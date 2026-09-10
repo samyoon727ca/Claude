@@ -44,7 +44,7 @@ Legend: **[built]** exists now · **[planned]** in the sequence · **[cert]** cr
 - **P5.2** Milestone-structured security architecture doc with MBSE hooks. **[planned]**
 - **P0.2** Target-selection dossier — SCRM reasoning (vendor SoC/supply chain). **[built]**
 - **P0.3 / P1.3** Triage + diff Skills — Software Assurance (silent-patch and
-  unsafe-sink detection) and Configuration Management (version/hash tracking). **[built/planned]**
+  unsafe-sink detection) and Configuration Management (version/hash tracking). **[built]**
 
 ### 6. Anti-tamper process and associated documentation
 - **P5.2** Dedicated anti-tamper approach writeup with process documentation. **[planned]**

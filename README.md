@@ -36,10 +36,9 @@ docs/
   disclosure-policy.md        Coordinated disclosure + legal/ethics scope
 .claude/skills/
   firmware-triage/            Skill: acquire -> unpack -> inventory -> first-pass sink scan
-    SKILL.md
-    scripts/                  Runnable triage.sh + sink_scan.py (no exotic deps)
-    reference/                Triage checklist, unsafe-sink catalog, binwalk notes
-    templates/                Triage-report output template
+    scripts/                  triage.sh + sink_scan.py (no exotic deps)
+  binary-diff/                Skill: diff two firmware versions -> ranked candidate list
+    scripts/                  fw_diff.py (file/symbol/sink/string delta + ranker)
 ```
 
 ## Reusable tooling (Claude Code Skills)
@@ -51,14 +50,20 @@ files — Markdown instructions plus small scripts with no exotic dependencies.
 - **firmware-triage** — Turn a firmware image into a structured triage report:
   extract the filesystem, inventory sensitive files (keys/creds/certs/SUID),
   fingerprint binary architecture and endianness, and produce a ranked list of
-  binaries that call dangerous C sinks. This is the first stage of the funnel;
-  binary-diffing and report-generation Skills build on its output.
+  binaries that call dangerous C sinks. First stage of the funnel.
+- **binary-diff** — Diff an older and newer firmware version to surface
+  silently-patched or newly-introduced bugs: added/removed/changed files,
+  dangerous-sink deltas per binary, "silent-fix" error-string tells, and a ranked
+  candidate list that names which version likely holds the bug (points Ghidra/
+  Diaphora at the right function). Vendor-agnostic; consumes triage output.
 
 ## Status
 
-Early build-out. The triage Skill and the planning/selection/disclosure docs are
-in place; research writeups and additional Skills (binary-diff-to-candidate-list,
-finding-to-report, data-visualization) follow the sequence in the artifact plan.
+Early build-out. The **firmware-triage** and **binary-diff** Skills plus the
+planning / target-selection / disclosure docs are in place and the tooling is
+verified end-to-end on synthetic fixtures. Remaining Skills (finding-to-report,
+finding-to-CVE, data-visualization) and the research writeups follow the
+sequence in the artifact plan.
 
 ## License
 

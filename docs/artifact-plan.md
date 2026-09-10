@@ -22,7 +22,7 @@ index (competency -> artifacts) lives in [`qualification-map.md`](qualification-
 | ID | Deliverable | Track | DoD | Competency |
 |----|-------------|-------|-----|------------|
 | P0.1 | Disclosure policy + research scope | — | Committed | Software Assurance; program discipline |
-| P0.2 | Track 1 target-selection dossier | 1 | Rubric + shortlist + primary pick committed | Firmware assessment; SCRM |
+| P0.2 | Track 1 target-selection dossier **[built]** | 1 | Rubric + freshness re-scoring + revised pick committed | Firmware assessment; SCRM |
 | P0.3 | `firmware-triage` Skill | 3 | Runs end-to-end on a sample image | Firmware assessment; Software Assurance |
 
 ### Phase 1 — First candidate list (Track 1 primary begins)
@@ -30,7 +30,7 @@ index (competency -> artifacts) lives in [`qualification-map.md`](qualification-
 |----|-------------|-------|-----|------------|
 | P1.1 | Acquire 2-3 firmware versions of the chosen Netgear model | 1 | Hashes recorded; SoC confirmed from image | Firmware assessment; Config Mgmt |
 | P1.2 | Triage report per version (via P0.3) | 1 | Inventories + sink candidates produced | Firmware assessment |
-| P1.3 | `binary-diff-to-candidate-list` Skill | 3 | Diffs two rootfs, ranks changed binaries | Software Assurance; Config Mgmt |
+| P1.3 | `binary-diff` Skill **[built]** | 3 | Diffs two rootfs; ranks by sink/string delta; names likely-vulnerable version. Verified on synthetic silent-patch | Software Assurance; Config Mgmt |
 | P1.4 | First cross-version diff report | 1 | Silently-changed functions flagged | Firmware assessment; Cyber T&E |
 
 ### Phase 2 — Confirm a bug -> vendor report (income attempt #1)
