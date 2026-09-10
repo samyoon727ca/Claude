@@ -1,0 +1,13 @@
+threat,risk
+GNSS spoofing -> position hijack,9.0
+MAVLink command injection (unauth link),8.5
+Unsigned firmware/param upload via bootloader,8.0
+Companion computer / network compromise,7.5
+GCS operator station compromise,7.5
+Supply-chain firmware tamper,7.0
+RC link jamming (DoS),7.0
+Telemetry eavesdrop (mission data),6.0
+Telemetry replay,5.5
+Sensor (IMU/mag) EM spoofing,5.0
+Failsafe/battery logic abuse,5.0
+Log/param tamper (repudiation),4.5

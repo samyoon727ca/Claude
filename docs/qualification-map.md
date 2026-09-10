@@ -9,8 +9,8 @@ Legend: **[built]** exists now · **[planned]** in the sequence · **[cert]** cr
 ---
 
 ### 1. Security architecture across the product lifecycle; deriving/decomposing security requirements from threat intel
-- **P4.3** Threat model in NIST SP 800-160 language — derives security
-  requirements directly from an enumerated threat set. **[planned]**
+- **P4.3** UAS autopilot threat model in NIST SP 800-160 language — derives
+  verifiable security requirements from a STRIDE/ATT&CK threat register. **[built]**
 - **P5.2** Milestone-style security architecture document (SRR->CDR) — shows
   requirements decomposed and traced across lifecycle gates. **[planned]**
 - **P5.1** Autopilot assessment — architecture-level attack-surface reasoning on
@@ -40,6 +40,7 @@ Legend: **[built]** exists now · **[planned]** in the sequence · **[cert]** cr
 - **Cyber T&E Guidebook** — P2.2 emulation harness + P1.4/P2.5 test-and-evaluation
   framing of findings. **[planned]**
 - **NIST SP 800-193/147/155** — P4.2 firmware-resiliency/measurement vocabulary in use. **[built]**
+- **NIST SP 800-160/154/30 + Cyber Survivability + ATT&CK-ICS** — P4.3 threat model. **[built]**
 - **CMMC / NIST 800-53** — P4.4 controls mapping. **[planned]**
 - **JSIG / ICD 503 / Cyber Survivability** — vocabulary applied in P5.2 milestone
   doc and P4.3 threat model. **[planned]**
@@ -73,7 +74,7 @@ Legend: **[built]** exists now · **[planned]** in the sequence · **[cert]** cr
 
 | Competency | Evidenced now | After planned build |
 |-----------|:-------------:|:-------------------:|
-| 1. Security architecture / requirements | partial | strong |
+| 1. Security architecture / requirements | building | strong |
 | 2. Embedded HW: secure boot / keys / AT | building | strong |
 | 3. Firmware / embedded assessment | building | strong |
 | 4. USG methodology fluency | building | strong |
