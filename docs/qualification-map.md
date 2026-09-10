@@ -54,7 +54,8 @@ Legend: **[built]** exists now · **[planned]** in the sequence · **[cert]** cr
 - **P4.1** `data-visualization` Skill — briefing-grade charts and architecture
   diagrams from analysis output. **[planned]**
 - **P2.4** `finding-to-vendor-report` Skill — CVSS-scored PSIRT reports +
-  disclosure email; **[built]**. **P3.1** CVE-writeup Skill — **[planned]**.
+  disclosure email; **[built]**. **P3.1** `finding-to-cve-writeup` Skill —
+  CVE JSON 5.1 record + sanitized public writeup + publish linter; **[built]**.
 - **P3.3** Public writeup — externally visible written + visual communication. **[planned]**
 
 ### 8. Certifications / DoD 8140

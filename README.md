@@ -45,6 +45,8 @@ research/
   firmware-triage/scripts/setup-tools.sh   One-command extraction-toolchain install
   finding-to-vendor-report/   Skill: confirmed finding -> CVSS-scored PSIRT report
     scripts/                  cvss.py (v3.1, NVD-verified) + make_report.py
+  finding-to-cve-writeup/     Skill: disclosed finding -> CVE JSON 5.1 + public writeup
+    scripts/                  make_cve.py + sanitize_check.py (publish gate)
 ```
 
 ## Reusable tooling (Claude Code Skills)
@@ -66,6 +68,10 @@ files — Markdown instructions plus small scripts with no exotic dependencies.
   report: a CVSS v3.1 calculator (verified against NVD vectors), CWE mapping, a
   report assembler that fills the template from a finding file, and a
   coordinated-disclosure cover email. Automates scoring + drafting, not judgment.
+- **finding-to-cve-writeup** — Turn a disclosed finding into a submittable CVE
+  JSON 5.1 record (reusing the same finding file and CVSS score) and a
+  methodology-forward public writeup, with a sanitization linter that blocks key
+  material, unfilled placeholders, and weaponized payloads before publishing.
 
 ## Status
 
@@ -73,8 +79,8 @@ Early build-out. The **firmware-triage** and **binary-diff** Skills plus the
 planning / target-selection / disclosure docs are in place and the tooling is
 verified end-to-end on synthetic fixtures. The **finding-to-vendor-report**
 Skill (CVSS v3.1 scoring + PSIRT report assembly) is built and verified too.
-Remaining Skills (finding-to-CVE-writeup, data-visualization) and the research
-writeups follow the artifact plan.
+Remaining: the **data-visualization** Skill and the research writeups, per the
+artifact plan.
 
 ## License
 

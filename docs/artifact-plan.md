@@ -45,7 +45,7 @@ index (competency -> artifacts) lives in [`qualification-map.md`](qualification-
 ### Phase 3 — Disclose + publish
 | ID | Deliverable | Track | DoD | Competency |
 |----|-------------|-------|-----|------------|
-| P3.1 | `finding-to-CVE-writeup` Skill | 3 | Report -> sanitized public writeup | Communication |
+| P3.1 | `finding-to-cve-writeup` Skill **[built]** | 3 | finding.json -> CVE JSON 5.1 record + sanitized writeup; publish linter verified | Communication |
 | P3.2 | Coordinated disclosure + CVE request | 1 | Vendor engaged; CVE ID sought | Program discipline |
 | P3.3 | Sanitized public writeup / CVE | 1 | Published post-fix; on GitHub | Assessment; Communication; hiring signal |
 
