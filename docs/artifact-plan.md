@@ -39,7 +39,7 @@ index (competency -> artifacts) lives in [`qualification-map.md`](qualification-
 | P2.1 | Ghidra decompilation review of top candidates | 1 | Unsafe sinks confirmed/rejected with notes | Embedded reversing; assessment |
 | P2.2 | Emulation harness (QEMU/FirmAE) for the target | 1/3 | Target service reachable in emulation | Cyber T&E; assessment |
 | P2.3 | Hand-built PoC on a confirmed candidate | 1 | Minimal, reliable repro (you build this) | Assessment |
-| P2.4 | `finding-to-vendor-report` Skill | 3 | Template -> structured report from evidence | Communication (written) |
+| P2.4 | `finding-to-vendor-report` Skill **[built]** | 3 | finding.json -> CVSS-scored PSIRT report + cover email; CVSS v3.1 calc verified vs NVD | Communication (written) |
 | P2.5 | First vendor-ready vulnerability report (private) | 1 | CVSS vector + impact narrative; submitted | Assessment; Communication; Cyber T&E |
 
 ### Phase 3 — Disclose + publish

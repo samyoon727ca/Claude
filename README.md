@@ -43,6 +43,8 @@ research/
   binary-diff/                Skill: diff two firmware versions -> ranked candidate list
     scripts/                  fw_diff.py (file/symbol/sink/string delta + ranker)
   firmware-triage/scripts/setup-tools.sh   One-command extraction-toolchain install
+  finding-to-vendor-report/   Skill: confirmed finding -> CVSS-scored PSIRT report
+    scripts/                  cvss.py (v3.1, NVD-verified) + make_report.py
 ```
 
 ## Reusable tooling (Claude Code Skills)
@@ -60,14 +62,19 @@ files — Markdown instructions plus small scripts with no exotic dependencies.
   dangerous-sink deltas per binary, "silent-fix" error-string tells, and a ranked
   candidate list that names which version likely holds the bug (points Ghidra/
   Diaphora at the right function). Vendor-agnostic; consumes triage output.
+- **finding-to-vendor-report** — Turn a confirmed finding into a PSIRT-ready
+  report: a CVSS v3.1 calculator (verified against NVD vectors), CWE mapping, a
+  report assembler that fills the template from a finding file, and a
+  coordinated-disclosure cover email. Automates scoring + drafting, not judgment.
 
 ## Status
 
 Early build-out. The **firmware-triage** and **binary-diff** Skills plus the
 planning / target-selection / disclosure docs are in place and the tooling is
-verified end-to-end on synthetic fixtures. Remaining Skills (finding-to-report,
-finding-to-CVE, data-visualization) and the research writeups follow the
-sequence in the artifact plan.
+verified end-to-end on synthetic fixtures. The **finding-to-vendor-report**
+Skill (CVSS v3.1 scoring + PSIRT report assembly) is built and verified too.
+Remaining Skills (finding-to-CVE-writeup, data-visualization) and the research
+writeups follow the artifact plan.
 
 ## License
 

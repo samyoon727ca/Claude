@@ -53,8 +53,8 @@ Legend: **[built]** exists now · **[planned]** in the sequence · **[cert]** cr
 ### 7. Briefing complex security concepts (visual + written — weighted heavily)
 - **P4.1** `data-visualization` Skill — briefing-grade charts and architecture
   diagrams from analysis output. **[planned]**
-- **P2.4 / P3.1** report + CVE-writeup Skills — standardized, senior-reading
-  written communication. **[planned]**
+- **P2.4** `finding-to-vendor-report` Skill — CVSS-scored PSIRT reports +
+  disclosure email; **[built]**. **P3.1** CVE-writeup Skill — **[planned]**.
 - **P3.3** Public writeup — externally visible written + visual communication. **[planned]**
 
 ### 8. Certifications / DoD 8140
