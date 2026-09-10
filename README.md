@@ -5,6 +5,8 @@ tooling, and milestone-style security engineering documentation. Everything here
 is built on **open-source, commercial, or academic targets** and is intended to
 demonstrate transferable systems-security-engineering skills.
 
+![Portfolio blueprint: three tracks, the reusable-skill funnel engine, and per-deliverable status](docs/portfolio-blueprint.svg)
+
 > **Scope & ethics.** UNCLASSIFIED, publicly-available targets only. All firmware
 > is acquired from vendors' public support sites. No proprietary, classified, or
 > export-controlled (ITAR/EAR) technical data is reproduced or generated here.
