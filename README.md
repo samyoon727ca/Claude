@@ -35,6 +35,8 @@ docs/
   track1-target-selection.md  Target choice: rubric + freshness pass + CVE-volume reorder
   track1-acquisition-runbook.md  Turnkey P1.1: acquire -> confirm SoC -> triage -> diff -> dedup
   disclosure-policy.md        Coordinated disclosure + legal/ethics scope
+docs/track2/
+  secure-boot-root-of-trust.md  Reference explainer: RoT, verified/measured boot, keys, AT
 research/
   dlink-rtl819x/              First-target working area (paperwork only; blobs git-ignored)
 .claude/skills/
@@ -85,8 +87,10 @@ Early build-out. The **firmware-triage** and **binary-diff** Skills plus the
 planning / target-selection / disclosure docs are in place and the tooling is
 verified end-to-end on synthetic fixtures. The **finding-to-vendor-report**
 Skill (CVSS v3.1 scoring + PSIRT report assembly) is built and verified too.
-The **security-dataviz** Skill (briefing charts + diagrams) is built. Remaining:
-the Track 2 engineering docs and the research writeups, per the artifact plan.
+The **security-dataviz** Skill is built, and the first Track 2 engineering doc —
+a **secure-boot / hardware root-of-trust explainer** (`docs/track2/`) — is
+published. Remaining: the rest of the Track 2 docs and the research writeups, per
+the artifact plan.
 
 ## License
 

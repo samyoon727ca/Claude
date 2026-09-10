@@ -53,7 +53,7 @@ index (competency -> artifacts) lives in [`qualification-map.md`](qualification-
 | ID | Deliverable | Track | DoD | Competency |
 |----|-------------|-------|-----|------------|
 | P4.1 | `security-dataviz` Skill **[built]** | 3 | Theme-aware SVG charts + mermaid taint/timeline from analysis CSVs; sample rendered | Communication (visual, weighted) |
-| P4.2 | Secure-boot / hardware-root-of-trust reference explainer | 2 | Diagrammed teardown of a real RoT/secure-boot chain | Embedded HW features; secure boot; comms |
+| P4.2 | Secure-boot / hardware-root-of-trust reference explainer **[built]** | 2 | 243-line explainer: chain-of-trust + key-hierarchy + lifecycle diagrams, threat->requirement->T&E traceability, NIST 800-193/147/155/160 | Embedded HW features; secure boot; comms |
 | P4.3 | Full threat model of an open embedded platform (NIST SP 800-160) | 2 | Requirements derived from threats, 800-160 structure | Security architecture; 800-160 |
 | P4.4 | End-to-end hardening writeup on a real embedded target | 2 | Secure-boot chain + attack-surface reduction + controls map | Secure boot; controls mapping (800-53/CMMC) |
 

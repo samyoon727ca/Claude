@@ -17,11 +17,14 @@ Legend: **[built]** exists now · **[planned]** in the sequence · **[cert]** cr
   a real system. **[planned]**
 
 ### 2. Security-relevant embedded HW / FPGA features: secure boot, key management, anti-tamper
-- **P4.2** Secure-boot / hardware-root-of-trust reference explainer — teardown of
-  a real RoT chain (verified boot, key hierarchy, fuses). **[planned]**
+- **P4.2** Secure-boot / hardware-root-of-trust reference explainer — RoT
+  functions, verified vs measured boot, key hierarchy, lifecycle/anti-tamper,
+  attack decomposition, and threat->requirement->T&E traceability. **[built]**
 - **P4.4** Hardening writeup — documents the secure-boot chain and key handling on
   a real device. **[planned]**
-- **P5.2** Anti-tamper approach section — process + documentation for AT. **[planned]**
+- **P4.2** Lifecycle + anti-tamper section (tamper-resistant key storage, secure
+  debug, zeroization, passive/active AT). **[built]**
+- **P5.2** Dedicated anti-tamper approach + process documentation. **[planned]**
 
 ### 3. Firmware / application / network / IoT / embedded security assessment
 - **P0.3** `firmware-triage` Skill — the assessment funnel itself. **[built]**
@@ -36,6 +39,7 @@ Legend: **[built]** exists now · **[planned]** in the sequence · **[cert]** cr
 - **NIST SP 800-160** — P4.3 threat model is structured in its language. **[planned]**
 - **Cyber T&E Guidebook** — P2.2 emulation harness + P1.4/P2.5 test-and-evaluation
   framing of findings. **[planned]**
+- **NIST SP 800-193/147/155** — P4.2 firmware-resiliency/measurement vocabulary in use. **[built]**
 - **CMMC / NIST 800-53** — P4.4 controls mapping. **[planned]**
 - **JSIG / ICD 503 / Cyber Survivability** — vocabulary applied in P5.2 milestone
   doc and P4.3 threat model. **[planned]**
@@ -47,8 +51,9 @@ Legend: **[built]** exists now · **[planned]** in the sequence · **[cert]** cr
   unsafe-sink detection) and Configuration Management (version/hash tracking). **[built]**
 
 ### 6. Anti-tamper process and associated documentation
+- **P4.2** RoT explainer §6 covers the tamper-resistance primitives AT relies on
+  (lifecycle states, secure debug, zeroization, passive/active AT). **[built]**
 - **P5.2** Dedicated anti-tamper approach writeup with process documentation. **[planned]**
-- **P4.2** RoT explainer covers the tamper-resistance primitives AT relies on. **[planned]**
 
 ### 7. Briefing complex security concepts (visual + written — weighted heavily)
 - **P4.1** `security-dataviz` Skill — theme-aware SVG charts + mermaid taint/
@@ -69,15 +74,16 @@ Legend: **[built]** exists now · **[planned]** in the sequence · **[cert]** cr
 | Competency | Evidenced now | After planned build |
 |-----------|:-------------:|:-------------------:|
 | 1. Security architecture / requirements | partial | strong |
-| 2. Embedded HW: secure boot / keys / AT | — | strong |
+| 2. Embedded HW: secure boot / keys / AT | building | strong |
 | 3. Firmware / embedded assessment | building | strong |
-| 4. USG methodology fluency | — | strong |
+| 4. USG methodology fluency | building | strong |
 | 5. Milestone docs / MBSE / SCRM / SwA / CM | partial | strong |
-| 6. Anti-tamper | — | moderate |
+| 6. Anti-tamper | building | moderate |
 | 7. Briefing (visual + written) | partial | strong |
 | 8. Certs / 8140 | out-of-band | out-of-band |
 
-The gap to close first: competencies **4** and **6** have no artifact yet. They
-are covered by Phase 4-5 docs, which is why those phases matter even though they
-generate no income — they are the difference between "strong bug-finder" and
-"systems security *engineer*."
+Gaps closing: the P4.2 secure-boot/RoT explainer now gives competencies **2**,
+**4**, and **6** their first artifact (previously empty). The remaining depth for
+**4** (JSIG/ICD 503/CMMC) and **6** (dedicated AT process doc) comes with the
+P4.3 threat model, P4.4 hardening writeup, and P5.2 milestone/AT doc — the
+difference between "strong bug-finder" and "systems security *engineer*."
