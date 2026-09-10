@@ -20,14 +20,15 @@ Legend: **[built]** exists now · **[planned]** in the sequence · **[cert]** cr
 - **P4.2** Secure-boot / hardware-root-of-trust reference explainer — RoT
   functions, verified vs measured boot, key hierarchy, lifecycle/anti-tamper,
   attack decomposition, and threat->requirement->T&E traceability. **[built]**
-- **P4.4** Hardening writeup — documents the secure-boot chain and key handling on
-  a real device. **[planned]**
+- **P4.4** Hardening writeup — verified boot + key handling applied on a real
+  Linux embedded node, mapped to controls. **[built]**
 - **P4.2** Lifecycle + anti-tamper section (tamper-resistant key storage, secure
   debug, zeroization, passive/active AT). **[built]**
 - **P5.2** Dedicated anti-tamper approach + process documentation. **[planned]**
 
 ### 3. Firmware / application / network / IoT / embedded security assessment
 - **P0.3** `firmware-triage` Skill — the assessment funnel itself. **[built]**
+- **P4.4** Hardening writeup — assessment-to-hardening on a real Linux embedded node. **[built]**
 - **P1.2 / P1.4** Triage + cross-version diff reports. **[planned]**
 - **P2.1 / P2.3 / P2.5** Ghidra review, PoC, vendor report — full assessment
   lifecycle on a commercial device. **[planned]**
@@ -41,7 +42,7 @@ Legend: **[built]** exists now · **[planned]** in the sequence · **[cert]** cr
   framing of findings. **[planned]**
 - **NIST SP 800-193/147/155** — P4.2 firmware-resiliency/measurement vocabulary in use. **[built]**
 - **NIST SP 800-160/154/30 + Cyber Survivability + ATT&CK-ICS** — P4.3 threat model. **[built]**
-- **CMMC / NIST 800-53** — P4.4 controls mapping. **[planned]**
+- **CMMC / NIST 800-53 Rev.5 / 800-171** — P4.4 controls-mapping table (12 measures). **[built]**
 - **JSIG / ICD 503 / Cyber Survivability** — vocabulary applied in P5.2 milestone
   doc and P4.3 threat model. **[planned]**
 
@@ -50,6 +51,8 @@ Legend: **[built]** exists now · **[planned]** in the sequence · **[cert]** cr
 - **P0.2** Target-selection dossier — SCRM reasoning (vendor SoC/supply chain). **[built]**
 - **P0.3 / P1.3** Triage + diff Skills — Software Assurance (silent-patch and
   unsafe-sink detection) and Configuration Management (version/hash tracking). **[built]**
+- **P4.4** Hardening writeup — Config Mgmt (baseline/least-functionality) + supply-chain
+  assurance (reproducible build, SBOM, SR controls). **[built]**
 
 ### 6. Anti-tamper process and associated documentation
 - **P4.2** RoT explainer §6 covers the tamper-resistance primitives AT relies on
@@ -78,7 +81,7 @@ Legend: **[built]** exists now · **[planned]** in the sequence · **[cert]** cr
 | 2. Embedded HW: secure boot / keys / AT | building | strong |
 | 3. Firmware / embedded assessment | building | strong |
 | 4. USG methodology fluency | building | strong |
-| 5. Milestone docs / MBSE / SCRM / SwA / CM | partial | strong |
+| 5. Milestone docs / MBSE / SCRM / SwA / CM | building | strong |
 | 6. Anti-tamper | building | moderate |
 | 7. Briefing (visual + written) | partial | strong |
 | 8. Certs / 8140 | out-of-band | out-of-band |
