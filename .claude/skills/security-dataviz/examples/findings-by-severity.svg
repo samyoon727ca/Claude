@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="780" height="250" viewBox="0 0 780 250" role="img" aria-label="Findings by CVSS severity">
+<style>
+    .bg{fill:var(--bg)} .title{fill:var(--fg);font:600 17px system-ui,sans-serif}
+    .lbl{fill:var(--fg);font:13px ui-monospace,monospace}
+    .val{fill:var(--muted);font:600 12px system-ui,sans-serif}
+    .bar{fill:#3B7DD8} .axis{stroke:var(--grid);stroke-width:1}
+    :root{--bg:#ffffff;--fg:#1a1a1a;--muted:#555;--grid:#e2e2e2}
+    .Critical{fill:#B4232A} .High{fill:#C6641B}
+    .Medium{fill:#B8901A} .Low{fill:#2E7D46} .None{fill:#6B7280}
+    @media (prefers-color-scheme:dark){
+      :root{--bg:#14161a;--fg:#e8e8e8;--muted:#a2a2a2;--grid:#2c2f36}
+      .Critical{fill:#F2555D} .High{fill:#F08A3C}
+      .Medium{fill:#E7B93E} .Low{fill:#54B072} .None{fill:#9AA4B2}
+    }</style>
+<rect class="bg" x="0" y="0" width="780" height="250"/>
+<text class="title" x="300" y="30">Findings by CVSS severity</text>
+<line class="axis" x1="300" y1="50" x2="300" y2="226"/>
+<text class="lbl" x="290" y="73.68" text-anchor="end">upnpd stack overflow</text>
+<rect class="bar Critical" x="300" y="56" width="410" height="26" rx="3"><title>upnpd stack overflow: 9.8</title></rect>
+<text class="val" x="718" y="73.68">9.8</text>
+<text class="lbl" x="290" y="107.68" text-anchor="end">ping.cgi command injection (pre-auth)</text>
+<rect class="bar High" x="300" y="90" width="368" height="26" rx="3"><title>ping.cgi command injection (pre-auth): 8.8</title></rect>
+<text class="val" x="676" y="107.68">8.8</text>
+<text class="lbl" x="290" y="141.68" text-anchor="end">telnetd default creds</text>
+<rect class="bar High" x="300" y="124" width="313" height="26" rx="3"><title>telnetd default creds: 7.5</title></rect>
+<text class="val" x="621" y="141.68">7.5</text>
+<text class="lbl" x="290" y="175.68" text-anchor="end">config disclosure</text>
+<rect class="bar Medium" x="300" y="158" width="271" height="26" rx="3"><title>config disclosure: 6.5</title></rect>
+<text class="val" x="579" y="175.68">6.5</text>
+<text class="lbl" x="290" y="209.68" text-anchor="end">csrf reboot</text>
+<rect class="bar Medium" x="300" y="192" width="179" height="26" rx="3"><title>csrf reboot: 4.3</title></rect>
+<text class="val" x="487" y="209.68">4.3</text>
+</svg>

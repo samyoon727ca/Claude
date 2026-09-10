@@ -51,8 +51,8 @@ Legend: **[built]** exists now · **[planned]** in the sequence · **[cert]** cr
 - **P4.2** RoT explainer covers the tamper-resistance primitives AT relies on. **[planned]**
 
 ### 7. Briefing complex security concepts (visual + written — weighted heavily)
-- **P4.1** `data-visualization` Skill — briefing-grade charts and architecture
-  diagrams from analysis output. **[planned]**
+- **P4.1** `security-dataviz` Skill — theme-aware SVG charts + mermaid taint/
+  timeline diagrams from analysis output. **[built]**
 - **P2.4** `finding-to-vendor-report` Skill — CVSS-scored PSIRT reports +
   disclosure email; **[built]**. **P3.1** `finding-to-cve-writeup` Skill —
   CVE JSON 5.1 record + sanitized public writeup + publish linter; **[built]**.

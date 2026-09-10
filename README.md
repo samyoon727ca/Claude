@@ -47,6 +47,8 @@ research/
     scripts/                  cvss.py (v3.1, NVD-verified) + make_report.py
   finding-to-cve-writeup/     Skill: disclosed finding -> CVE JSON 5.1 + public writeup
     scripts/                  make_cve.py + sanitize_check.py (publish gate)
+  security-dataviz/           Skill: analysis output -> briefing charts + diagrams
+    scripts/                  chart.py (SVG) + diagram.py (mermaid)
 ```
 
 ## Reusable tooling (Claude Code Skills)
@@ -72,6 +74,10 @@ files — Markdown instructions plus small scripts with no exotic dependencies.
   JSON 5.1 record (reusing the same finding file and CVSS score) and a
   methodology-forward public writeup, with a sanitization linter that blocks key
   material, unfilled placeholders, and weaponized payloads before publishing.
+- **security-dataviz** — Briefing-grade, dependency-free visuals from analysis
+  output: theme-aware SVG bar charts (ranked candidates; findings colored by CVSS
+  band) and native mermaid diagrams (taint paths, disclosure timelines), plus a
+  one-page briefing template. Defers palette/design theory to the `dataviz` skill.
 
 ## Status
 
@@ -79,8 +85,8 @@ Early build-out. The **firmware-triage** and **binary-diff** Skills plus the
 planning / target-selection / disclosure docs are in place and the tooling is
 verified end-to-end on synthetic fixtures. The **finding-to-vendor-report**
 Skill (CVSS v3.1 scoring + PSIRT report assembly) is built and verified too.
-Remaining: the **data-visualization** Skill and the research writeups, per the
-artifact plan.
+The **security-dataviz** Skill (briefing charts + diagrams) is built. Remaining:
+the Track 2 engineering docs and the research writeups, per the artifact plan.
 
 ## License
 
