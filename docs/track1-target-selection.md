@@ -98,15 +98,57 @@ Zyxel and D-Link alike):
    CGI, TR-069, vendor daemons).
 5. Only then lock the model and record it below.
 
-## Working target
+## Objective reorder (user directive, 2026-09): CVE volume + portfolio over payout
 
-- **Vendor decision:** pending your (A)/(B) constraint call above.
-- **Immediate diff-fuel target (tooling shakedown, no payout expectation):**
-  a D-Link DIR RTL819x model with 3+ public releases — used to prove the
-  binary-diff Skill and to produce the first patch-diff writeup while the
-  Zyxel-vs-constraint decision is made.
-- **Exact model:** fixed at P1.1 by the procedure above; recorded here with
-  version list + hashes once acquired.
+Constraint decision **(B)** is adopted: "Realtek **or** the vendor's actively-
+patched SOHO line." And the first target is now optimized for **CVE volume +
+portfolio strength**, not payout path. That reorders the ranking:
+
+- **Payout drops out.** Confirmed: **Zyxel runs no bug bounty - credit only**
+  (PSIRT `security@zyxel.com.tw`, CNA since 2021). D-Link is likewise credit /
+  Hall-of-Thanks, no cash on consumer gear. Under the reordered objective this is
+  fine: the first target is explicitly **not** an income play - credit + writeups.
+- **Saturation becomes the enemy** (a picked-clean model yields duplicates, not
+  CVEs); **CVE-assignment cadence + novel surface become the prize.**
+
+### First target: **D-Link** (primary CVE-volume engine)
+- **Why volume:** ~245 severe D-Link router CVEs over a decade (~2 serious
+  remotely-exploitable/month), and a prolific CNA still assigning through 2026.
+  No other US/allied SOHO vendor converts findings->CVEs at this rate.
+- **Why portfolio:** Realtek RTL819x = MIPS, squarely the stated specialization;
+  deep SDK firmware history (`rtl819x-SDK v3.2.x -> v3.4T-CT`) = excellent diff fuel.
+- **The volume lever that beats saturation:** RTL819x bugs live in the shared
+  **Realtek SDK**, so one silently-patched root cause commonly spans *many*
+  D-Link models -> one finding can map to multiple affected models / CVEs. That
+  is how an EOL, well-researched platform still yields net-new assignments: hunt
+  **silent (unassigned) SDK-level fixes** via diffing, then enumerate the fan-out.
+- **Honest caveat:** the confirmed-Realtek D-Link models (DIR-816L, DIR-850L,
+  DIR-820L, DIR-818Lx, DIR-817Lx, DWR-118) are EOL and heavily researched.
+  Duplicate risk is real -> every candidate goes through a mandatory
+  **NVD/advisory dedup check** before it counts as novel (see the runbook). That
+  discipline is what keeps a "volume" strategy honest.
+
+### Complement: **Zyxel** (novelty, cleaner CVEs)
+Fresher, less-swarmed, active CNA credit. Lower total volume than D-Link but
+higher *novel* yield per finding. Rotate in when D-Link candidates dedup as
+known. Under (B), also the route to actively-patched surface off RTL819x.
+
+### Demoted: Netgear
+Its cash bounty is irrelevant to the reordered objective, and its fresh surface
+is non-Realtek. Off the first-target board.
+
+## Working target (locked)
+
+- **Vendor:** D-Link (primary), Zyxel (novelty complement). Both credit-only.
+- **Model bracket (confirm SoC from image):** a D-Link RTL819x model with 3+
+  public firmware releases - **DIR-816L** primary candidate, **DIR-850L** /
+  **DIR-820L** alternates - for the funnel shakedown + first SDK-level patch-diff.
+  Exact model fixed at P1.1 acquisition.
+- **Execution note:** P1.1 hands-on acquisition/extraction runs on an
+  unrestricted host - this remote sandbox's network policy blocks vendor firmware
+  hosts (403) and lacks squashfs extractors. See
+  `track1-acquisition-runbook.md`; version list + hashes + confirmed SoC land in
+  `research/dlink-rtl819x/acquisition-log.md`.
 
 ## Freshness evidence (as of 2026-09)
 

@@ -28,7 +28,7 @@ index (competency -> artifacts) lives in [`qualification-map.md`](qualification-
 ### Phase 1 — First candidate list (Track 1 primary begins)
 | ID | Deliverable | Track | DoD | Competency |
 |----|-------------|-------|-----|------------|
-| P1.1 | Acquire 2-3 firmware versions of the chosen Netgear model | 1 | Hashes recorded; SoC confirmed from image | Firmware assessment; Config Mgmt |
+| P1.1 | Acquire 2-3 firmware versions of the D-Link RTL819x target **[runbook ready; runs on unrestricted host]** | 1 | Hashes recorded; SoC confirmed from image | Firmware assessment; Config Mgmt |
 | P1.2 | Triage report per version (via P0.3) | 1 | Inventories + sink candidates produced | Firmware assessment |
 | P1.3 | `binary-diff` Skill **[built]** | 3 | Diffs two rootfs; ranks by sink/string delta; names likely-vulnerable version. Verified on synthetic silent-patch | Software Assurance; Config Mgmt |
 | P1.4 | First cross-version diff report | 1 | Silently-changed functions flagged | Firmware assessment; Cyber T&E |

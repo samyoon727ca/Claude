@@ -32,8 +32,10 @@ image whose provenance the user cannot state. Never commit the firmware blob or
 extracted filesystem to git (see `.gitignore`).
 
 ## Prerequisites
-- `binwalk` (extraction). If missing, `scripts/triage.sh` prints install guidance
-  and still inventories an already-extracted rootfs.
+- `binwalk` (extraction). Run `scripts/setup-tools.sh` once to install the full
+  extraction toolchain (binwalk, squashfs-tools, jefferson, ubi_reader, QEMU). If
+  `binwalk` is still missing, `scripts/triage.sh` prints guidance and inventories
+  an already-extracted rootfs anyway.
 - Standard binutils (`file`, `readelf`, `strings`, `find`) — used opportunistically.
 - `scripts/sink_scan.py` needs only Python 3 stdlib; it uses `readelf` if present
   for accurate dynamic-symbol reads, else falls back to `strings`.

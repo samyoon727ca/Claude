@@ -32,13 +32,17 @@ Engineer competency, is in [`docs/artifact-plan.md`](docs/artifact-plan.md) and
 docs/
   artifact-plan.md            Concrete plan across all three tracks
   qualification-map.md        Every artifact -> a specific SSE competency
-  track1-target-selection.md  How the first research target was chosen (rubric + shortlist)
+  track1-target-selection.md  Target choice: rubric + freshness pass + CVE-volume reorder
+  track1-acquisition-runbook.md  Turnkey P1.1: acquire -> confirm SoC -> triage -> diff -> dedup
   disclosure-policy.md        Coordinated disclosure + legal/ethics scope
+research/
+  dlink-rtl819x/              First-target working area (paperwork only; blobs git-ignored)
 .claude/skills/
   firmware-triage/            Skill: acquire -> unpack -> inventory -> first-pass sink scan
     scripts/                  triage.sh + sink_scan.py (no exotic deps)
   binary-diff/                Skill: diff two firmware versions -> ranked candidate list
     scripts/                  fw_diff.py (file/symbol/sink/string delta + ranker)
+  firmware-triage/scripts/setup-tools.sh   One-command extraction-toolchain install
 ```
 
 ## Reusable tooling (Claude Code Skills)
