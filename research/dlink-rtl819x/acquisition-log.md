@@ -49,7 +49,7 @@ Planned pairs (▶ = highest-priority silent-fix lead). Fill results after `fw_d
 
 | Old ver | New ver | diff-candidates top lead | likely_bug_side | notes |
 |---------|---------|--------------------------|-----------------|-------|
-| ▶ 2.05.B02 | 2.06.B01 | **`htdocs/cgibin`** (the web CGI) | OLD (silent fix) | Confirmed via `fw_diff` on extracted rootfs: 1 ranked candidate = `htdocs/cgibin` (BE-MIPS ELF). Patch signature (readelf/strings): **only new import = `access()`**; new strings = `access`, `"%s/%s.php"`, `"http://purenetworks.com/HNAP1/GetDeviceSettings"`. `.text` +144 B (real code added). Hypothesis: **path-handling fix (traversal / arbitrary file-or-script access) in the HNAP / action dispatch** — `access()` added to validate a `"%s/%s.php"` path built from request input. → Ghidra confirm. (Kernel was unchanged bar build stamps; rootfs +108 B.) |
+| ▶ 2.05.B02 | 2.06.B01 | **`cgibin!hnap_main`** | OLD (silent fix) | **CONFIRMED (Ghidra headless, MIPS:BE:32).** OLD does `system("sh /etc/templates/hnap/<method>.sh > /dev/console")` where `<method>` = tail of the attacker-controlled `HTTP_SOAPACTION` header (text after last `/`); the `GetDeviceSettings` substring (matched by `strstr`) **bypasses auth** → **unauthenticated blind OS command injection (CWE-78)**. NEW fixes it by adding `access("/etc/templates/hnap/<method>.php")` and only proceeding if that template exists. Surfaced by: new `access()` import + `"%s/%s.php"` + HNAP URL; `.text` +144 B. Dedup ↓ = **n-day (CVE-2015-2051 class)**. |
 | 2.06.B01 | 2.06.B09 | _pending_ | _pending_ | Patch → later patch; second silent-fix window |
 | 2.03B03 | 2.05.B02 | _pending_ | _pending_ | Mid-lineage feature/fix drift |
 | 2.00B01 | 2.03B03 | _pending_ | _pending_ | Early baseline drift |
@@ -57,7 +57,7 @@ Planned pairs (▶ = highest-priority silent-fix lead). Fill results after `fw_d
 ## Candidate dedup ledger (novelty gate)
 | Candidate (binary:function) | Existing CVE? | Source checked | Verdict (novel / n-day) |
 |-----------------------------|---------------|----------------|-------------------------|
-|                             |               |                |                         |
+| `cgibin!hnap_main` — HNAP `SOAPAction` → `system()` cmd injection (unauth via `GetDeviceSettings`) | **Yes — CVE-2015-2051 class** (HNAP GetDeviceSettings cmd injection). Metasploit `exploit/linux/http/dlink_hnap_header_exec_noauth`; Mirai/Goldoon-weaponized; D-Link HNAP advisory 2015-04-13 | NVD (CVE-2015-2051), D-Link SAP10169 + 2015 HNAP advisory, Rapid7/Exploit-DB (37171), Tenable/Nessus 84086 | **n-day** — known class, not novel. Portfolio/n-day-reproduction only; no new CVE. |
 
 ## SDK fan-out (volume multiplier)
 | Vulnerable pattern | Other D-Link RTL819x models sharing it | Confirmed? |
