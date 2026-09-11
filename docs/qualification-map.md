@@ -34,7 +34,7 @@ Legend: **[built]** exists now · **[planned]** in the sequence · **[cert]** cr
   lifecycle on a commercial device. **[planned]**
 - **P3.3** Public writeup / CVE — externally validated assessment result. **[planned]**
 - **P5.1** UAS autopilot + MAVLink assessment — IoT/embedded on a defense-relevant
-  class of system. **[planned]**
+  class of system; **mavlink-sectest** T&E harness built, hands-on pending. **[building]**
 
 ### 4. USG cyber methodology fluency (vocabulary to document around)
 - **NIST SP 800-160** — P4.3 threat model is structured in its language. **[planned]**
@@ -42,6 +42,7 @@ Legend: **[built]** exists now · **[planned]** in the sequence · **[cert]** cr
   framing of findings. **[planned]**
 - **NIST SP 800-193/147/155** — P4.2 firmware-resiliency/measurement vocabulary in use. **[built]**
 - **NIST SP 800-160/154/30 + Cyber Survivability + ATT&CK-ICS** — P4.3 threat model. **[built]**
+- **Cyber T&E** — mavlink-sectest harness runs threat-model requirements as automated tests. **[built]**
 - **CMMC / NIST 800-53 Rev.5 / 800-171** — P4.4 controls-mapping table (12 measures). **[built]**
 - **JSIG / ICD 503 / Cyber Survivability** — vocabulary applied in P5.2 milestone
   doc and P4.3 threat model. **[planned]**

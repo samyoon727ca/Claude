@@ -60,7 +60,7 @@ index (competency -> artifacts) lives in [`qualification-map.md`](qualification-
 ### Phase 5 — Capstone (UAS autopilot) + milestone doc
 | ID | Deliverable | Track | DoD | Competency |
 |----|-------------|-------|-----|------------|
-| P5.1 | ArduPilot/PX4 + MAVLink firmware & protocol assessment | 1 | Attack surface of MAVLink + autopilot boot posture | Embedded/IoT assessment; security architecture |
+| P5.1 | ArduPilot/PX4 + MAVLink assessment **[T&E harness built; hands-on pending]** | 1 | mavlink-sectest runs the threat-model reqs vs SITL; hands-on assessment on owned/sim | Embedded/IoT assessment; security architecture; Cyber T&E |
 | P5.2 | Milestone security architecture + anti-tamper approach **[built]** | 2 | SRR->PRR gate table, MBSE traceability, DoD AT process (5200.39/47E), SCRM/SwA/CM; synthesizes P4.2/4.3/4.4 | Milestone docs; anti-tamper; MBSE; architecture |
 
 ## Certification note (DoD 8140 / role alignment)

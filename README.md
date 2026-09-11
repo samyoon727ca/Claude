@@ -32,30 +32,28 @@ Engineer competency, is in [`docs/artifact-plan.md`](docs/artifact-plan.md) and
 
 ```
 docs/
-  artifact-plan.md            Concrete plan across all three tracks
-  qualification-map.md        Every artifact -> a specific SSE competency
+  artifact-plan.md            Concrete plan across all three tracks (built/planned status)
+  qualification-map.md        Every artifact -> a specific SSE competency + coverage snapshot
+  portfolio-blueprint.svg     One-image end-state blueprint (the banner above)
+  disclosure-policy.md        Coordinated disclosure + legal/ethics scope
   track1-target-selection.md  Target choice: rubric + freshness pass + CVE-volume reorder
   track1-acquisition-runbook.md  Turnkey P1.1: acquire -> confirm SoC -> triage -> diff -> dedup
-  disclosure-policy.md        Coordinated disclosure + legal/ethics scope
-docs/track2/
-  secure-boot-root-of-trust.md  Reference explainer: RoT, verified/measured boot, keys, AT
-  uas-autopilot-threat-model.md NIST SP 800-160 threat model (ArduPilot/PX4 + MAVLink)
-  embedded-hardening-writeup.md Hardening a real Linux node -> 800-53/CMMC controls map
-  milestone-security-architecture-and-anti-tamper.md  SRR->PRR gates, MBSE, DoD anti-tamper
+  track2/
+    secure-boot-root-of-trust.md                        RoT, verified/measured boot, keys, anti-tamper
+    uas-autopilot-threat-model.md                       NIST SP 800-160 threat model (ArduPilot/PX4 + MAVLink)
+    embedded-hardening-writeup.md                       Hardening a real Linux node -> 800-53/CMMC controls
+    milestone-security-architecture-and-anti-tamper.md  SRR->PRR gates, MBSE, DoD anti-tamper
+.claude/skills/                Reusable Claude Code Skills (the assessment funnel)
+  firmware-triage/             extract -> inventory -> sink-scan  (triage.sh, sink_scan.py, setup-tools.sh)
+  binary-diff/                 version-to-version diff -> ranked candidates  (fw_diff.py)
+  finding-to-vendor-report/    confirmed finding -> CVSS-scored PSIRT report  (cvss.py, make_report.py)
+  finding-to-cve-writeup/      disclosed finding -> CVE JSON 5.1 + writeup  (make_cve.py, sanitize_check.py)
+  security-dataviz/            analysis output -> briefing charts + diagrams  (chart.py, diagram.py)
+tools/
+  mavlink-sectest/             MAVLink security test harness for ArduPilot/PX4 SITL (P5.1 T&E)
+  run-checks.sh                Repo verification: lints, self-tests, SVG/mermaid/link checks
 research/
-  dlink-rtl819x/              First-target working area (paperwork only; blobs git-ignored)
-.claude/skills/
-  firmware-triage/            Skill: acquire -> unpack -> inventory -> first-pass sink scan
-    scripts/                  triage.sh + sink_scan.py (no exotic deps)
-  binary-diff/                Skill: diff two firmware versions -> ranked candidate list
-    scripts/                  fw_diff.py (file/symbol/sink/string delta + ranker)
-  firmware-triage/scripts/setup-tools.sh   One-command extraction-toolchain install
-  finding-to-vendor-report/   Skill: confirmed finding -> CVSS-scored PSIRT report
-    scripts/                  cvss.py (v3.1, NVD-verified) + make_report.py
-  finding-to-cve-writeup/     Skill: disclosed finding -> CVE JSON 5.1 + public writeup
-    scripts/                  make_cve.py + sanitize_check.py (publish gate)
-  security-dataviz/           Skill: analysis output -> briefing charts + diagrams
-    scripts/                  chart.py (SVG) + diagram.py (mermaid)
+  dlink-rtl819x/               First-target working area (paperwork only; blobs git-ignored)
 ```
 
 ## Reusable tooling (Claude Code Skills)
@@ -86,18 +84,36 @@ files — Markdown instructions plus small scripts with no exotic dependencies.
   band) and native mermaid diagrams (taint paths, disclosure timelines), plus a
   one-page briefing template. Defers palette/design theory to the `dataviz` skill.
 
+A standalone tool supports the UAS capstone:
+
+- **mavlink-sectest** (`tools/`) — a pymavlink test harness that runs the threat
+  model's requirements as automated T&E against ArduPilot/PX4 SITL (signing,
+  command injection, replay, cleartext telemetry, failsafe), benign and
+  simulation-first. Its output feeds the report and dataviz skills.
+
 ## Status
 
-Early build-out. The **firmware-triage** and **binary-diff** Skills plus the
-planning / target-selection / disclosure docs are in place and the tooling is
-verified end-to-end on synthetic fixtures. The **finding-to-vendor-report**
-Skill (CVSS v3.1 scoring + PSIRT report assembly) is built and verified too.
-All four Track 2 engineering docs are published in `docs/track2/`: a **secure-boot /
-hardware root-of-trust explainer**, a **NIST SP 800-160 threat model** of the open
-UAS autopilot stack, an **embedded hardening writeup** (800-53 / CMMC controls
-map), and a **milestone security architecture + anti-tamper approach** (SRR->PRR
-gates, MBSE traceability, DoD AT process). Remaining: the live Track 1 firmware
-run and the P5.1 UAS capstone assessment, per the artifact plan.
+The tooling funnel and the engineering-document set are **built and verified on
+fixtures**; what remains is hands-on execution that needs an unrestricted host.
+
+**Built**
+- **Track 3 — six reusable Skills** (firmware-triage, binary-diff,
+  finding-to-vendor-report, finding-to-cve-writeup, security-dataviz) plus the
+  **mavlink-sectest** harness — the full acquire → triage → diff → report → CVE →
+  visualize funnel, each verified end-to-end on synthetic fixtures.
+- **Track 2 — four engineering documents**: the secure-boot / root-of-trust
+  explainer, the NIST SP 800-160 UAS threat model, the 800-53 / CMMC hardening
+  writeup, and the milestone security architecture + anti-tamper approach — giving
+  SSE competencies 1–7 real artifact coverage (see the blueprint above).
+
+**Remaining** (needs an unrestricted environment / owned hardware)
+- **Track 1** — the live firmware run: acquire → confirm SoC → diff → confirm →
+  disclose a real CVE (the only income path; the runbook is turnkey).
+- **P5.1** — the hands-on UAS capstone assessment (threat model + test harness ready).
+
+This session's environment blocks vendor firmware hosts and lacks squashfs
+extractors, so Track 1 acquisition runs on your machine — see
+[`docs/track1-acquisition-runbook.md`](docs/track1-acquisition-runbook.md).
 
 ## License
 
