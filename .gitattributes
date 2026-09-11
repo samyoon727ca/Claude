@@ -1,0 +1,9 @@
+# Shell scripts must keep LF endings so they run under Linux/WSL even when the
+# repo is checked out on Windows. Without this, core.autocrlf=true gives the
+# working copy CRLF, and the '\r' breaks the shebang and heredocs (bad interpreter).
+# The repo already stores these blobs as LF; this pins the working-tree EOL too.
+*.sh text eol=lf
+
+# Python tooling: keep LF for consistency (Python tolerates CRLF, but the skills
+# are meant to run on Linux/WSL).
+*.py text eol=lf

@@ -1,0 +1,38 @@
+# SHA-256 provenance manifest — D-Link DIR-816L Rev B firmware
+# Track 1 / P1.1 acquisition. Hashes recorded at acquisition, before analysis.
+#
+# Source (plain HTTP, no TLS — integrity established by post-download validation):
+#   FIRMWARE:         http://legacyfiles.us.dlink.com/DIR-816L/REVB/FIRMWARE/
+#   SECURITY_PATCHES: http://legacyfiles.us.dlink.com/DIR-816L/REVB/SECURITY_PATCHES/
+# Acquired:      2026-09-10
+# Validation:    HTTP 200; byte count == directory listing; ZIP local-header
+#                magic (PK\x03\x04) + `unzip -t` OK on all archives; PDF %PDF magic.
+# Server Last-Modified (upload proxy, not original release date):
+#                firmware ZIPs 2019-06-18; security patches 2020-02-07.
+#
+# Two hashes per release: the acquired ZIP (what came off D-Link's server) and
+# the inner .bin (what gets extracted, diffed, and cited). Both are authoritative.
+
+## Acquired archives (ZIP)
+792a3de8727056dc14eda3f36e322b04300f82cd4acd2cfdce99b6a7e7e09206  DIR-816L_REVB_FIRMWARE_2.00B01.ZIP
+b57ab21f062b9ec9c5bc1df59c748906f1dbf745b7dfb35ae8b93afeb7540cbd  DIR-816L_REVB_FIRMWARE_2.01B03_WW.ZIP
+2e36b9270661e3360c4da27f99003a4df1c98849b6593c6af79ec48954fe9cf8  DIR-816L_REVB_FIRMWARE_2.03B03.ZIP
+273bb9549a3befcaa80d11f0f24d305cb3ab5d97f010dced704cf9b9948eee91  DIR-816L_REVB_FIRMWARE_2.05.B02.ZIP
+13453c72bfdd592a87a848764f8b5cbf4a39b574502cb384d5e5e36b74894680  DIR-816L_REVB_FIRMWARE_PATCH_2.06.B01.ZIP
+7eff2db89ee7e37348b397c17be741dfde4aa522eafbdba306b24378f1795ae4  DIR-816L_REVB_FIRMWARE_PATCH_2.06.B09.ZIP
+
+## Inner firmware images (.bin), streamed from each ZIP
+fa13f443a8c5206cc43b79d6286627d6fc3f5fd7d5d6ab4e3ea3999a8eeccef3  DIR-816L_REVB1_FW_v2.00b01.bin        # from 2.00B01.ZIP        (7,426,192 B)
+84fc9a3d0c435adb86f19fa61728c26dca14c2c3f059bad317961a2176ef3344  DIR816L_FW201b03.bin                  # from 2.01B03_WW.ZIP     (7,422,096 B)
+3854089ad006f8d999a5b6be91b5dfc014cd2650c8a36769b6474c7332306334  DIR816L_FW203b03.bin                  # from 2.03B03.ZIP        (7,532,688 B)
+89b4a76d6fb1fed06c8a23bc0b039b5f1b055c97db1c235e1f1cab4db65de075  DIR816L_FW205b02.bin.bin              # from 2.05.B02.ZIP       (7,536,784 B)
+fccdbdbdf588ba9cf81499606706ab3895cb389654ccb9e14e07df76d1e72fc4  DIR-816L_FIRMWARE_206b01.bin          # from PATCH_2.06.B01.ZIP (7,536,784 B)  <-- same size as 2.05.B02, different hash: silent in-place patch
+8a3ead65a6dc8284217567aac0d242fd68d944e1e1693a1604e656ae97328911  DIR816L_REVB_FW_2_06_b09_beta.bin     # from PATCH_2.06.B09.ZIP (7,557,264 B)  beta
+
+## Vendor notes (PDF, informational — vendor-claimed changelog for silent-fix cross-check)
+b7bfaea1ecc0aa6a33fe04456fd4e49ad037cdfc3737384392cb405a48bdf99d  notes/DIR-816L_REVB_RELEASENOTES_1.00B09_EN.PDF
+ce964eafddc0c1b9e02c44ca4b354b1783860eed206cf03357c4a0e90587fb27  notes/DIR-816L_REVB_RELEASENOTES_2.01B03_EN.PDF
+a724cf13344bbf006d1df42afaa3c84ba59834dc4f033ede42a26f453abd12ce  notes/DIR-816L_REVB_RELEASENOTES_2.03B03_EN.PDF
+4f5f80733d2e7882baa8cb833d943c6498a24522e05ce3e91b27a28f10540274  notes/DIR-816L_REVB_RELEASENOTES_2.05.B02_EN_US.PDF
+787f2c09c30e92c08b4bdae51918b53f4e072cefad20a4b6c3dee2dfbc2ae4db  notes/DIR-816L_REVB_FIRMWARE_PATCH_NOTES_2.06.B01_EN.PDF
+a5b38ee67b7c898e578cd409ba3611b305868beee1d357a5e703a9092b570842  notes/DIR-816L_REVB_FIRMWARE_PATCH_NOTES_2.06.B09_EN.PDF
