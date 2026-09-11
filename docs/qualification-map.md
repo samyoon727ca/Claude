@@ -47,7 +47,8 @@ Legend: **[built]** exists now · **[planned]** in the sequence · **[cert]** cr
   doc and P4.3 threat model. **[planned]**
 
 ### 5. Milestone security docs (SRR/PDR/CDR/TRR/PRR); MBSE; SCRM; Software Assurance; Configuration Management
-- **P5.2** Milestone-structured security architecture doc with MBSE hooks. **[planned]**
+- **P5.2** Milestone security architecture doc — SRR->PRR gate table + MBSE
+  traceability golden thread. **[built]**
 - **P0.2** Target-selection dossier — SCRM reasoning (vendor SoC/supply chain). **[built]**
 - **P0.3 / P1.3** Triage + diff Skills — Software Assurance (silent-patch and
   unsafe-sink detection) and Configuration Management (version/hash tracking). **[built]**
@@ -57,7 +58,8 @@ Legend: **[built]** exists now · **[planned]** in the sequence · **[cert]** cr
 ### 6. Anti-tamper process and associated documentation
 - **P4.2** RoT explainer §6 covers the tamper-resistance primitives AT relies on
   (lifecycle states, secure debug, zeroization, passive/active AT). **[built]**
-- **P5.2** Dedicated anti-tamper approach writeup with process documentation. **[planned]**
+- **P5.2** Dedicated anti-tamper approach — CPI -> plan -> implement -> AT&E
+  process (DoDI 5200.39 / DoDD 5200.47E), architecture level. **[built]**
 
 ### 7. Briefing complex security concepts (visual + written — weighted heavily)
 - **P4.1** `security-dataviz` Skill — theme-aware SVG charts + mermaid taint/
@@ -77,17 +79,17 @@ Legend: **[built]** exists now · **[planned]** in the sequence · **[cert]** cr
 
 | Competency | Evidenced now | After planned build |
 |-----------|:-------------:|:-------------------:|
-| 1. Security architecture / requirements | building | strong |
-| 2. Embedded HW: secure boot / keys / AT | building | strong |
-| 3. Firmware / embedded assessment | building | strong |
-| 4. USG methodology fluency | building | strong |
-| 5. Milestone docs / MBSE / SCRM / SwA / CM | building | strong |
-| 6. Anti-tamper | building | moderate |
-| 7. Briefing (visual + written) | partial | strong |
+| 1. Security architecture / requirements | strong | strong |
+| 2. Embedded HW: secure boot / keys / AT | strong | strong |
+| 3. Firmware / embedded assessment | strong | proven (live CVE) |
+| 4. USG methodology fluency | strong | strong |
+| 5. Milestone docs / MBSE / SCRM / SwA / CM | strong | strong |
+| 6. Anti-tamper | moderate (process) | moderate (process) |
+| 7. Briefing (visual + written) | strong | strong |
 | 8. Certs / 8140 | out-of-band | out-of-band |
 
-Gaps closing: the P4.2 secure-boot/RoT explainer now gives competencies **2**,
-**4**, and **6** their first artifact (previously empty). The remaining depth for
-**4** (JSIG/ICD 503/CMMC) and **6** (dedicated AT process doc) comes with the
-P4.3 threat model, P4.4 hardening writeup, and P5.2 milestone/AT doc — the
-difference between "strong bug-finder" and "systems security *engineer*."
+State: all four Track 2 engineering docs (P4.2/P4.3/P4.4/P5.2) are built, giving
+competencies **1-7** real artifact coverage (6 at the unclassified process ceiling;
+8 is out-of-band certs). What converts artifact-evidence into *proven* results is
+the live Track 1 run — a real firmware CVE (competency 3) — plus the P5.1 UAS
+capstone. Those are the only remaining substantive items in the plan.

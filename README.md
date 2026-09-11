@@ -41,6 +41,7 @@ docs/track2/
   secure-boot-root-of-trust.md  Reference explainer: RoT, verified/measured boot, keys, AT
   uas-autopilot-threat-model.md NIST SP 800-160 threat model (ArduPilot/PX4 + MAVLink)
   embedded-hardening-writeup.md Hardening a real Linux node -> 800-53/CMMC controls map
+  milestone-security-architecture-and-anti-tamper.md  SRR->PRR gates, MBSE, DoD anti-tamper
 research/
   dlink-rtl819x/              First-target working area (paperwork only; blobs git-ignored)
 .claude/skills/
@@ -91,11 +92,12 @@ Early build-out. The **firmware-triage** and **binary-diff** Skills plus the
 planning / target-selection / disclosure docs are in place and the tooling is
 verified end-to-end on synthetic fixtures. The **finding-to-vendor-report**
 Skill (CVSS v3.1 scoring + PSIRT report assembly) is built and verified too.
-Three Track 2 engineering docs are published in `docs/track2/`: a **secure-boot /
+All four Track 2 engineering docs are published in `docs/track2/`: a **secure-boot /
 hardware root-of-trust explainer**, a **NIST SP 800-160 threat model** of the open
-UAS autopilot stack, and an **embedded hardening writeup** mapping a real node's
-controls to NIST 800-53 / CMMC. Remaining: the milestone + anti-tamper doc, and
-the research writeups + UAS capstone, per the artifact plan.
+UAS autopilot stack, an **embedded hardening writeup** (800-53 / CMMC controls
+map), and a **milestone security architecture + anti-tamper approach** (SRR->PRR
+gates, MBSE traceability, DoD AT process). Remaining: the live Track 1 firmware
+run and the P5.1 UAS capstone assessment, per the artifact plan.
 
 ## License
 
