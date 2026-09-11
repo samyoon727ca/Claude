@@ -35,6 +35,7 @@ docs/
   artifact-plan.md            Concrete plan across all three tracks (built/planned status)
   qualification-map.md        Every artifact -> a specific SSE competency + coverage snapshot
   portfolio-blueprint.svg     One-image end-state blueprint (the banner above)
+  NEXT-SESSION.md             Two restart paths (Track 1 live run · P5.1 capstone)
   disclosure-policy.md        Coordinated disclosure + legal/ethics scope
   track1-target-selection.md  Target choice: rubric + freshness pass + CVE-volume reorder
   track1-acquisition-runbook.md  Turnkey P1.1: acquire -> confirm SoC -> triage -> diff -> dedup
