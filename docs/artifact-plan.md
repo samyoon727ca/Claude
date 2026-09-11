@@ -16,6 +16,58 @@ index (competency -> artifacts) lives in [`qualification-map.md`](qualification-
   is the compounding lever — build the Skill before the third time you'd do a
   task by hand.
 
+## Role alignment & re-prioritization (living — updated 2026-09)
+
+**Target role.** Product-facing Systems Security Engineer for defense embedded
+systems: own security end-to-end — derive/decompose security requirements from
+customer needs and threat intel, design architectures, implement security features,
+run security T&E at multiple integration levels across SRR->PDR->CDR->TRR->PRR, and
+brief government customers and program leadership. Explicitly **not** an ISSO/ISSM
+compliance role — the work is engineering, not authorization paperwork. This repo is
+deliberately structured against that competency set (reverse index in
+[`qualification-map.md`](qualification-map.md)).
+
+**The hard gate is already cleared.** TS/SCI with SAP eligibility (held) plus the
+DoD-8140 certs (Security+, CASP+; CISSP USAF-funded, in progress) clear the
+clearance + eligibility filter that gates most of these roles outright. That
+*reframes what this portfolio is for*: not proving eligibility or methodology
+vocabulary (already strong), but evidencing transferable **hands-on** depth that a
+clearance line alone doesn't show.
+
+**Declare the doc set done.** The Track 2 documents (P4.2-P4.4, P5.2) and the Track 3
+skill funnel already give competencies 1, 2, 4, 5, 7 credible, well-structured
+coverage. Another Track 2 doc has hit diminishing returns — **freeze it.** The risk
+of *more* prose is that a strong interviewer reads a stack of structured docs as
+survey material rather than earned depth.
+
+**Shift the marginal hour from "tell" to "show."** Written docs are "tell"; what
+converts the portfolio into evidence you *are* an SSE is externally verifiable
+"show." Reprioritize, in order:
+1. **Novel CVE** (Track 1, Zyxel run: P1.x -> P3.x). Turns firmware/embedded
+   assessment (competency 3) from *partial* (DIR-816L n-day) to *proven*. Top item.
+2. **Execute the UAS T&E** (P5.1). Run `mavlink-sectest` against real SITL and fold
+   the results into the capstone — turns the harness from self-test into real result.
+3. **FPGA security artifact** (P6.1). Fills the one *named* JD requirement with zero
+   coverage today (embedded HW **/ FPGA** secure boot, key management). Extends P4.2.
+4. **One systems-language build** (P6.2). Rust or C, not Python glue — proves you
+   build in the languages embedded security actually runs on.
+5. **One real brief** (P6.3). A slide deck or recorded talk, not a markdown doc — the
+   JD weights briefing government customers heavily and no *brief* exists yet.
+
+**Re-scope UAS toward Group 3+.** ArduPilot/PX4 stays as the lab, but the P4.3 threat
+model and P5.1 capstone framing should target Group 3+ characteristics (BLOS/SATCOM
+C2, encrypted datalinks, GPS-denied / spoofing resilience, the ground control station
+as attack surface, multi-vehicle) — the class the target market actually fields,
+rather than hobby-class autopilot defaults.
+
+**Parallelize — but split by cognitive mode.** Serialize the deep proof path;
+parallelize the additive gap-fillers so a stall in one never blocks the others:
+- **Track A (serial, deep flow):** Zyxel diff -> Ghidra confirm -> dedup -> CVE,
+  *then* execute the UAS T&E. Do not parallelize work that needs uninterrupted flow.
+- **Track B (parallel, different modes):** FPGA doc (writing), Rust/C artifact
+  (building), briefing deck (synthesis of existing work), CISSP progress (study).
+  These fill named gaps *between* reversing sessions without diluting Track A.
+
 ## Build sequence (dependencies interleave Track 1 and Track 3)
 
 ### Phase 0 — Foundations (in progress)
@@ -63,13 +115,26 @@ index (competency -> artifacts) lives in [`qualification-map.md`](qualification-
 | P5.1 | ArduPilot/PX4 + MAVLink assessment **[T&E harness built; hands-on pending]** | 1 | mavlink-sectest runs the threat-model reqs vs SITL; hands-on assessment on owned/sim | Embedded/IoT assessment; security architecture; Cyber T&E |
 | P5.2 | Milestone security architecture + anti-tamper approach **[built]** | 2 | SRR->PRR gate table, MBSE traceability, DoD AT process (5200.39/47E), SCRM/SwA/CM; synthesizes P4.2/4.3/4.4 | Milestone docs; anti-tamper; MBSE; architecture |
 
-## Certification note (DoD 8140 / role alignment)
-- **Security+** satisfies DoD 8140 baseline for many IAT/IAM/cyber roles and is
-  the fast credential to hold first.
-- **CISSP** maps to higher IAM/IASAE levels and is the stronger long-term signal
-  for an architecture-leaning SSE role.
-- These are tracked separately from artifacts; note them on the resume line, not
-  as repo deliverables.
+### Phase 6 — Role-alignment gap-fillers (JD-driven; parallel Track B)
+| ID | Deliverable | Track | DoD | Competency |
+|----|-------------|-------|-----|------------|
+| P6.1 | FPGA security reference artifact **[planned]** | 2 | Bitstream authentication/encryption, eFUSE key provisioning, secure configuration, DPA/side-channel exposure, PUF-based keying; RoT extended into programmable logic; threat->requirement->T&E rows | Embedded HW **/ FPGA** features (named JD gap) |
+| P6.2 | One systems-language embedded-security build (Rust or C) **[planned]** | 3 | A real, minimal artifact — e.g. memory-safe firmware-container parser, MAVLink v2 signing implementation, or a C PoC for a confirmed finding; builds + tests | Rust/Go/C/C++ (preferred qual); Software Assurance |
+| P6.3 | Program-leadership security brief **[planned]** | 2 | A slide deck or recorded ~10-min talk translating the UAS threat model (or a CVE) for government / leadership audiences | Briefing gov customers (weighted) |
+
+## Clearance & certifications (role gate — held)
+- **Clearance: TS/SCI with SAP eligibility — active/held.** This is the hard gate on
+  most SSE / defense-embedded roles (typical JDs require *at minimum* a final Secret +
+  SAP eligibility, plus TS obtainability). Holding TS/SCI + SAP clears that filter
+  outright and is the single strongest line in the profile.
+- **DoD 8140 baseline: Security+ (held), CASP+ / SecurityX (held).** Satisfy the
+  8140/8570 baseline through the advanced (IAT III / IASAE) tier for cyber-workforce
+  coding of these roles.
+- **CISSP: in progress (USAF-funded).** Maps to higher IAM/IASAE levels and is the
+  stronger long-term signal for an architecture-leaning SSE role.
+- Clearance + certs are resume-line facts, tracked here for strategy rather than as
+  repo deliverables. Their existence is *why* the build priority above shifts to
+  proof artifacts instead of more eligibility or methodology-vocabulary signaling.
 
 ## Cost discipline (tokens vs. outcomes)
 - Automate the **funnel** (triage, diffing, drafting, charts) via Skills; never
