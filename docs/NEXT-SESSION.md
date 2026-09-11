@@ -24,6 +24,14 @@ workstation (or an environment provisioned with a permissive network policy).
 Goal: acquire → confirm SoC → diff → confirm → disclose a **real CVE**. Only this
 path pays. Full procedure: [`docs/track1-acquisition-runbook.md`](track1-acquisition-runbook.md).
 
+> **Status:** Run 1 (D-Link **DIR-816L Rev B**) is complete — the funnel confirmed an
+> unauth HNAP `SOAPAction` command injection, dedup'd as an **n-day** (CVE-2015-2051
+> class); case study in [`writeups/`](../writeups/dir-816l-hnap-soapaction-cmdinjection.md).
+> **Run 2 is Zyxel** (fresh, active-CNA credit) — the turnkey plan (models, firmware
+> source, diff strategy, disclosure) is in
+> [`research/zyxel-cpe/target-notes.md`](../research/zyxel-cpe/target-notes.md). The
+> steps below are the vendor-agnostic procedure; substitute the Zyxel target.
+
 1. **Tools:** `.claude/skills/firmware-triage/scripts/setup-tools.sh`
    (binwalk, squashfs-tools, jefferson, ubi_reader, QEMU).
 2. **Acquire** 2–3 firmware versions of the locked target — D-Link RTL819x,
