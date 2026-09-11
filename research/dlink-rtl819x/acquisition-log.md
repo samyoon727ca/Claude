@@ -8,8 +8,12 @@ analysis. SoC confirmed from the image, not the spec sheet.
 - SoC (confirmed from image): **Realtek RTL819x family** — kernel exports `rtl865x_*`
   (RTL819x switch/VLAN/ACL) and `rtl8192cd_*` (WiFi); CPU reports `RLX 32BIT`
   (Realtek Lexra-derived MIPS core). Confirmed from the decompressed kernel, not the spec sheet.
-- Arch / endianness: **MIPS32, little-endian (mipsel)** — `RLX 32BIT`, `mips16 implemented`,
-  `R_MIPS_26/LO16` relocations in-kernel; rootfs squashfs magic `hsqs` (LE).
+- Arch / endianness: **MIPS32, big-endian (MSB) · o32 ABI · MIPS1/R3000** — confirmed from
+  the userspace ELFs post-extraction (`readelf -h htdocs/cgibin` → `Data: 2's complement,
+  big endian`, `Machine: MIPS R3000`). NOTE: the rootfs squashfs magic `hsqs` is **not** an
+  endianness signal — squashfs 4.0 is always little-endian on-disk regardless of target CPU;
+  an earlier LE call (inferred from `hsqs`) was **corrected to BE** once the binaries were extracted.
+  ⇒ Ghidra `MIPS:BE:32`; emulation `qemu-mips-static` (big-endian).
 - Filesystem type: **SEAMA container** (magic `0x5ea3a417`, meta
   `signature=wrgac14_dlob.hans_dir816l`) → **LZMA-alone kernel @0x70** (Linux 2.6.30.9,
   Realtek gcc 4.4.5) → **squashfs v4.0, compression id 2 = LZMA @0x180090**. NOTE: squashfs
@@ -45,7 +49,7 @@ Planned pairs (▶ = highest-priority silent-fix lead). Fill results after `fw_d
 
 | Old ver | New ver | diff-candidates top lead | likely_bug_side | notes |
 |---------|---------|--------------------------|-----------------|-------|
-| ▶ 2.05.B02 | 2.06.B01 | **rootfs userspace** (pre-extraction) | OLD (silent fix) | Pre-diff (packed-image analysis): **kernel effectively unchanged** — 31 B differ in 3 clusters = 2 build-stamp banners (cosmetic) + one 2-entry data-table extension @kernel 0x3915ff. **rootfs grew +108 B** (squashfs bytes_used 5,961,111→5,961,219). ⇒ fix is in the squashfs userspace; extract both rootfs w/ sasquatch and diff the CGI/httpd layer. |
+| ▶ 2.05.B02 | 2.06.B01 | **`htdocs/cgibin`** (the web CGI) | OLD (silent fix) | Confirmed via `fw_diff` on extracted rootfs: 1 ranked candidate = `htdocs/cgibin` (BE-MIPS ELF). Patch signature (readelf/strings): **only new import = `access()`**; new strings = `access`, `"%s/%s.php"`, `"http://purenetworks.com/HNAP1/GetDeviceSettings"`. `.text` +144 B (real code added). Hypothesis: **path-handling fix (traversal / arbitrary file-or-script access) in the HNAP / action dispatch** — `access()` added to validate a `"%s/%s.php"` path built from request input. → Ghidra confirm. (Kernel was unchanged bar build stamps; rootfs +108 B.) |
 | 2.06.B01 | 2.06.B09 | _pending_ | _pending_ | Patch → later patch; second silent-fix window |
 | 2.03B03 | 2.05.B02 | _pending_ | _pending_ | Mid-lineage feature/fix drift |
 | 2.00B01 | 2.03B03 | _pending_ | _pending_ | Early baseline drift |
