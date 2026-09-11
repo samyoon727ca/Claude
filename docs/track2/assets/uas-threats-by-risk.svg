@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="780" height="488" viewBox="0 0 780 488" role="img" aria-label="UAS autopilot — threat events by risk (NIST SP 800-30)">
+<style>
+    .bg{fill:var(--bg)} .title{fill:var(--fg);font:600 17px system-ui,sans-serif}
+    .lbl{fill:var(--fg);font:13px ui-monospace,monospace}
+    .val{fill:var(--muted);font:600 12px system-ui,sans-serif}
+    .bar{fill:#3B7DD8} .axis{stroke:var(--grid);stroke-width:1}
+    :root{--bg:#ffffff;--fg:#1a1a1a;--muted:#555;--grid:#e2e2e2}
+    .Critical{fill:#B4232A} .High{fill:#C6641B}
+    .Medium{fill:#B8901A} .Low{fill:#2E7D46} .None{fill:#6B7280}
+    @media (prefers-color-scheme:dark){
+      :root{--bg:#14161a;--fg:#e8e8e8;--muted:#a2a2a2;--grid:#2c2f36}
+      .Critical{fill:#F2555D} .High{fill:#F08A3C}
+      .Medium{fill:#E7B93E} .Low{fill:#54B072} .None{fill:#9AA4B2}
+    }</style>
+<rect class="bg" x="0" y="0" width="780" height="488"/>
+<text class="title" x="300" y="30">UAS autopilot — threat events by risk (NIST SP 800-30)</text>
+<line class="axis" x1="300" y1="50" x2="300" y2="464"/>
+<text class="lbl" x="290" y="73.68" text-anchor="end">GNSS spoofing -&gt; position hijack</text>
+<rect class="bar Critical" x="300" y="56" width="410" height="26" rx="3"><title>GNSS spoofing -&gt; position hijack: 9</title></rect>
+<text class="val" x="718" y="73.68">9</text>
+<text class="lbl" x="290" y="107.68" text-anchor="end">MAVLink command injection (unauth link)</text>
+<rect class="bar High" x="300" y="90" width="387" height="26" rx="3"><title>MAVLink command injection (unauth link): 8.5</title></rect>
+<text class="val" x="695" y="107.68">8.5</text>
+<text class="lbl" x="290" y="141.68" text-anchor="end">…gned firmware/param upload via bootloader</text>
+<rect class="bar High" x="300" y="124" width="364" height="26" rx="3"><title>Unsigned firmware/param upload via bootloader: 8</title></rect>
+<text class="val" x="672" y="141.68">8</text>
+<text class="lbl" x="290" y="175.68" text-anchor="end">Companion computer / network compromise</text>
+<rect class="bar High" x="300" y="158" width="341" height="26" rx="3"><title>Companion computer / network compromise: 7.5</title></rect>
+<text class="val" x="649" y="175.68">7.5</text>
+<text class="lbl" x="290" y="209.68" text-anchor="end">GCS operator station compromise</text>
+<rect class="bar High" x="300" y="192" width="341" height="26" rx="3"><title>GCS operator station compromise: 7.5</title></rect>
+<text class="val" x="649" y="209.68">7.5</text>
+<text class="lbl" x="290" y="243.68" text-anchor="end">Supply-chain firmware tamper</text>
+<rect class="bar High" x="300" y="226" width="318" height="26" rx="3"><title>Supply-chain firmware tamper: 7</title></rect>
+<text class="val" x="626" y="243.68">7</text>
+<text class="lbl" x="290" y="277.68" text-anchor="end">RC link jamming (DoS)</text>
+<rect class="bar High" x="300" y="260" width="318" height="26" rx="3"><title>RC link jamming (DoS): 7</title></rect>
+<text class="val" x="626" y="277.68">7</text>
+<text class="lbl" x="290" y="311.68" text-anchor="end">Telemetry eavesdrop (mission data)</text>
+<rect class="bar Medium" x="300" y="294" width="273" height="26" rx="3"><title>Telemetry eavesdrop (mission data): 6</title></rect>
+<text class="val" x="581" y="311.68">6</text>
+<text class="lbl" x="290" y="345.68" text-anchor="end">Telemetry replay</text>
+<rect class="bar Medium" x="300" y="328" width="250" height="26" rx="3"><title>Telemetry replay: 5.5</title></rect>
+<text class="val" x="558" y="345.68">5.5</text>
+<text class="lbl" x="290" y="379.68" text-anchor="end">Sensor (IMU/mag) EM spoofing</text>
+<rect class="bar Medium" x="300" y="362" width="227" height="26" rx="3"><title>Sensor (IMU/mag) EM spoofing: 5</title></rect>
+<text class="val" x="535" y="379.68">5</text>
+<text class="lbl" x="290" y="413.68" text-anchor="end">Failsafe/battery logic abuse</text>
+<rect class="bar Medium" x="300" y="396" width="227" height="26" rx="3"><title>Failsafe/battery logic abuse: 5</title></rect>
+<text class="val" x="535" y="413.68">5</text>
+<text class="lbl" x="290" y="447.68" text-anchor="end">Log/param tamper (repudiation)</text>
+<rect class="bar Medium" x="300" y="430" width="205" height="26" rx="3"><title>Log/param tamper (repudiation): 4.5</title></rect>
+<text class="val" x="513" y="447.68">4.5</text>
+</svg>

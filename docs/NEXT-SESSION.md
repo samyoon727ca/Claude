@@ -1,0 +1,77 @@
+# Next Session — Restart Paths
+
+Everything buildable in a locked-down cloud sandbox is **done and verified**
+(6 skills + the mavlink-sectest harness, 4 Track 2 docs, the briefing artifact,
+the blueprint). What remains is **hands-on execution** that needs an unrestricted
+host or owned/simulated hardware. This note is the frictionless restart.
+
+## 0. Confirm state first (30 seconds)
+```
+git checkout claude/sse-portfolio-tooling-v8tkyr   # or main, if merged
+tools/run-checks.sh                                 # expect: 26 passed, 0 failed
+```
+Read [`docs/artifact-plan.md`](artifact-plan.md) for the plan and
+[`docs/qualification-map.md`](qualification-map.md) for competency coverage.
+
+## Why these run locally, not in the cloud sandbox
+The cloud environment's network policy blocks vendor firmware hosts (403) and
+lacks squashfs extractors; SITL wants a real build. Both paths assume a normal
+workstation (or an environment provisioned with a permissive network policy).
+
+---
+
+## Path A — Track 1 live firmware run (the income path)
+Goal: acquire → confirm SoC → diff → confirm → disclose a **real CVE**. Only this
+path pays. Full procedure: [`docs/track1-acquisition-runbook.md`](track1-acquisition-runbook.md).
+
+1. **Tools:** `.claude/skills/firmware-triage/scripts/setup-tools.sh`
+   (binwalk, squashfs-tools, jefferson, ubi_reader, QEMU).
+2. **Acquire** 2–3 firmware versions of the locked target — D-Link RTL819x,
+   **DIR-816L** primary (see [`docs/track1-target-selection.md`](track1-target-selection.md));
+   record SHA-256 in [`research/dlink-rtl819x/acquisition-log.md`](../research/dlink-rtl819x/acquisition-log.md).
+3. **Confirm the SoC from the image** (binwalk + bootloader strings) — do not
+   trust spec sheets.
+4. **Triage** each version → **diff** across versions:
+   ```
+   .claude/skills/firmware-triage/scripts/triage.sh  <rootfs> triage-out/<ver>
+   .claude/skills/binary-diff/scripts/fw_diff.py      <old_rootfs> <new_rootfs> --out diff-out \
+       --reachable triage-out/<new>/services.txt
+   ```
+5. **Confirm** a silent-patch candidate in Ghidra; reproduce in emulation
+   (QEMU/FirmAE). **Dedup against NVD before claiming novelty** (runbook §6).
+6. **Report + disclose:** `finding.json` → `finding-to-vendor-report` (CVSS +
+   PSIRT report) → coordinated disclosure → `finding-to-cve-writeup` (public
+   writeup + CVE JSON). Chart findings with `security-dataviz`.
+> Disclosure obligation: before publishing under your name or accepting any
+> payout, handle personal disclosure/COI reporting first (disclosure-policy §5).
+
+---
+
+## Path B — P5.1 UAS capstone (portfolio, no income)
+Goal: the hands-on autopilot assessment. Analytical foundation is already written:
+[`docs/track2/uas-autopilot-threat-model.md`](track2/uas-autopilot-threat-model.md).
+
+1. **Install + simulate** (open source):
+   ```
+   pip install -r tools/mavlink-sectest/requirements.txt
+   # ArduPilot: Tools/autotest/sim_vehicle.py -v ArduCopter --out=udp:127.0.0.1:14550
+   # or PX4:    make px4_sitl jmavsim
+   ```
+2. **Run the T&E harness** against SITL:
+   ```
+   python3 tools/mavlink-sectest/mavlink_sectest.py --connect udp:127.0.0.1:14550 \
+       --out report.json --csv findings.csv
+   ```
+   (Verify the harness itself anytime with `--selftest`, no SITL needed.)
+3. **Visualize + write up:** `findings.csv` →
+   `security-dataviz/scripts/chart.py` (severity chart); a confirmed finding →
+   `finding-to-vendor-report`. Fold results into the capstone assessment,
+   structured by the threat model and the milestone architecture doc.
+
+---
+
+## Pointers
+- Front door / repo map: [`README.md`](../README.md)
+- Scope & ethics: [`docs/disclosure-policy.md`](disclosure-policy.md)
+- Engineering docs: [`docs/track2/`](track2/)
+- Reusable skills: `.claude/skills/`  ·  Tools: `tools/`

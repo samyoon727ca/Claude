@@ -1,0 +1,214 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" role="img"
+  aria-label="End-state blueprint of the embedded and firmware security portfolio: Track 1 research pipeline, Track 3 reusable-skill engine, and Track 2 engineering docs, with per-deliverable built or planned status.">
+  <style>
+    .t{font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+    .m{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+    .fg{fill:#131A24}.mut{fill:#59667A}.faint{fill:#8A97AA}
+    .title{font-weight:700}.b{font-weight:600}
+  </style>
+  <!-- ground: painted so the image reads on any page theme -->
+  <rect x="0" y="0" width="1200" height="760" fill="#F1F4F9"/>
+  <rect x="8" y="8" width="1184" height="744" rx="14" fill="#FFFFFF" stroke="#D3DAE6"/>
+
+  <!-- header -->
+  <text class="t title fg" x="40" y="56" font-size="29">Embedded &amp; Firmware Security &#8212; Portfolio Blueprint</text>
+  <text class="m mut" x="41" y="82" font-size="13.5">Target: Systems Security Engineer  &#183;  UNCLASSIFIED, open targets only  &#183;  end-state goal</text>
+
+  <!-- legend -->
+  <g font-size="12" class="m">
+    <circle cx="852" cy="43" r="5" fill="#2E7D46"/><text class="mut" x="864" y="47">built</text>
+    <circle cx="928" cy="43" r="5" fill="none" stroke="#8A97AA" stroke-width="1.6"/><text class="mut" x="940" y="47">planned</text>
+    <rect x="1020" y="38" width="10" height="10" fill="#B4531A"/><text class="mut" x="1036" y="47">manual (judgment)</text>
+  </g>
+  <line x1="40" y1="100" x2="1160" y2="100" stroke="#E4E9F0" stroke-width="1"/>
+
+  <!-- ============ TRACK 1 ============ -->
+  <text class="t b fg" x="40" y="150" font-size="16">TRACK 1</text>
+  <text class="t mut" x="40" y="170" font-size="12.5">Vulnerability</text>
+  <text class="t mut" x="40" y="186" font-size="12.5">research</text>
+  <text class="m faint" x="40" y="206" font-size="11">income + assess</text>
+
+  <!-- pipeline nodes -->
+  <defs>
+    <marker id="ar" markerWidth="9" markerHeight="9" refX="7.5" refY="4" orient="auto">
+      <polygon points="0,0 8,4 0,8" fill="#B9C3D4"/>
+    </marker>
+  </defs>
+  <g font-size="12.5">
+    <!-- x starts 210 step 137.3 ; w118 h58 y140 -->
+    <!-- node 1 Acquire (planned) -->
+    <rect x="210" y="140" width="118" height="58" rx="8" fill="#F5F7FB" stroke="#B9C3D4" stroke-width="1.4"/>
+    <circle cx="316" cy="152" r="4.5" fill="none" stroke="#8A97AA" stroke-width="1.5"/>
+    <text class="t b fg" x="269" y="166" text-anchor="middle">Acquire</text>
+    <text class="m faint" x="269" y="184" text-anchor="middle" font-size="10">runbook ready</text>
+    <!-- node 2 Triage -->
+    <rect x="347" y="140" width="118" height="58" rx="8" fill="#F5F7FB" stroke="#B9C3D4" stroke-width="1.4"/>
+    <circle cx="453" cy="152" r="4.5" fill="#2E7D46"/>
+    <text class="t b fg" x="406" y="166" text-anchor="middle">Triage</text>
+    <text class="m faint" x="406" y="184" text-anchor="middle" font-size="10">tool</text>
+    <!-- node 3 Diff -->
+    <rect x="485" y="140" width="118" height="58" rx="8" fill="#F5F7FB" stroke="#B9C3D4" stroke-width="1.4"/>
+    <circle cx="591" cy="152" r="4.5" fill="#2E7D46"/>
+    <text class="t b fg" x="544" y="166" text-anchor="middle">Binary-diff</text>
+    <text class="m faint" x="544" y="184" text-anchor="middle" font-size="10">tool</text>
+    <!-- node 4 Confirm (manual) -->
+    <rect x="622" y="140" width="118" height="58" rx="8" fill="#FbF1E9" stroke="#D69A6B" stroke-width="1.4" stroke-dasharray="5 3"/>
+    <rect x="726" y="147" width="9" height="9" fill="#B4531A"/>
+    <text class="t b fg" x="681" y="166" text-anchor="middle">Confirm</text>
+    <text class="m" x="681" y="184" text-anchor="middle" font-size="10" fill="#B4531A">Ghidra</text>
+    <!-- node 5 PoC (manual) -->
+    <rect x="760" y="140" width="118" height="58" rx="8" fill="#FbF1E9" stroke="#D69A6B" stroke-width="1.4" stroke-dasharray="5 3"/>
+    <rect x="864" y="147" width="9" height="9" fill="#B4531A"/>
+    <text class="t b fg" x="819" y="166" text-anchor="middle">PoC</text>
+    <text class="m" x="819" y="184" text-anchor="middle" font-size="10" fill="#B4531A">emulate</text>
+    <!-- node 6 Vendor report -->
+    <rect x="897" y="140" width="118" height="58" rx="8" fill="#F5F7FB" stroke="#B9C3D4" stroke-width="1.4"/>
+    <circle cx="1003" cy="152" r="4.5" fill="#2E7D46"/>
+    <text class="t b fg" x="956" y="166" text-anchor="middle">Vendor report</text>
+    <text class="m faint" x="956" y="184" text-anchor="middle" font-size="10">tool</text>
+    <!-- node 7 CVE -->
+    <rect x="1034" y="140" width="118" height="58" rx="8" fill="#F5F7FB" stroke="#B9C3D4" stroke-width="1.4"/>
+    <circle cx="1140" cy="152" r="4.5" fill="#2E7D46"/>
+    <text class="t b fg" x="1093" y="166" text-anchor="middle">CVE + writeup</text>
+    <text class="m faint" x="1093" y="184" text-anchor="middle" font-size="10">tool</text>
+    <!-- arrows -->
+    <g stroke="#B9C3D4" stroke-width="1.5">
+      <line x1="328" y1="169" x2="345" y2="169" marker-end="url(#ar)"/>
+      <line x1="465" y1="169" x2="483" y2="169" marker-end="url(#ar)"/>
+      <line x1="603" y1="169" x2="620" y2="169" marker-end="url(#ar)"/>
+      <line x1="740" y1="169" x2="758" y2="169" marker-end="url(#ar)"/>
+      <line x1="878" y1="169" x2="895" y2="169" marker-end="url(#ar)"/>
+      <line x1="1015" y1="169" x2="1032" y2="169" marker-end="url(#ar)"/>
+    </g>
+  </g>
+
+  <!-- connector note between track1 and track3 -->
+  <text class="m" x="681" y="236" text-anchor="middle" font-size="11.5" fill="#146A85">&#8593; skills automate the funnel &#8212; not the judgment (Confirm / PoC stay manual)</text>
+
+  <!-- ============ TRACK 3 ============ -->
+  <text class="t b fg" x="40" y="298" font-size="16">TRACK 3</text>
+  <text class="t mut" x="40" y="318" font-size="12.5">Reusable</text>
+  <text class="t mut" x="40" y="334" font-size="12.5">skills</text>
+  <text class="m faint" x="40" y="354" font-size="11">funnel engine</text>
+
+  <rect x="210" y="252" width="942" height="98" rx="12" fill="#EAF2F5" stroke="#146A85" stroke-width="1.4"/>
+  <text class="m b" x="226" y="274" font-size="12" fill="#146A85">CLAUDE CODE SKILLS &#8212; ALL BUILT &amp; VERIFIED ON FIXTURES</text>
+  <g font-size="12">
+    <!-- 6 chips: x 226 step 154 w140 h40 y292 -->
+    <g>
+      <rect x="226" y="296" width="140" height="40" rx="7" fill="#FFFFFF" stroke="#B9C3D4"/>
+      <circle cx="240" cy="316" r="4" fill="#2E7D46"/>
+      <text class="m fg" x="252" y="320" font-size="11.5">firmware-triage</text>
+    </g>
+    <g>
+      <rect x="380" y="296" width="140" height="40" rx="7" fill="#FFFFFF" stroke="#B9C3D4"/>
+      <circle cx="394" cy="316" r="4" fill="#2E7D46"/>
+      <text class="m fg" x="406" y="320" font-size="11.5">binary-diff</text>
+    </g>
+    <g>
+      <rect x="534" y="296" width="140" height="40" rx="7" fill="#FFFFFF" stroke="#B9C3D4"/>
+      <circle cx="548" cy="316" r="4" fill="#2E7D46"/>
+      <text class="m fg" x="560" y="320" font-size="11">finding&#8594;report</text>
+    </g>
+    <g>
+      <rect x="688" y="296" width="140" height="40" rx="7" fill="#FFFFFF" stroke="#B9C3D4"/>
+      <circle cx="702" cy="316" r="4" fill="#2E7D46"/>
+      <text class="m fg" x="714" y="320" font-size="11.5">finding&#8594;CVE</text>
+    </g>
+    <g>
+      <rect x="842" y="296" width="140" height="40" rx="7" fill="#FFFFFF" stroke="#B9C3D4"/>
+      <circle cx="856" cy="316" r="4" fill="#2E7D46"/>
+      <text class="m fg" x="868" y="320" font-size="11">security-dataviz</text>
+    </g>
+    <g>
+      <rect x="996" y="296" width="140" height="40" rx="7" fill="#FFFFFF" stroke="#B9C3D4"/>
+      <circle cx="1010" cy="316" r="4" fill="#2E7D46"/>
+      <text class="m fg" x="1022" y="320" font-size="11.5">setup-tools</text>
+    </g>
+  </g>
+
+  <!-- ============ TRACK 2 ============ -->
+  <text class="t b fg" x="40" y="424" font-size="16">TRACK 2</text>
+  <text class="t mut" x="40" y="444" font-size="12.5">Engineering</text>
+  <text class="t mut" x="40" y="460" font-size="12.5">docs</text>
+  <text class="m faint" x="40" y="480" font-size="11">portfolio only</text>
+
+  <g font-size="12">
+    <!-- 5 chips x210 step193 w170 h66 y402 -->
+    <!-- 1 secure boot built -->
+    <rect x="210" y="402" width="170" height="66" rx="9" fill="#E4F1E8" stroke="#2E7D46" stroke-width="1.4"/>
+    <circle cx="366" cy="416" r="4.5" fill="#2E7D46"/>
+    <text class="t b fg" x="226" y="430" font-size="12.5">Secure boot / RoT</text>
+    <text class="m mut" x="226" y="450" font-size="10.5">explainer + briefing</text>
+    <!-- 2 threat model planned -->
+    <rect x="403" y="402" width="170" height="66" rx="9" fill="#E4F1E8" stroke="#2E7D46" stroke-width="1.4"/>
+    <circle cx="559" cy="416" r="4.5" fill="#2E7D46"/>
+    <text class="t b fg" x="419" y="430" font-size="12.5">Threat model</text>
+    <text class="m mut" x="419" y="450" font-size="10.5">NIST SP 800-160</text>
+    <!-- 3 hardening planned -->
+    <rect x="596" y="402" width="170" height="66" rx="9" fill="#E4F1E8" stroke="#2E7D46" stroke-width="1.4"/>
+    <circle cx="752" cy="416" r="4.5" fill="#2E7D46"/>
+    <text class="t b fg" x="612" y="430" font-size="12.5">Hardening writeup</text>
+    <text class="m mut" x="612" y="450" font-size="10.5">controls: 800-53/CMMC</text>
+    <!-- 4 milestone/AT planned -->
+    <rect x="789" y="402" width="170" height="66" rx="9" fill="#E4F1E8" stroke="#2E7D46" stroke-width="1.4"/>
+    <circle cx="945" cy="416" r="4.5" fill="#2E7D46"/>
+    <text class="t b fg" x="805" y="430" font-size="12.5">Milestone + AT</text>
+    <text class="m mut" x="805" y="450" font-size="10.5">SRR/PDR/CDR &#183; anti-tamper</text>
+    <!-- 5 UAS capstone planned -->
+    <rect x="982" y="402" width="170" height="66" rx="9" fill="#F5F7FB" stroke="#B9C3D4" stroke-width="1.4"/>
+    <circle cx="1138" cy="416" r="4.5" fill="none" stroke="#8A97AA" stroke-width="1.5"/>
+    <text class="t b fg" x="998" y="430" font-size="12.5">UAS capstone</text>
+    <text class="m mut" x="998" y="450" font-size="10.5">ArduPilot/PX4 + MAVLink</text>
+  </g>
+
+  <!-- ============ footer: qualification coverage ============ -->
+  <line x1="40" y1="516" x2="1160" y2="516" stroke="#E4E9F0" stroke-width="1"/>
+  <text class="m b" x="40" y="548" font-size="12" fill="#146A85">SSE QUALIFICATION COVERAGE (end-state &#8594; strong across all)</text>
+  <g font-size="10.5" class="m">
+    <!-- 8 cells x40 step139 w126 h56 y560 -->
+    <!-- helper: built=green fill, partial=teal ring, planned=grey ring -->
+    <!-- 1 arch/req partial -->
+    <rect x="40" y="560" width="126" height="58" rx="8" fill="#E4F1E8" stroke="#2E7D46" stroke-width="1.3"/>
+    <text class="fg b" x="52" y="580" font-size="11">1 Architecture</text>
+    <text class="mut" x="52" y="596" font-size="10">requirements</text>
+    <text x="52" y="611" font-size="9.5" fill="#2E7D46">built</text>
+    <!-- 2 embedded HW built -->
+    <rect x="179" y="560" width="126" height="58" rx="8" fill="#E4F1E8" stroke="#2E7D46" stroke-width="1.3"/>
+    <text class="fg b" x="191" y="580" font-size="11">2 Embedded HW</text>
+    <text class="mut" x="191" y="596" font-size="10">secure boot/AT</text>
+    <text x="191" y="611" font-size="9.5" fill="#2E7D46">built</text>
+    <!-- 3 firmware assessment built -->
+    <rect x="318" y="560" width="126" height="58" rx="8" fill="#E4F1E8" stroke="#2E7D46" stroke-width="1.3"/>
+    <text class="fg b" x="330" y="580" font-size="11">3 Firmware</text>
+    <text class="mut" x="330" y="596" font-size="10">assessment</text>
+    <text x="330" y="611" font-size="9.5" fill="#2E7D46">tooling built</text>
+    <!-- 4 USG methodology partial -->
+    <rect x="457" y="560" width="126" height="58" rx="8" fill="#E4F1E8" stroke="#2E7D46" stroke-width="1.3"/>
+    <text class="fg b" x="469" y="580" font-size="11">4 USG method</text>
+    <text class="mut" x="469" y="596" font-size="10">160/171/JSIG</text>
+    <text x="469" y="611" font-size="9.5" fill="#2E7D46">built</text>
+    <!-- 5 milestone/CM partial -->
+    <rect x="596" y="560" width="126" height="58" rx="8" fill="#E4F1E8" stroke="#2E7D46" stroke-width="1.3"/>
+    <text class="fg b" x="608" y="580" font-size="11">5 Milestone/CM</text>
+    <text class="mut" x="608" y="596" font-size="10">MBSE/SCRM</text>
+    <text x="608" y="611" font-size="9.5" fill="#2E7D46">built</text>
+    <!-- 6 anti-tamper partial -->
+    <rect x="735" y="560" width="126" height="58" rx="8" fill="#E4F1E8" stroke="#2E7D46" stroke-width="1.3"/>
+    <text class="fg b" x="747" y="580" font-size="11">6 Anti-tamper</text>
+    <text class="mut" x="747" y="596" font-size="10">process/doc</text>
+    <text x="747" y="611" font-size="9.5" fill="#2E7D46">built</text>
+    <!-- 7 briefing built -->
+    <rect x="874" y="560" width="126" height="58" rx="8" fill="#E4F1E8" stroke="#2E7D46" stroke-width="1.3"/>
+    <text class="fg b" x="886" y="580" font-size="11">7 Briefing</text>
+    <text class="mut" x="886" y="596" font-size="10">visual+written</text>
+    <text x="886" y="611" font-size="9.5" fill="#2E7D46">built</text>
+    <!-- 8 certs -->
+    <rect x="1013" y="560" width="126" height="58" rx="8" fill="#F5F7FB" stroke="#B9C3D4" stroke-width="1.3"/>
+    <text class="fg b" x="1025" y="580" font-size="11">8 Certs / 8140</text>
+    <text class="mut" x="1025" y="596" font-size="10">Sec+ / CISSP</text>
+    <text class="faint" x="1025" y="611" font-size="9.5">out-of-band</text>
+  </g>
+
+  <text class="m faint" x="40" y="646" font-size="10.5">Status today: 6 skills + 4 engineering docs built &#183; funnel complete end-to-end &#183; pending: first live Track 1 run (unrestricted host), remaining Track 2 docs, UAS capstone.</text>
+</svg>

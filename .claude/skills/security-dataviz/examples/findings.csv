@@ -1,0 +1,6 @@
+finding,cvss
+ping.cgi command injection (pre-auth),8.8
+upnpd stack overflow,9.8
+config disclosure,6.5
+telnetd default creds,7.5
+csrf reboot,4.3

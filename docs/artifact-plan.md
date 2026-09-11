@@ -1,0 +1,81 @@
+# Artifact Plan
+
+A concrete, sequenced set of deliverables across the three tracks. Every artifact
+is mapped to a named Systems Security Engineer (SSE) competency — the reverse
+index (competency -> artifacts) lives in [`qualification-map.md`](qualification-map.md).
+
+## Honesty ledger — what actually pays
+
+- **Only Track 1 can generate income**, and only at the report/disclosure stage
+  (T1-F/T1-G), and only *if* the vendor pays. Most SOHO-router disclosure yields
+  **CVE credit + occasional bounty**, not reliable cash. Treat Track 1 as
+  income-*capable*, not a salary.
+- **Track 2 and Track 3 pay nothing.** They are portfolio evidence and reusable
+  leverage. Their return is hiring signal and lower cost-per-analysis, not money.
+- **Track 3 tooling reduces token/analyst cost** on every later Track 1 run. That
+  is the compounding lever — build the Skill before the third time you'd do a
+  task by hand.
+
+## Build sequence (dependencies interleave Track 1 and Track 3)
+
+### Phase 0 — Foundations (in progress)
+| ID | Deliverable | Track | DoD | Competency |
+|----|-------------|-------|-----|------------|
+| P0.1 | Disclosure policy + research scope | — | Committed | Software Assurance; program discipline |
+| P0.2 | Track 1 target-selection dossier **[built]** | 1 | Rubric + freshness re-scoring + revised pick committed | Firmware assessment; SCRM |
+| P0.3 | `firmware-triage` Skill | 3 | Runs end-to-end on a sample image | Firmware assessment; Software Assurance |
+
+### Phase 1 — First candidate list (Track 1 primary begins)
+| ID | Deliverable | Track | DoD | Competency |
+|----|-------------|-------|-----|------------|
+| P1.1 | Acquire 2-3 firmware versions of the D-Link RTL819x target **[runbook ready; runs on unrestricted host]** | 1 | Hashes recorded; SoC confirmed from image | Firmware assessment; Config Mgmt |
+| P1.2 | Triage report per version (via P0.3) | 1 | Inventories + sink candidates produced | Firmware assessment |
+| P1.3 | `binary-diff` Skill **[built]** | 3 | Diffs two rootfs; ranks by sink/string delta; names likely-vulnerable version. Verified on synthetic silent-patch | Software Assurance; Config Mgmt |
+| P1.4 | First cross-version diff report | 1 | Silently-changed functions flagged | Firmware assessment; Cyber T&E |
+
+### Phase 2 — Confirm a bug -> vendor report (income attempt #1)
+| ID | Deliverable | Track | DoD | Competency |
+|----|-------------|-------|-----|------------|
+| P2.1 | Ghidra decompilation review of top candidates | 1 | Unsafe sinks confirmed/rejected with notes | Embedded reversing; assessment |
+| P2.2 | Emulation harness (QEMU/FirmAE) for the target | 1/3 | Target service reachable in emulation | Cyber T&E; assessment |
+| P2.3 | Hand-built PoC on a confirmed candidate | 1 | Minimal, reliable repro (you build this) | Assessment |
+| P2.4 | `finding-to-vendor-report` Skill **[built]** | 3 | finding.json -> CVSS-scored PSIRT report + cover email; CVSS v3.1 calc verified vs NVD | Communication (written) |
+| P2.5 | First vendor-ready vulnerability report (private) | 1 | CVSS vector + impact narrative; submitted | Assessment; Communication; Cyber T&E |
+
+### Phase 3 — Disclose + publish
+| ID | Deliverable | Track | DoD | Competency |
+|----|-------------|-------|-----|------------|
+| P3.1 | `finding-to-cve-writeup` Skill **[built]** | 3 | finding.json -> CVE JSON 5.1 record + sanitized writeup; publish linter verified | Communication |
+| P3.2 | Coordinated disclosure + CVE request | 1 | Vendor engaged; CVE ID sought | Program discipline |
+| P3.3 | Sanitized public writeup / CVE | 1 | Published post-fix; on GitHub | Assessment; Communication; hiring signal |
+
+### Phase 4 — Portfolio docs + briefing polish (parallel; no income)
+| ID | Deliverable | Track | DoD | Competency |
+|----|-------------|-------|-----|------------|
+| P4.1 | `security-dataviz` Skill **[built]** | 3 | Theme-aware SVG charts + mermaid taint/timeline from analysis CSVs; sample rendered | Communication (visual, weighted) |
+| P4.2 | Secure-boot / hardware-root-of-trust reference explainer **[built]** | 2 | 243-line explainer: chain-of-trust + key-hierarchy + lifecycle diagrams, threat->requirement->T&E traceability, NIST 800-193/147/155/160 | Embedded HW features; secure boot; comms |
+| P4.3 | UAS autopilot threat model (NIST SP 800-160) **[built]** | 2 | 220-line data-centric model: DFD+trust boundaries, STRIDE/ATT&CK-ICS register, 800-30 risk chart, 9 threat->requirement->T&E rows, survivability map | Security architecture; 800-160 |
+| P4.4 | Embedded hardening writeup (Linux UAS companion computer) **[built]** | 2 | Defense-in-depth from baseline; 12-row controls map (800-53 r5 + CMMC/800-171); before/after surface; realizes P4.3 threats | Secure boot; controls mapping (800-53/CMMC) |
+
+### Phase 5 — Capstone (UAS autopilot) + milestone doc
+| ID | Deliverable | Track | DoD | Competency |
+|----|-------------|-------|-----|------------|
+| P5.1 | ArduPilot/PX4 + MAVLink assessment **[T&E harness built; hands-on pending]** | 1 | mavlink-sectest runs the threat-model reqs vs SITL; hands-on assessment on owned/sim | Embedded/IoT assessment; security architecture; Cyber T&E |
+| P5.2 | Milestone security architecture + anti-tamper approach **[built]** | 2 | SRR->PRR gate table, MBSE traceability, DoD AT process (5200.39/47E), SCRM/SwA/CM; synthesizes P4.2/4.3/4.4 | Milestone docs; anti-tamper; MBSE; architecture |
+
+## Certification note (DoD 8140 / role alignment)
+- **Security+** satisfies DoD 8140 baseline for many IAT/IAM/cyber roles and is
+  the fast credential to hold first.
+- **CISSP** maps to higher IAM/IASAE levels and is the stronger long-term signal
+  for an architecture-leaning SSE role.
+- These are tracked separately from artifacts; note them on the resume line, not
+  as repo deliverables.
+
+## Cost discipline (tokens vs. outcomes)
+- Automate the **funnel** (triage, diffing, drafting, charts) via Skills; never
+  automate the **judgment** (exploitation, severity calls, final report review).
+- Each Skill should make the next session cheaper and more consistent — build one
+  the third time you'd otherwise repeat a task by hand.
+- Flag any track that stops earning its cost. As of Phase 0, Track 1 is the only
+  track with a payout path; Tracks 2-3 are justified by hiring signal + leverage,
+  not revenue.

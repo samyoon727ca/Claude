@@ -1,0 +1,55 @@
+# ==========================================================================
+# Firmware blobs & extracted images — NEVER commit these.
+# Reasons: vendor copyright, potential DMCA/redistribution issues, repo bloat,
+# and clearance-safety hygiene (keep only YOUR analysis, not vendor binaries).
+# Acquire firmware yourself from the vendor's public support site each time.
+# ==========================================================================
+*.bin
+*.img
+*.trx
+*.chk
+*.w
+*.rmt
+*.pkgtb
+*.squashfs
+*.squashfs.*
+*.jffs2
+*.cramfs
+*.ubi
+*.ubifs
+*.romfs
+firmware/
+images/
+fw/
+samples/
+_*.extracted/
+*.extracted/
+
+# --- Analysis workspaces & tool scratch ---
+work/
+workspace/
+triage-out/
+diff-out/
+*.ghidra
+*.gpr
+*.rep
+*.i64
+*.idb
+ghidra_projects/
+*.log
+
+# --- Reports may contain pre-disclosure detail; stage to public deliberately ---
+drafts/private/
+*.private.md
+*.embargoed.md
+
+# --- OS / editor / language noise ---
+.DS_Store
+Thumbs.db
+*.swp
+*~
+__pycache__/
+*.pyc
+.venv/
+venv/
+node_modules/
