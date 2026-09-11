@@ -25,6 +25,8 @@ Legend: **[built]** exists now · **[planned]** in the sequence · **[cert]** cr
 - **P4.2** Lifecycle + anti-tamper section (tamper-resistant key storage, secure
   debug, zeroization, passive/active AT). **[built]**
 - **P5.2** Dedicated anti-tamper approach + process documentation. **[planned]**
+- **P6.1** FPGA security reference artifact — the current thin spot: bitstream
+  authentication/encryption, eFUSE keying, PUFs, RoT into programmable logic. **[planned]**
 
 ### 3. Firmware / application / network / IoT / embedded security assessment
 - **P0.3** `firmware-triage` Skill — the assessment funnel itself. **[built]**
@@ -69,10 +71,17 @@ Legend: **[built]** exists now · **[planned]** in the sequence · **[cert]** cr
   disclosure email; **[built]**. **P3.1** `finding-to-cve-writeup` Skill —
   CVE JSON 5.1 record + sanitized public writeup + publish linter; **[built]**.
 - **P3.3** Public writeup — externally visible written + visual communication. **[planned]**
+- **P6.3** Program-leadership security brief (deck or recorded talk) — an actual
+  *brief*, the form the JD weights, which no current artifact provides. **[planned]**
 
-### 8. Certifications / DoD 8140
-- **Security+** — DoD 8140 baseline for IAT/IAM cyber roles. **[cert]**
-- **CISSP** — higher IAM/IASAE alignment for architecture-leaning SSE. **[cert]**
+### 8. Clearance & certifications / DoD 8140
+- **Clearance: TS/SCI with SAP eligibility — held.** Clears the hard gate on most
+  SSE / defense-embedded roles (which require at minimum a final Secret + SAP
+  eligibility). The single strongest line in the profile. **[held]**
+- **Security+ — held.** DoD 8140/8570 baseline for IAT/IAM cyber roles. **[held]**
+- **CASP+ / SecurityX — held.** Advanced 8140 baseline (IAT III / IASAE). **[held]**
+- **CISSP — in progress (USAF-funded).** Higher IAM/IASAE alignment for an
+  architecture-leaning SSE role. **[in progress]**
 
 ---
 
@@ -87,10 +96,10 @@ Legend: **[built]** exists now · **[planned]** in the sequence · **[cert]** cr
 | 5. Milestone docs / MBSE / SCRM / SwA / CM | strong | strong |
 | 6. Anti-tamper | moderate (process) | moderate (process) |
 | 7. Briefing (visual + written) | strong | strong |
-| 8. Certs / 8140 | out-of-band | out-of-band |
+| 8. Clearance & certs / 8140 | held (TS/SCI+SAP · Sec+ · CASP+) | + CISSP (in progress) |
 
 State: all four Track 2 engineering docs (P4.2/P4.3/P4.4/P5.2) are built, giving
 competencies **1-7** real artifact coverage (6 at the unclassified process ceiling;
-8 is out-of-band certs). What converts artifact-evidence into *proven* results is
+8 is the clearance + certs, held out-of-band — TS/SCI+SAP, Security+, CASP+). What converts artifact-evidence into *proven* results is
 the live Track 1 run — a real firmware CVE (competency 3) — plus the P5.1 UAS
 capstone. Those are the only remaining substantive items in the plan.
