@@ -90,6 +90,26 @@ Two mistakes combine:
   `` ` ``, `$()`, `&`) pass straight through — so `<method>` breaks out of the
   intended command and runs arbitrary shell as root.
 
+**Attack path (unauthenticated):** one attacker-controlled header reaches a root
+`system()` — the substring auth check is what makes it reachable without credentials.
+
+```mermaid
+flowchart LR
+    n0["HTTP_SOAPACTION header (attacker-controlled)"]
+    n1["auth bypass: strstr substring-match on GetDeviceSettings"]
+    n2["method = text after last slash of the header"]
+    n3["sprintf builds: sh /etc/templates/hnap/METHOD.sh"]
+    n4["system() runs it as root"]
+    n0 --> n1
+    n1 --> n2
+    n2 --> n3
+    n3 --> n4
+    classDef src fill:#F2555D,stroke:#B4232A,color:#fff;
+    classDef sink fill:#C6641B,stroke:#8a410f,color:#fff;
+    class n0 src;
+    class n4 sink;
+```
+
 ## The fix (what 2.06.B01 changed)
 The patched `hnap_main` closes both halves:
 
