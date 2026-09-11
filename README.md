@@ -54,7 +54,12 @@ tools/
   mavlink-sectest/             MAVLink security test harness for ArduPilot/PX4 SITL (P5.1 T&E)
   run-checks.sh                Repo verification: lints, self-tests, SVG/mermaid/link checks
 research/
-  dlink-rtl819x/               First-target working area (paperwork only; blobs git-ignored)
+  dlink-rtl819x/               First-target working area: acquisition log + hashes, the
+                               extract->diff runner, and Ghidra headless diff scripts
+                               (paperwork + tooling tracked; firmware blobs git-ignored)
+writeups/
+  dir-816l-hnap-soapaction-cmdinjection.md  Track 1 case study: patch-diffing rediscovers an
+                               n-day unauth HNAP command injection (CVE-2015-2051 class)
 ```
 
 ## Reusable tooling (Claude Code Skills)
@@ -106,15 +111,19 @@ fixtures**; what remains is hands-on execution that needs an unrestricted host.
   explainer, the NIST SP 800-160 UAS threat model, the 800-53 / CMMC hardening
   writeup, and the milestone security architecture + anti-tamper approach — giving
   SSE competencies 1–7 real artifact coverage (see the blueprint above).
+- **Track 1 — first live run (DIR-816L Rev B)**: the funnel exercised end-to-end
+  on real vendor firmware — acquire → confirm SoC (Realtek RTL819x, MIPS big-endian)
+  → diff the security patch → confirm in Ghidra → dedup. It rediscovered an
+  unauthenticated HNAP `SOAPAction` OS command injection by patch-diffing, dedup'd
+  as an **n-day** (CVE-2015-2051 class). Case study:
+  [`writeups/dir-816l-hnap-soapaction-cmdinjection.md`](writeups/dir-816l-hnap-soapaction-cmdinjection.md).
 
-**Remaining** (needs an unrestricted environment / owned hardware)
-- **Track 1** — the live firmware run: acquire → confirm SoC → diff → confirm →
-  disclose a real CVE (the only income path; the runbook is turnkey).
+**Remaining**
+- **Track 1 — a *novel* finding**: the DIR-816L run confirmed the method but landed
+  on a known n-day (expected for an EOL, botnet-saturated line). A net-new CVE means
+  a fresher, still-patched target — the next `2.06.B01 → 2.06.B09` diff, or the Zyxel
+  complement per [`docs/track1-target-selection.md`](docs/track1-target-selection.md).
 - **P5.1** — the hands-on UAS capstone assessment (threat model + test harness ready).
-
-This session's environment blocks vendor firmware hosts and lacks squashfs
-extractors, so Track 1 acquisition runs on your machine — see
-[`docs/track1-acquisition-runbook.md`](docs/track1-acquisition-runbook.md).
 
 ## License
 
