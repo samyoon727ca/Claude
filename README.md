@@ -54,8 +54,12 @@ tools/
   mavlink-sectest/             MAVLink security test harness for ArduPilot/PX4 SITL (P5.1 T&E)
   run-checks.sh                Repo verification: lints, self-tests, SVG/mermaid/link checks
 research/
-  dlink-rtl819x/               First-target working area: acquisition log + hashes, the
-                               extract->diff runner, and Ghidra headless diff scripts
+  dlink-rtl819x/               Run 1 working area: acquisition log + hashes, the extract->diff
+                               runner, and Ghidra headless diff scripts (n-day case study)
+  zyxel-cpe/                   Run 2 working area: target notes + acquisition log — blocked at
+                               acquisition (2026 patched CPE firmware is ISP-gated, not public)
+  draytek-vigor/               Run 3 working area: Vigor300B fingerprint, diff sweep, dedup
+                               ledger, reusable Ghidra scripts, and the confirmed novel finding
                                (paperwork + tooling tracked; firmware blobs git-ignored)
 writeups/
   dir-816l-hnap-soapaction-cmdinjection.md  Track 1 case study: patch-diffing rediscovers an
@@ -111,18 +115,31 @@ fixtures**; what remains is hands-on execution that needs an unrestricted host.
   explainer, the NIST SP 800-160 UAS threat model, the 800-53 / CMMC hardening
   writeup, and the milestone security architecture + anti-tamper approach — giving
   SSE competencies 1–7 real artifact coverage (see the blueprint above).
-- **Track 1 — first live run (DIR-816L Rev B)**: the funnel exercised end-to-end
-  on real vendor firmware — acquire → confirm SoC (Realtek RTL819x, MIPS big-endian)
-  → diff the security patch → confirm in Ghidra → dedup. It rediscovered an
-  unauthenticated HNAP `SOAPAction` OS command injection by patch-diffing, dedup'd
-  as an **n-day** (CVE-2015-2051 class). Case study:
-  [`writeups/dir-816l-hnap-soapaction-cmdinjection.md`](writeups/dir-816l-hnap-soapaction-cmdinjection.md).
+- **Track 1 — three live runs, method proven then extended to a novel finding:**
+  - **Run 1 — DIR-816L Rev B (D-Link, RTL819x MIPS-BE):** funnel exercised end-to-end
+    on real vendor firmware — acquire → confirm SoC → diff the security patch → confirm
+    in Ghidra → dedup. Rediscovered an unauthenticated HNAP `SOAPAction` OS command
+    injection, dedup'd as an **n-day** (CVE-2015-2051 class). Case study:
+    [`writeups/dir-816l-hnap-soapaction-cmdinjection.md`](writeups/dir-816l-hnap-soapaction-cmdinjection.md).
+  - **Run 2 — Zyxel CPE:** fresh, active-CNA target, but **blocked at acquisition** —
+    the 2026 patched CPE firmware is ISP-gated, so the fix is not provenance-acquirable
+    to diff. Exposed the acquisition-feasibility gate that drove the run-3 re-pick.
+  - **Run 3 — DrayTek Vigor300B (Linux/Comcerto, ARM-LE):** the funnel landed a
+    ***novel*** finding. Diffing the public `1.5.1.6 → 1.5.1.7` window surfaced a
+    silent hardening of `mainfunction.cgi`; Ghidra decompilation + disassembly
+    **confirmed a `download_ovpn` OS command injection** — an incomplete-blocklist
+    sanitizer *bypass* that runs as **root** (post-auth operator/admin), with **no
+    matching CVE** across NVD / OpenCVE / DrayTek advisories. Confirmed at the code
+    level; runtime PoC and coordinated disclosure pending. Finding + evidence:
+    [`research/draytek-vigor/finding-openvpn-cmdinjection.md`](research/draytek-vigor/finding-openvpn-cmdinjection.md).
 
 **Remaining**
-- **Track 1 — a *novel* finding**: the DIR-816L run confirmed the method but landed
-  on a known n-day (expected for an EOL, botnet-saturated line). A net-new CVE means
-  a fresher, still-patched target — the next `2.06.B01 → 2.06.B09` diff, or the Zyxel
-  complement per [`docs/track1-target-selection.md`](docs/track1-target-selection.md).
+- **Track 1 — close out the novel finding (DrayTek run 3):** stand up a runtime PoC on
+  an owned/emulated ≤ 1.5.1.6 device, fan the pattern out across other Vigor models, then
+  run coordinated disclosure to DrayTek (active CNA) → CVE. This is the top-priority item
+  in [`docs/artifact-plan.md`](docs/artifact-plan.md) (turns competency 3 from *partial* to
+  *proven*). Disclosure obligation: handle personal COI / outside-activity reporting first
+  ([`docs/disclosure-policy.md`](docs/disclosure-policy.md) §5).
 - **P5.1** — the hands-on UAS capstone assessment (threat model + test harness ready).
 
 ## License

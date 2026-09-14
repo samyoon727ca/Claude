@@ -16,7 +16,7 @@ index (competency -> artifacts) lives in [`qualification-map.md`](qualification-
   is the compounding lever — build the Skill before the third time you'd do a
   task by hand.
 
-## Role alignment & re-prioritization (living — updated 2026-09)
+## Role alignment & re-prioritization (living — updated 2026-09-14)
 
 **Target role.** Product-facing Systems Security Engineer for defense embedded
 systems: own security end-to-end — derive/decompose security requirements from
@@ -43,8 +43,12 @@ survey material rather than earned depth.
 **Shift the marginal hour from "tell" to "show."** Written docs are "tell"; what
 converts the portfolio into evidence you *are* an SSE is externally verifiable
 "show." Reprioritize, in order:
-1. **Novel CVE** (Track 1, Zyxel run: P1.x -> P3.x). Turns firmware/embedded
-   assessment (competency 3) from *partial* (DIR-816L n-day) to *proven*. Top item.
+1. **Novel CVE** (Track 1, DrayTek run 3: P1.x -> P3.x). **Confirmed novel at the code
+   level** — a `download_ovpn` root OS command injection in Vigor300B `mainfunction.cgi`
+   (sanitizer bypass), deduped vs NVD/OpenCVE/DrayTek. What remains to make it *proven*:
+   runtime PoC -> model fan-out -> coordinated disclosure. Turns firmware/embedded
+   assessment (competency 3) from *partial* (DIR-816L n-day) toward *proven*. Top item.
+   (Zyxel, the prior run-2 pick, is blocked at acquisition — ISP-gated patched firmware.)
 2. **Execute the UAS T&E** (P5.1). Run `mavlink-sectest` against real SITL and fold
    the results into the capstone — turns the harness from self-test into real result.
 3. **FPGA security artifact** (P6.1). Fills the one *named* JD requirement with zero
@@ -62,8 +66,9 @@ rather than hobby-class autopilot defaults.
 
 **Parallelize — but split by cognitive mode.** Serialize the deep proof path;
 parallelize the additive gap-fillers so a stall in one never blocks the others:
-- **Track A (serial, deep flow):** Zyxel diff -> Ghidra confirm -> dedup -> CVE,
-  *then* execute the UAS T&E. Do not parallelize work that needs uninterrupted flow.
+- **Track A (serial, deep flow):** DrayTek diff -> Ghidra confirm -> dedup **[done]** ->
+  runtime PoC -> fan-out -> coordinated disclosure -> CVE, *then* execute the UAS T&E.
+  Do not parallelize work that needs uninterrupted flow.
 - **Track B (parallel, different modes):** FPGA doc (writing), Rust/C artifact
   (building), briefing deck (synthesis of existing work), CISSP progress (study).
   These fill named gaps *between* reversing sessions without diluting Track A.
@@ -80,15 +85,15 @@ parallelize the additive gap-fillers so a stall in one never blocks the others:
 ### Phase 1 — First candidate list (Track 1 primary begins)
 | ID | Deliverable | Track | DoD | Competency |
 |----|-------------|-------|-----|------------|
-| P1.1 | Acquire 2-3 firmware versions of the D-Link RTL819x target **[runbook ready; runs on unrestricted host]** | 1 | Hashes recorded; SoC confirmed from image | Firmware assessment; Config Mgmt |
-| P1.2 | Triage report per version (via P0.3) | 1 | Inventories + sink candidates produced | Firmware assessment |
+| P1.1 | Acquire 2-3 firmware versions of the locked target **[done: D-Link DIR-816L + DrayTek Vigor300B]** | 1 | Hashes recorded; SoC confirmed from image | Firmware assessment; Config Mgmt |
+| P1.2 | Triage report per version (via P0.3) **[done on both runs]** | 1 | Inventories + sink candidates produced | Firmware assessment |
 | P1.3 | `binary-diff` Skill **[built]** | 3 | Diffs two rootfs; ranks by sink/string delta; names likely-vulnerable version. Verified on synthetic silent-patch | Software Assurance; Config Mgmt |
-| P1.4 | First cross-version diff report | 1 | Silently-changed functions flagged | Firmware assessment; Cyber T&E |
+| P1.4 | First cross-version diff report **[done: DrayTek 1.5.1.6→1.5.1.7 silent-fix flagged]** | 1 | Silently-changed functions flagged | Firmware assessment; Cyber T&E |
 
 ### Phase 2 — Confirm a bug -> vendor report (income attempt #1)
 | ID | Deliverable | Track | DoD | Competency |
 |----|-------------|-------|-----|------------|
-| P2.1 | Ghidra decompilation review of top candidates | 1 | Unsafe sinks confirmed/rejected with notes | Embedded reversing; assessment |
+| P2.1 | Ghidra decompilation review of top candidates **[done: DrayTek download_ovpn confirmed novel + auth resolved]** | 1 | Unsafe sinks confirmed/rejected with notes | Embedded reversing; assessment |
 | P2.2 | Emulation harness (QEMU/FirmAE) for the target | 1/3 | Target service reachable in emulation | Cyber T&E; assessment |
 | P2.3 | Hand-built PoC on a confirmed candidate | 1 | Minimal, reliable repro (you build this) | Assessment |
 | P2.4 | `finding-to-vendor-report` Skill **[built]** | 3 | finding.json -> CVSS-scored PSIRT report + cover email; CVSS v3.1 calc verified vs NVD | Communication (written) |

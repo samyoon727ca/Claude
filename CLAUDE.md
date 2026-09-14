@@ -62,12 +62,26 @@ python3 tools/mavlink-sectest/mavlink_sectest.py --selftest
 ## Track 1 working state
 
 Live research lives under `research/` (git-ignored blobs; paperwork committed) and
-public writeups under `writeups/`. As of the last sync: DIR-816L Rev B was
-acquired + fingerprinted (BE MIPS), and its first cross-version candidate
-(`cgibin` HNAP SOAPAction command injection) **deduped as an n-day** — written up
-as a case study, not a new CVE. A **Zyxel CPE** run is scaffolded under
-`research/zyxel-cpe/` as the next shot at a *novel* finding. See
-`research/dlink-rtl819x/acquisition-log.md` and the target-selection dossier.
+public writeups under `writeups/`. Three Track 1 runs so far:
+
+- **Run 1 — D-Link DIR-816L Rev B** (BE MIPS): acquired + fingerprinted; first
+  cross-version candidate (`cgibin` HNAP SOAPAction command injection) **deduped as
+  an n-day** — written up as a case study, not a new CVE
+  (`research/dlink-rtl819x/`, `writeups/dir-816l-hnap-soapaction-cmdinjection.md`).
+- **Run 2 — Zyxel CPE**: **blocked at acquisition** — 2026 patched CPE firmware is
+  ISP-gated, so the fix is not provenance-acquirable to diff (`research/zyxel-cpe/`).
+  This exposed the acquisition-feasibility gate that drove the run-3 re-pick.
+- **Run 3 — DrayTek Vigor300B** (ARM-LE, Comcerto): **CONFIRMED novel finding at the
+  code level.** Diffing the public `1.5.1.6 → 1.5.1.7` window found a silently-hardened
+  `download_ovpn` OS command injection in `mainfunction.cgi` — an incomplete-blocklist
+  sanitizer *bypass* that runs as **root** (post-auth operator/admin), with no matching
+  CVE (deduped vs NVD/OpenCVE/DrayTek). Ghidra decompile+disasm evidence under the
+  git-ignored `diff-out-dt/ghidra/`. **Remaining: runtime PoC → model fan-out →
+  coordinated disclosure (DrayTek is an active CNA).** See
+  `research/draytek-vigor/finding-openvpn-cmdinjection.md` and `acquisition-log.md`.
+
+See also the target-selection dossier (`docs/track1-target-selection.md`) — it carries
+the 2026-09-14 re-pick rationale (acquisition-feasibility gate → DrayTek).
 
 ## Guardrails (see [`docs/disclosure-policy.md`](docs/disclosure-policy.md))
 

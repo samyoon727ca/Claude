@@ -7,7 +7,7 @@ host or owned/simulated hardware. This note is the frictionless restart.
 
 ## 0. Confirm state first (30 seconds)
 ```
-git checkout claude/sse-portfolio-tooling-v8tkyr   # or main, if merged
+git checkout main                                   # tooling branches are merged
 tools/run-checks.sh                                 # expect: 26 passed, 0 failed
 ```
 Read [`docs/artifact-plan.md`](artifact-plan.md) for the plan and
@@ -24,13 +24,23 @@ workstation (or an environment provisioned with a permissive network policy).
 Goal: acquire → confirm SoC → diff → confirm → disclose a **real CVE**. Only this
 path pays. Full procedure: [`docs/track1-acquisition-runbook.md`](track1-acquisition-runbook.md).
 
-> **Status:** Run 1 (D-Link **DIR-816L Rev B**) is complete — the funnel confirmed an
-> unauth HNAP `SOAPAction` command injection, dedup'd as an **n-day** (CVE-2015-2051
-> class); case study in [`writeups/`](../writeups/dir-816l-hnap-soapaction-cmdinjection.md).
-> **Run 2 is Zyxel** (fresh, active-CNA credit) — the turnkey plan (models, firmware
-> source, diff strategy, disclosure) is in
-> [`research/zyxel-cpe/target-notes.md`](../research/zyxel-cpe/target-notes.md). The
-> steps below are the vendor-agnostic procedure; substitute the Zyxel target.
+> **Status (3 runs in):**
+> - **Run 1 — D-Link DIR-816L Rev B:** funnel confirmed an unauth HNAP `SOAPAction`
+>   command injection, dedup'd as an **n-day** (CVE-2015-2051 class); case study in
+>   [`writeups/`](../writeups/dir-816l-hnap-soapaction-cmdinjection.md).
+> - **Run 2 — Zyxel CPE:** **blocked at acquisition** — the 2026 patched CPE firmware is
+>   ISP-gated, so the fix is not provenance-acquirable to diff. Notes:
+>   [`research/zyxel-cpe/target-notes.md`](../research/zyxel-cpe/target-notes.md).
+> - **Run 3 — DrayTek Vigor300B: a *novel* finding, confirmed at the code level.** A
+>   `download_ovpn` OS command injection in `mainfunction.cgi` (incomplete-blocklist
+>   sanitizer bypass, runs as **root**, post-auth) with no matching CVE — confirmed via
+>   Ghidra decompile + disasm; **runtime PoC + coordinated disclosure are what remain**
+>   (see the finding and next steps in
+>   [`research/draytek-vigor/finding-openvpn-cmdinjection.md`](../research/draytek-vigor/finding-openvpn-cmdinjection.md)).
+>
+> **Next action on this path = close out run 3** (PoC → fan-out → disclose), not a new
+> target. The numbered steps below are the vendor-agnostic procedure, kept for the next
+> fresh target after DrayTek.
 
 1. **Tools:** `.claude/skills/firmware-triage/scripts/setup-tools.sh`
    (binwalk, squashfs-tools, jefferson, ubi_reader, QEMU).

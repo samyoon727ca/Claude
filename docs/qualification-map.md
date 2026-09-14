@@ -31,10 +31,15 @@ Legend: **[built]** exists now · **[planned]** in the sequence · **[cert]** cr
 ### 3. Firmware / application / network / IoT / embedded security assessment
 - **P0.3** `firmware-triage` Skill — the assessment funnel itself. **[built]**
 - **P4.4** Hardening writeup — assessment-to-hardening on a real Linux embedded node. **[built]**
-- **P1.2 / P1.4** Triage + cross-version diff reports. **[planned]**
-- **P2.1 / P2.3 / P2.5** Ghidra review, PoC, vendor report — full assessment
-  lifecycle on a commercial device. **[planned]**
-- **P3.3** Public writeup / CVE — externally validated assessment result. **[planned]**
+- **P1.2 / P1.4** Triage + cross-version diff reports — run on real firmware across
+  three targets (D-Link, Zyxel, DrayTek). **[built]**
+- **P2.1** Ghidra decompilation review — on DrayTek Vigor300B it **confirmed a novel
+  root OS command injection** (`download_ovpn` sanitizer bypass) at the code level and
+  resolved the auth gate, deduped vs NVD/OpenCVE. **[built]**
+- **P2.3 / P2.5** PoC + vendor report — runtime PoC and PSIRT report for the DrayTek
+  finding; the remaining step to make the assessment lifecycle externally *proven*. **[planned]**
+- **P3.3** Public writeup / CVE — DIR-816L n-day case study published; the DrayTek
+  novel CVE follows coordinated disclosure. **[building]**
 - **P5.1** UAS autopilot + MAVLink assessment — IoT/embedded on a defense-relevant
   class of system; **mavlink-sectest** T&E harness built, hands-on pending. **[building]**
 
@@ -91,7 +96,7 @@ Legend: **[built]** exists now · **[planned]** in the sequence · **[cert]** cr
 |-----------|:-------------:|:-------------------:|
 | 1. Security architecture / requirements | strong | strong |
 | 2. Embedded HW: secure boot / keys / AT | strong | strong |
-| 3. Firmware / embedded assessment | strong | proven (live CVE) |
+| 3. Firmware / embedded assessment | strong (novel finding confirmed at code level) | proven (live CVE) |
 | 4. USG methodology fluency | strong | strong |
 | 5. Milestone docs / MBSE / SCRM / SwA / CM | strong | strong |
 | 6. Anti-tamper | moderate (process) | moderate (process) |
@@ -100,6 +105,9 @@ Legend: **[built]** exists now · **[planned]** in the sequence · **[cert]** cr
 
 State: all four Track 2 engineering docs (P4.2/P4.3/P4.4/P5.2) are built, giving
 competencies **1-7** real artifact coverage (6 at the unclassified process ceiling;
-8 is the clearance + certs, held out-of-band — TS/SCI+SAP, Security+, CASP+). What converts artifact-evidence into *proven* results is
-the live Track 1 run — a real firmware CVE (competency 3) — plus the P5.1 UAS
-capstone. Those are the only remaining substantive items in the plan.
+8 is the clearance + certs, held out-of-band — TS/SCI+SAP, Security+, CASP+). Track 1
+run 3 (DrayTek Vigor300B) has **confirmed a novel root command injection at the code
+level** — the strongest hands-on evidence in the portfolio so far. What converts it
+into a *proven*, externally-validated result is the remaining close-out — runtime PoC
+-> coordinated disclosure -> CVE — plus the P5.1 UAS capstone. Those are the only
+remaining substantive items in the plan.
