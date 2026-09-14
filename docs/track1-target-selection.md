@@ -159,3 +159,63 @@ Public advisories / trackers consulted for the freshness pass (data, not endorse
   since 2025-11-27 per Shadowserver), CVE-2025-29635 (Mirai/D-Link), CVE-2019-16920.
 - Zyxel: advisory 2026-04-28 (CPE command injection), CVE-2026-1459, CVE-2025-13943,
   CVE-2025-11845..11848.
+
+## Re-pick (2026-09-14): the acquisition-feasibility gate → DrayTek Vigor
+
+Running the funnel exposed a criterion the base rubric missed, and it is decisive:
+
+**New hard gate — the *patched* firmware must be publicly downloadable from the
+vendor.** Diffing a fix (our whole novel-finding method) is impossible if the fixed
+image is not acquirable under the provenance rule (`disclosure-policy.md`: vendors'
+public support sites only; no third-party mirrors). This gate reorders everything,
+because it is exactly where the two prior picks failed in *opposite* ways:
+
+- **D-Link (run 1): public but EOL/saturated.** All six DIR-816L Rev B images are
+  public and diffable — but the line is EOL and swarmed, so the funnel produced an
+  **n-day** (CVE-2015-2051 class) plus two more silent-fix leads that fit known
+  DIR-series classes (see `research/dlink-rtl819x/acquisition-log.md`). Good diff
+  fuel, low novel yield. As predicted.
+- **Zyxel (run 2): fresh but gated.** CVE-2026-1459 (TR-369 cert-download CGI cmd
+  injection) is fresh and CNA-credit-eligible, but Zyxel moved recent VMG/EMG CPE
+  firmware to the **ISP/service-provider** channel. On the public CDN
+  (`download.zyxel.com`) VMG3625-T50B is hosted **only through 5.50(ABPM.9.4)C0**;
+  the last-vulnerable **9.7** and patched **9.8** return soft-404s, and sibling
+  model paths host nothing. Verified 2026-09-14 by HEAD-checking the CDN. The 2026
+  patch is therefore **not provenance-acquirable** → the fix is not diffable. The
+  older 9.2–9.4 window is public but predates the 2026 CVEs.
+
+### Re-scored against the feasibility gate
+
+| Candidate | Public *patched* fw? | Fresh CVEs / active CNA | Saturation | Embedded fit | Verdict |
+|-----------|:--------------------:|:-----------------------:|:----------:|:------------:|---------|
+| D-Link RTL819x | ✅ (but EOL only) | assigns, but EOL | very high | MIPS/Realtek ✓ | n-day fuel (done) |
+| Zyxel VMG/EMG CPE | ❌ ISP-gated | ✅ active CNA | moderate | mixed SoC | **blocked at acquisition** |
+| **DrayTek Vigor (Linux)** | **✅ full open archive** | ✅ active CNA, 2024–2026 CVEs | moderate (business CPE, less Mirai-swarmed) | Linux MIPS/ARM ✓ | **selected** |
+| TP-Link / Netgear | partial (latest only; newer builds encrypted) | ✅ very active | high | mixed | thin version depth; fallback |
+
+### Selected target: **DrayTek Vigor (Linux models; Vigor300B primary)**
+
+DrayTek uniquely clears the feasibility gate: an **open, browsable, versioned
+firmware archive** at `fw.draytek.com.tw` that publishes *every* release including
+current security patches. Verified 2026-09-14 — the Vigor300B firmware index lists
+**13 public versions** (v1.0.8.2 → v1.5.1.7), each a real ~31 MB ZIP, and the
+CVE-relevant chain is **entirely public**:
+
+- `v1.5.1.4` — vulnerable (CVE-2024-12987, `mainfunction.cgi` OS command injection)
+- `v1.5.1.5` — fix #1
+- `v1.5.1.6` — still vulnerable per a Feb-2026 command-injection report
+- `v1.5.1.7` — latest (likely the Feb-2026 fix) → **freshest diff window**
+
+**Why it fits the sharpened rubric:** (1) public patched firmware + deep version
+depth = many diffable fix windows, the ideal binary-diff substrate; (2) active
+DrayTek CNA + a 2026 fix = a *novel* silent/incomplete fix earns a real CVE;
+(3) business CPE is less botnet-swarmed than consumer D-Link/TP-Link = more novelty
+headroom; (4) Linux Vigor CPE (the `mainfunction.cgi` lineage) is MIPS/ARM and
+extractable, fitting the reversing specialization. **Confirm SoC/arch from the
+image** per the standing rule.
+
+**Honest caveat:** `mainfunction.cgi` and DrayTek Linux CPE are researched
+(CVE-2020-8515, CVE-2024-12987, others), so the mandatory NVD/advisory **dedup
+gate** still governs — the play is the *silent* fix that maps to no CVE, found by
+diffing across the public chain (esp. `1.5.1.6 → 1.5.1.7`). Working area:
+`research/draytek-vigor/`.

@@ -50,9 +50,17 @@ Planned pairs (▶ = highest-priority silent-fix lead). Fill results after `fw_d
 | Old ver | New ver | diff-candidates top lead | likely_bug_side | notes |
 |---------|---------|--------------------------|-----------------|-------|
 | ▶ 2.05.B02 | 2.06.B01 | **`cgibin!hnap_main`** | OLD (silent fix) | **CONFIRMED (Ghidra headless, MIPS:BE:32).** OLD does `system("sh /etc/templates/hnap/<method>.sh > /dev/console")` where `<method>` = tail of the attacker-controlled `HTTP_SOAPACTION` header (text after last `/`); the `GetDeviceSettings` substring (matched by `strstr`) **bypasses auth** → **unauthenticated blind OS command injection (CWE-78)**. NEW fixes it by adding `access("/etc/templates/hnap/<method>.php")` and only proceeding if that template exists. Surfaced by: new `access()` import + `"%s/%s.php"` + HNAP URL; `.text` +144 B. Dedup ↓ = **n-day (CVE-2015-2051 class)**. |
-| 2.06.B01 | 2.06.B09 | _pending_ | _pending_ | Patch → later patch; second silent-fix window |
-| 2.03B03 | 2.05.B02 | _pending_ | _pending_ | Mid-lineage feature/fix drift |
-| 2.00B01 | 2.03B03 | _pending_ | _pending_ | Early baseline drift |
+| 2.06.B01 | 2.06.B09 | **`htdocs/cgibin`** (score 18) | OLD (silent fix) | b09 adds SOAP/multipart + SSDP validation to the HNAP handler (new strings `Got illegal Soap request from %s!!`, `MPFD_INVALID_CONTENT`, `invalid M-SEARCH request`; +8 syms) and client-side login encryption (`+htdocs/phplib/encrypt.php`, `+web/js/AES.js`, `+etc/defnodes/S90sessions_privatekey.php`). Hardening of request parsing around the same cgibin that held the HNAP n-day. Dedup pending; b09 is a beta. Likely n-day/hardening. |
+| 2.03B03 | 2.05.B02 | **`htdocs/phplib/fatlady/DDNS4.INF.php`** (score 15) | OLD (silent fix) | 2.05.B02 adds `verify_ddns4_url()` — a char-allowlist validator on the DDNS **provider** URL that 2.03B03 lacks; provider is consumed by `usr/sbin/ddnsd` (builds HTTP update requests; refs `system`). Shape of a silently-fixed DDNS provider injection; `tools_ddns.php` UI also changed. Dedup pending — D-Link DDNS is a CVE-dense class → likely n-day. |
+| 2.00B01 | 2.03B03 | `usr/sbin/dnsmasq` (53), `usr/bin/minidlna` (42) | OLD (nominal) | Top rows are **upstream package version bumps** (recompiled/stripped: 247 / 346 syms removed) — upstream-CVE territory, not D-Link-authored fixes. D-Link-side changes are fatlady/service PHP (`ACCESSCTRL.php`, `DNS.php`, UPnP `AddPortMapping`) — low signal. No strong D-Link silent-fix lead in this window. |
+
+**Sweep summary (2026-09-14):** all four planned diff pairs are now run. Beyond the
+confirmed HNAP n-day (2.05.B02→2.06.B01), the sweep surfaces two further D-Link-authored
+silent fixes — the **DDNS provider URL validator** (2.03B03→2.05.B02) and **cgibin SOAP/SSDP
+hardening** (2.06.B01→2.06.B09) — plus upstream package bumps (noise). Both remaining leads
+fit known DIR-series bug classes on an EOL line; novelty is unconfirmed and the base rate is
+n-day. Per the target-selection re-prioritization, the **novel-CVE** effort belongs on the
+Zyxel run; these D-Link leads are portfolio / n-day-study material unless dedup shows otherwise.
 
 ## Candidate dedup ledger (novelty gate)
 | Candidate (binary:function) | Existing CVE? | Source checked | Verdict (novel / n-day) |
