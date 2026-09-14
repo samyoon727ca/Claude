@@ -29,7 +29,9 @@ _*.extracted/
 work/
 workspace/
 triage-out/
+triage-out-dt/
 diff-out/
+diff-out-dt/
 *.ghidra
 *.gpr
 *.rep
