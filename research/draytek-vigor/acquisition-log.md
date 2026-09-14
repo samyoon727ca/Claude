@@ -42,7 +42,7 @@ acquired-ZIP SHA-256 in [`hashes.txt`](hashes.txt). Each ZIP holds one `.all` (4
 |-----------------------------|---------------|----------------|---------|
 | `mainfunction.cgi` **langs** — `uploadlangs`/File → `mv %s /www/langs/%s` cmd injection | **Yes — CVE-2026-3040** (Vigor300B ≤1.5.1.6, `cgiGetFile`/uploadlangs, published 2026-02-23, CVSS 4.7; vendor "EoL, won't fix" — yet silently quoted in 1.5.1.7) | NVD, OpenCVE, cyberstrike | **n-day** |
 | `mainfunction.cgi` **apm** — apmcfgupload/apmcfgupptim/session | Yes — CVE-2024-12986/12987 (1.5.1.4→fixed 1.5.1.5) | OpenCVE | **n-day** |
-| `mainfunction.cgi` **OpenVPN** — action `doOpenVPN` / `FUN_0001e9d8` @0x1e9d8: `create_client_conf.sh %s×5` unquoted → `system()`; 5 web params (`remote_ip`,`protocal`,`config_name`,`auto_dialout`,`redirect_gw`) via `cgiGetValue` with **no escaping**; silently quoted in 1.5.1.7 | **None found** — no OpenVPN/create_client_conf/doOpenVPN CVE across NVD/OpenCVE (vigor300b_firmware full list)/DrayTek advisories (known 300B mainfunction.cgi CVEs cover langs, apm, action, cvmcfgupload, query-string only) | NVD, OpenCVE, DrayTek advisories, master-abc/cve | **CONFIRMED (code-level) + NOVEL** — data flow traced via Ghidra decompile-diff (see [`finding-openvpn-cmdinjection.md`](finding-openvpn-cmdinjection.md)). Auth gate pending (severity driver); then fan-out + vendor report. |
+| `mainfunction.cgi` **OpenVPN** — action **`download_ovpn`** / `FUN_0001e9d8` @0x1e9d8: `create_client_conf.sh %s×5` → `system()`; 5 web params (`remote_ip`,`protocal`,`config_name`,`auto_dialout`,`redirect_gw`) each run through the sanitizer `FUN_0000ad8c` (blocklist replaces `` ;%`\|>space'"$\t\n\r `` + `&&` with `+`) — **incomplete blocklist, bypassable** via single `&`/`<`/`{cmd,arg}` (space-less injection); silently single-quoted in 1.5.1.7 | **None found** — no OpenVPN/create_client_conf/download_ovpn CVE across NVD/OpenCVE (vigor300b_firmware full list)/DrayTek advisories (known 300B mainfunction.cgi CVEs cover langs, apm, action, cvmcfgupload, query-string only) | NVD, OpenCVE, DrayTek advisories, master-abc/cve | **CONFIRMED (code-level) + NOVEL** — Ghidra decompile+disasm (see [`finding-openvpn-cmdinjection.md`](finding-openvpn-cmdinjection.md)). **Auth RESOLVED: post-auth, operator(4)/admin/root(7), level>3; runs as root** (lighttpd no priv-drop). Sev ~7.2 High (`PR:H`). Corrections vs first pass: action is `download_ovpn` not `doOpenVPN`; a sanitizer IS present (bypass, not "unfiltered"). PoC + fan-out + vendor report pending. |
 
 ## Fan-out (volume multiplier)
 | Vulnerable pattern | Other DrayTek Vigor models sharing it | Confirmed? |
@@ -50,9 +50,13 @@ acquired-ZIP SHA-256 in [`hashes.txt`](hashes.txt). Each ZIP holds one `.all` (4
 | OpenVPN web-config → `create_client_conf.sh` unquoted args in `mainfunction.cgi` | Vigor OpenVPN web config is broad across the Linux line (2960/3900/165x/…); many still supported (≠ EoL 300B) → higher-impact, fixable, CVE-worthy | pending (grep the same CGI across models' public firmware) |
 
 ## Next steps
-1. **Ghidra decompile-diff** `mainfunction.cgi` 1.5.1.6 vs 1.5.1.7 (`ARM:LE:32`, reuse
-   `research/dlink-rtl819x/ghidra/`): find the function building the OpenVPN command,
-   confirm the args are attacker-controlled web params, the auth gate (post-auth admin,
-   like CVE-2026-3040), and that only `cgiEscape()` (HTML-only) guards them → injectable.
-2. If confirmed: **fan-out** grep across other Vigor models' public firmware; then
-   `finding-to-vendor-report` (CVSS + PSIRT) → DrayTek coordinated disclosure.
+1. ~~**Ghidra decompile-diff** `mainfunction.cgi` 1.5.1.6 vs 1.5.1.7 + confirm the auth gate.~~
+   **DONE (run 3).** Command built by `FUN_0001e9d8` (`download_ovpn`); 5 web params confirmed;
+   guarded by the sanitizer `FUN_0000ad8c` (not `cgiEscape`) — an **incomplete blocklist that is
+   bypassable**; **auth = post-auth `operator`/`admin` (level > 3)**; runs as **root**. See
+   [`finding-openvpn-cmdinjection.md`](finding-openvpn-cmdinjection.md) and `diff-out-dt/ghidra/`.
+2. **PoC** a bypass payload (e.g. `remote_ip=x&reboot`, or benign `&{touch,/tmp/poc}`) on an
+   owned/emulated ≤1.5.1.6 device; confirm 1.5.1.7 neutralizes it. (Static analysis only so far.)
+3. **Fan-out** grep the same pattern across other Vigor models' public firmware (needs downloads —
+   user-confirmed); then `finding-to-vendor-report` (CVSS + PSIRT) → DrayTek coordinated disclosure
+   (COI / outside-activity disclosure obligations handled FIRST, per `docs/disclosure-policy.md`).
