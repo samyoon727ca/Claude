@@ -10,6 +10,16 @@ ok(){ pass=$((pass+1)); printf '  [ok]   %s\n' "$*"; }
 bad(){ fail=$((fail+1)); printf '  [FAIL] %s\n' "$*"; }
 have(){ command -v "$1" >/dev/null 2>&1; }
 
+# Use the project virtualenv if present, so python-based self-tests run against
+# the provisioned deps (e.g. the mavlink harness needs pymavlink) instead of a
+# bare system python3. Safe no-op when .venv is absent (e.g. minimal CI) or when
+# already inside a venv. set +u around the source: activate scripts predate the
+# nounset guard this script runs under.
+if [ -z "${VIRTUAL_ENV:-}" ] && [ -f .venv/bin/activate ]; then
+  set +u; . .venv/bin/activate; set -u
+  echo "[info] activated .venv ($(python3 -V 2>&1))"
+fi
+
 echo "== 1. Python parses =="
 while IFS= read -r f; do
   if python3 -c "import ast,sys; ast.parse(open('$f').read())" 2>/dev/null; then ok "$f"; else bad "parse $f"; fi
