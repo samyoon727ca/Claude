@@ -1,0 +1,23 @@
+Subject: [Security] OS command injection (sanitizer bypass) in DrayTek www/cgi-bin/mainfunction.cgi (action download_ovpn) (coordinated disclosure)
+
+Hello DrayTek Security Team,
+
+I am reporting a security vulnerability in a DrayTek product under coordinated
+disclosure. Summary:
+
+- Type: OS command injection (sanitizer bypass) (CWE-78)
+- Affected component: www/cgi-bin/mainfunction.cgi (action download_ovpn)
+- Severity: CVSS v3.1 7.2 (High) — CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H
+- Preconditions: Network-reachable web-management interface; post-authentication with session privilege level >= 4 (operator, or admin/root). Web CGI runs as root (lighttpd does not drop privileges: server.username/server.groupname commented out in etc/lighttpd/lighttpd.conf).
+
+The full report (affected versions + firmware hashes, reproduction, impact,
+suggested remediation) is attached / below.
+
+Requests:
+1. Please acknowledge receipt and provide a tracking identifier.
+2. Please share a remediation ETA. I will keep all details private until a fix is
+   available or 90 days from report, and I am happy to verify a candidate fix.
+3. If applicable, please assign a CVE (or advise if I should request one).
+
+Regards,
+Samuel Yoon (contact: samyoon727ca@gmail.com)

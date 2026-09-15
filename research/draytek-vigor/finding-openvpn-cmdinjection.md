@@ -125,17 +125,37 @@ OpenCVE (full `vigor300b_firmware` list), and DrayTek advisories. Known Vigor300
 (CVE-2020-8515 / -15415 / 2021-43118). The reclassification (sanitizer *bypass*, post-auth)
 does not match any of these. ⇒ **plausibly novel.**
 
+## Validation (2026-09-14, re-verified from the shipped binaries)
+Independently re-confirmed this run, not trusting the earlier decompile notes:
+- **Sink delta** (binary `strings`): v1.5.1.6 `create_client_conf.sh %s %s %s %s %s`
+  (unquoted) → v1.5.1.7 `'%s' '%s' '%s' '%s' '%s'`. The `openvpn disconnect_from_web`
+  args were likewise unquoted→quoted, while `gretunnel`/`ssltunnel` were *already*
+  quoted in 1.5.1.6 — the OpenVPN path was the un-hardened outlier.
+- **Sanitizer blocklist** decoded byte-for-byte from the ARM disassembly of
+  `FUN_0000ad8c`: blocks `; % ` `| > space ' " $ \t \n \r` and `&&`; a **single `&`**
+  (and `< ( ) { } , \`) survives. Bypass confirmed at the instruction level.
+- **Runs as root**: `server.username`/`server.groupname` commented out in
+  `etc/lighttpd/lighttpd.conf`.
+- **Novelty re-checked live** (NVD full Vigor300B list, OpenCVE, `master-abc/cve`):
+  no CVE on the `download_ovpn`/`create_client_conf` path. Holds.
+- Component hashes: vuln CGI `821d539c…`, fixed CGI `b5085e80…` (see `finding.json`).
+
 ## Open items before disclosure
 1. **PoC on owned/emulated device.** Confirm one bypass payload (e.g. `remote_ip=x&reboot`,
    or a benign `&{touch,/tmp/poc}`) actually executes on ≤1.5.1.6 and is neutralized on
-   1.5.1.7. Static analysis is strong but not a runtime demonstration.
+   1.5.1.7. Static analysis is strong but not a runtime demonstration. **[in progress —
+   QEMU/FirmAE emulation]**
 2. **Fan-out.** Grep the same `download_ovpn` + `create_client_conf.sh %s…` + `FUN_0000ad8c`
    pattern across other Vigor models' public firmware (2960 / 3900 / 165x / …). Many are
    **still supported** → higher impact, fixable, distinct affected products / CVEs. (Needs
    firmware downloads — a user-confirmed step.)
 3. **`finding.json`** → `finding-to-vendor-report` (CVSS + PSIRT report) → DrayTek coordinated
-   disclosure → `finding-to-cve-writeup` post-fix. **Handle personal COI / outside-activity
-   disclosure obligations FIRST** (see `docs/disclosure-policy.md`).
+   disclosure → `finding-to-cve-writeup` post-fix. **[DRAFTED this run]** — `finding.json`,
+   `vendor-report.md` (7.2 High), `disclosure-email.txt`, `CVE-…RESERVED.json`, and the held
+   `writeup-download_ovpn.md` are all in this directory. COI/outside-activity: cleared
+   (independent, unattributed research; no disclosure bar). **Next human step: send the
+   terse first contact to DrayTek PSIRT (`info@draytek.co.uk`), then the full report to the
+   assigned contact (PGP).**
 
 ## Reproduction data (working, git-ignored under `diff-out-dt/`)
 - `ghidra/action_table_1516.c` — full 137-entry action table + `download_ovpn` handler + session chain.
