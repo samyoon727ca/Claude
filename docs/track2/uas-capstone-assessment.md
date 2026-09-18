@@ -135,7 +135,8 @@ Re-run with signing enabled on the link and record the delta:
 
 That before/after is the difference between *finding* the gap and *proving the fix* — the
 SSE-level result. Implementing the signing control itself is the **P6.2** systems-language
-build (a MAVLink v2 signing module), which this assessment then re-tests.
+build (a MAVLink v2 signing module — [build spec](../../tools/mavlink-signing/SPEC.md)),
+which this assessment then re-tests.
 
 ## 7. Reproduction
 

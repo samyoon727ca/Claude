@@ -54,6 +54,7 @@ docs/
   security-dataviz/            analysis output -> briefing charts + diagrams  (chart.py, diagram.py)
 tools/
   mavlink-sectest/             MAVLink security test harness for ArduPilot/PX4 SITL (P5.1 T&E)
+  mavlink-signing/             P6.2 build spec: Rust MAVLink v2 signing module (closes T1/T5)
   run-checks.sh                Repo verification: lints, self-tests, SVG/mermaid/link checks
 research/
   dlink-rtl819x/               Run 1 working area: acquisition log + hashes, the extract->diff
