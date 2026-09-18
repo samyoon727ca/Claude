@@ -4,15 +4,15 @@
     "threat": "T1/T5",
     "requirement": "Autopilot SHALL reject unsigned MAVLink commands",
     "verdict": "FAIL",
-    "detail": "11/11 frames unsigned",
+    "detail": "216/216 frames unsigned",
     "risk": 8.5
   },
   {
     "id": "telemetry",
     "threat": "T4",
     "requirement": "Mission telemetry SHALL be encrypted in transit",
-    "verdict": "INFO",
-    "detail": "no telemetry decoded",
+    "verdict": "FAIL",
+    "detail": "cleartext telemetry: ATTITUDE, BATTERY_STATUS, GLOBAL_POSITION_INT, GPS_RAW_INT, VFR_HUD",
     "risk": 6.0
   },
   {

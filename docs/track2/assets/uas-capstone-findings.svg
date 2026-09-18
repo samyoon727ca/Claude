@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="780" height="182" viewBox="0 0 780 182" role="img" aria-label="Ranked candidates">
+<svg xmlns="http://www.w3.org/2000/svg" width="780" height="216" viewBox="0 0 780 216" role="img" aria-label="Ranked candidates">
 <style>
     .bg{fill:var(--bg)} .title{fill:var(--fg);font:600 17px system-ui,sans-serif}
     .lbl{fill:var(--fg);font:13px ui-monospace,monospace}
@@ -12,16 +12,19 @@
       .Critical{fill:#F2555D} .High{fill:#F08A3C}
       .Medium{fill:#E7B93E} .Low{fill:#54B072} .None{fill:#9AA4B2}
     }</style>
-<rect class="bg" x="0" y="0" width="780" height="182"/>
+<rect class="bg" x="0" y="0" width="780" height="216"/>
 <text class="title" x="300" y="30">Ranked candidates</text>
-<line class="axis" x1="300" y1="50" x2="300" y2="158"/>
+<line class="axis" x1="300" y1="50" x2="300" y2="192"/>
 <text class="lbl" x="290" y="73.68" text-anchor="end">signing (T1/T5)</text>
 <rect class="bar" x="300" y="56" width="410" height="26" rx="3"><title>signing (T1/T5): 8.5</title></rect>
 <text class="val" x="718" y="73.68">8.5</text>
 <text class="lbl" x="290" y="107.68" text-anchor="end">cmd_injection (T1)</text>
 <rect class="bar" x="300" y="90" width="410" height="26" rx="3"><title>cmd_injection (T1): 8.5</title></rect>
 <text class="val" x="718" y="107.68">8.5</text>
-<text class="lbl" x="290" y="141.68" text-anchor="end">replay (T5)</text>
-<rect class="bar" x="300" y="124" width="265" height="26" rx="3"><title>replay (T5): 5.5</title></rect>
-<text class="val" x="573" y="141.68">5.5</text>
+<text class="lbl" x="290" y="141.68" text-anchor="end">telemetry (T4)</text>
+<rect class="bar" x="300" y="124" width="289" height="26" rx="3"><title>telemetry (T4): 6</title></rect>
+<text class="val" x="597" y="141.68">6</text>
+<text class="lbl" x="290" y="175.68" text-anchor="end">replay (T5)</text>
+<rect class="bar" x="300" y="158" width="265" height="26" rx="3"><title>replay (T5): 5.5</title></rect>
+<text class="val" x="573" y="175.68">5.5</text>
 </svg>
