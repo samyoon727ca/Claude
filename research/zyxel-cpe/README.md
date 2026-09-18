@@ -6,7 +6,8 @@
 > patched image is not publicly downloadable** and the fix cannot be diffed under our
 > provenance rule (verified 2026-09-14; see
 > [`docs/track1-target-selection.md`](../../docs/track1-target-selection.md) §"Re-pick").
-> Track 1 rotated to **DrayTek Vigor300B**, which landed a confirmed novel finding —
+> Track 1 rotated to **DrayTek Vigor300B**, which produced a code-level finding that
+> **deduped as an n-day (CVE-2024-45890)** —
 > [`research/draytek-vigor/`](../draytek-vigor/). This folder is kept as the audit
 > trail and a fallback if Zyxel's public archive changes.
 

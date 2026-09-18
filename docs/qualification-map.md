@@ -33,13 +33,15 @@ Legend: **[built]** exists now · **[planned]** in the sequence · **[cert]** cr
 - **P4.4** Hardening writeup — assessment-to-hardening on a real Linux embedded node. **[built]**
 - **P1.2 / P1.4** Triage + cross-version diff reports — run on real firmware across
   three targets (D-Link, Zyxel, DrayTek). **[built]**
-- **P2.1** Ghidra decompilation review — on DrayTek Vigor300B it **confirmed a novel
-  root OS command injection** (`download_ovpn` sanitizer bypass) at the code level and
-  resolved the auth gate, deduped vs NVD/OpenCVE. **[built]**
+- **P2.1** Ghidra decompilation review — on DrayTek Vigor300B it **confirmed a root OS
+  command injection** (`download_ovpn` sanitizer bypass) at the code level and resolved the
+  auth gate; on live re-check it **deduped as an n-day (CVE-2024-45890)**, the same bug on
+  the sibling Vigor3900. **[built]**
 - **P2.3 / P2.5** PoC + vendor report — runtime PoC and PSIRT report for the DrayTek
   finding; the remaining step to make the assessment lifecycle externally *proven*. **[planned]**
-- **P3.3** Public writeup / CVE — DIR-816L n-day case study published; the DrayTek
-  novel CVE follows coordinated disclosure. **[building]**
+- **P3.3** Public writeup / CVE — DIR-816L n-day case study published; the DrayTek run 3
+  writes up as a second n-day case study (CVE-2024-45890). A genuinely new CVE depends on
+  the fan-out to a still-supported / unpatched Vigor model. **[building]**
 - **P5.1** UAS autopilot + MAVLink assessment — IoT/embedded on a defense-relevant
   class of system; **mavlink-sectest** T&E harness built, hands-on pending. **[building]**
 
@@ -96,7 +98,7 @@ Legend: **[built]** exists now · **[planned]** in the sequence · **[cert]** cr
 |-----------|:-------------:|:-------------------:|
 | 1. Security architecture / requirements | strong | strong |
 | 2. Embedded HW: secure boot / keys / AT | strong | strong |
-| 3. Firmware / embedded assessment | strong (novel finding confirmed at code level) | proven (live CVE) |
+| 3. Firmware / embedded assessment | strong (two n-days confirmed at code level; method proven) | proven (live CVE) |
 | 4. USG methodology fluency | strong | strong |
 | 5. Milestone docs / MBSE / SCRM / SwA / CM | strong | strong |
 | 6. Anti-tamper | moderate (process) | moderate (process) |
@@ -106,8 +108,9 @@ Legend: **[built]** exists now · **[planned]** in the sequence · **[cert]** cr
 State: all four Track 2 engineering docs (P4.2/P4.3/P4.4/P5.2) are built, giving
 competencies **1-7** real artifact coverage (6 at the unclassified process ceiling;
 8 is the clearance + certs, held out-of-band — TS/SCI+SAP, Security+, CASP+). Track 1
-run 3 (DrayTek Vigor300B) has **confirmed a novel root command injection at the code
-level** — the strongest hands-on evidence in the portfolio so far. What converts it
-into a *proven*, externally-validated result is the remaining close-out — runtime PoC
--> coordinated disclosure -> CVE — plus the P5.1 UAS capstone. Those are the only
-remaining substantive items in the plan.
+run 3 (DrayTek Vigor300B) **confirmed a root command injection at the code level**, then
+deduped it as an n-day (CVE-2024-45890) — strong hands-on evidence of *method*, though not a
+new discovery. What would convert the portfolio to a *proven*, externally-validated **new**
+CVE is the fan-out to a still-supported / unpatched Vigor model out of that CVE's CPE scope;
+run 3 itself closes out as a second n-day case study (substantiated by a runtime PoC), plus
+the P5.1 UAS capstone. Those are the remaining substantive items in the plan.

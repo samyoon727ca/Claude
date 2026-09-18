@@ -31,16 +31,20 @@ path pays. Full procedure: [`docs/track1-acquisition-runbook.md`](track1-acquisi
 > - **Run 2 — Zyxel CPE:** **blocked at acquisition** — the 2026 patched CPE firmware is
 >   ISP-gated, so the fix is not provenance-acquirable to diff. Notes:
 >   [`research/zyxel-cpe/target-notes.md`](../research/zyxel-cpe/target-notes.md).
-> - **Run 3 — DrayTek Vigor300B: a *novel* finding, confirmed at the code level.** A
+> - **Run 3 — DrayTek Vigor300B: confirmed at the code level, then deduped as an n-day.** A
 >   `download_ovpn` OS command injection in `mainfunction.cgi` (incomplete-blocklist
->   sanitizer bypass, runs as **root**, post-auth) with no matching CVE — confirmed via
->   Ghidra decompile + disasm; **runtime PoC + coordinated disclosure are what remain**
->   (see the finding and next steps in
->   [`research/draytek-vigor/finding-openvpn-cmdinjection.md`](../research/draytek-vigor/finding-openvpn-cmdinjection.md)).
+>   sanitizer bypass, runs as **root**, post-auth) — confirmed via Ghidra decompile + disasm,
+>   but on live re-check (2026-09-18) it is **CVE-2024-45890** (same bug on the sibling
+>   Vigor3900); the initial "no matching CVE" was a dedup miss (scoped to the 300B CVE list).
+>   **Not a new CVE.** What remains: a methodology case study, an optional CPE coverage-gap
+>   note, and the fan-out to a still-supported/unpatched model (the only new-CVE path). See
+>   [`research/draytek-vigor/finding-openvpn-cmdinjection.md`](../research/draytek-vigor/finding-openvpn-cmdinjection.md).
 >
-> **Next action on this path = close out run 3** (PoC → fan-out → disclose), not a new
-> target. The numbered steps below are the vendor-agnostic procedure, kept for the next
-> fresh target after DrayTek.
+> **Next action on this path = the run-3 fan-out** (grep the `download_ovpn` /
+> `create_client_conf.sh` pattern across other Vigor models for a still-supported,
+> out-of-CPE, unpatched one — the only remaining new-CVE path) plus a case-study writeup.
+> A fresh target is equally reasonable now that run 3 is an n-day. The numbered steps below
+> are the vendor-agnostic procedure.
 
 1. **Tools:** `.claude/skills/firmware-triage/scripts/setup-tools.sh`
    (binwalk, squashfs-tools, jefferson, ubi_reader, QEMU).
@@ -56,7 +60,10 @@ path pays. Full procedure: [`docs/track1-acquisition-runbook.md`](track1-acquisi
        --reachable triage-out/<new>/services.txt
    ```
 5. **Confirm** a silent-patch candidate in Ghidra; reproduce in emulation
-   (QEMU/FirmAE). **Dedup against NVD before claiming novelty** (runbook §6).
+   (QEMU/FirmAE). **Dedup against NVD before claiming novelty** (runbook §6) — and search
+   **every sibling model that shares the codebase, not just the target's own CPE list**
+   (the run-3 lesson: the `download_ovpn` bug was already CVE-2024-45890, filed under the
+   Vigor3900, and a 300B-scoped search missed it).
 6. **Report + disclose:** `finding.json` → `finding-to-vendor-report` (CVSS +
    PSIRT report) → coordinated disclosure → `finding-to-cve-writeup` (public
    writeup + CVE JSON). Chart findings with `security-dataviz`.
