@@ -98,6 +98,7 @@ Goal: the hands-on autopilot assessment. Analytical foundation is already writte
 
 ## Pointers
 - Front door / repo map: [`README.md`](../README.md)
+- Latest audit + consolidated roadmap: [`audit-2026-09-18.md`](audit-2026-09-18.md)
 - Scope & ethics: [`docs/disclosure-policy.md`](disclosure-policy.md)
 - Engineering docs: [`docs/track2/`](track2/)
 - Reusable skills: `.claude/skills/`  ·  Tools: `tools/`
