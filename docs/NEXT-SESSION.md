@@ -1,7 +1,7 @@
 # Next Session — Restart Paths
 
 Everything buildable in a locked-down cloud sandbox is **done and verified**
-(6 skills + the mavlink-sectest harness, 4 Track 2 docs, the briefing artifact,
+(5 skills + the mavlink-sectest harness, 4 Track 2 docs, the briefing artifact,
 the blueprint). What remains is **hands-on execution** that needs an unrestricted
 host or owned/simulated hardware. This note is the frictionless restart.
 

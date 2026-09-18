@@ -108,7 +108,7 @@ The tooling funnel and the engineering-document set are **built and verified on
 fixtures**; what remains is hands-on execution that needs an unrestricted host.
 
 **Built**
-- **Track 3 — six reusable Skills** (firmware-triage, binary-diff,
+- **Track 3 — five reusable Skills** (firmware-triage, binary-diff,
   finding-to-vendor-report, finding-to-cve-writeup, security-dataviz) plus the
   **mavlink-sectest** harness — the full acquire → triage → diff → report → CVE →
   visualize funnel, each verified end-to-end on synthetic fixtures.
