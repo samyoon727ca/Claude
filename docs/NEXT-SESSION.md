@@ -75,16 +75,19 @@ path pays. Full procedure: [`docs/track1-acquisition-runbook.md`](track1-acquisi
 
 ---
 
-## Path B — P5.1 UAS capstone (portfolio, no income) — ACTIVE
+## Path B — P5.1 UAS capstone (portfolio, no income) — COMPLETE
 Goal: the hands-on autopilot assessment. Analytical foundation is already written:
 [`docs/track2/uas-autopilot-threat-model.md`](track2/uas-autopilot-threat-model.md).
 
-> **Status (2026-09-18):** SITL run + signing before/after done — stock ArduCopter fails
-> the T1/T5 cluster (3 FAIL); the signing-enabled re-run clears it (0 FAIL); and the
-> **P6.2** Rust signing module ([`../tools/mavlink-signing/`](../tools/mavlink-signing/SPEC.md),
-> 7/7 cargo tests incl. pymavlink interop) gives the deterministic proof. Results:
-> [`track2/uas-capstone-assessment.md`](track2/uas-capstone-assessment.md). **Next** =
-> resolve the T4 telemetry INFO (stream capture), then fold into the P6.3 brief.
+> **Status (2026-09-18): done.** SITL run + signing before/after complete — stock link
+> **4 FAIL / 1 PASS** (T1/T4/T5 unmet as the threat model predicted); the signing-enabled
+> re-run clears the T1/T5 cluster; the **P6.2** Rust signing module
+> ([`../tools/mavlink-signing/`](../tools/mavlink-signing/SPEC.md), 7/7 cargo tests incl.
+> pymavlink interop) gives the deterministic proof. Written up in
+> [`track2/uas-capstone-assessment.md`](track2/uas-capstone-assessment.md) +
+> [`track2/uas-mavlink-hardening.md`](track2/uas-mavlink-hardening.md), briefed in
+> [`track2/uas-security-brief.html`](track2/uas-security-brief.html). **Next named gap = P6.1
+> (FPGA).** The steps below reproduce the run.
 
 1. **Install + simulate** (open source):
    ```
