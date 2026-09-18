@@ -43,6 +43,22 @@ acquired-ZIP SHA-256 in [`hashes.txt`](hashes.txt). Each ZIP holds one `.all` (4
 | `mainfunction.cgi` **langs** — `uploadlangs`/File → `mv %s /www/langs/%s` cmd injection | **Yes — CVE-2026-3040** (Vigor300B ≤1.5.1.6, `cgiGetFile`/uploadlangs, published 2026-02-23, CVSS 4.7; vendor "EoL, won't fix" — yet silently quoted in 1.5.1.7) | NVD, OpenCVE, cyberstrike | **n-day** |
 | `mainfunction.cgi` **apm** — apmcfgupload/apmcfgupptim/session | Yes — CVE-2024-12986/12987 (1.5.1.4→fixed 1.5.1.5) | OpenCVE | **n-day** |
 | `mainfunction.cgi` **OpenVPN** — action **`download_ovpn`** / `FUN_0001e9d8` @0x1e9d8: `create_client_conf.sh %s×5` → `system()`; 5 web params (`remote_ip`,`protocal`,`config_name`,`auto_dialout`,`redirect_gw`) each run through the sanitizer `FUN_0000ad8c` (blocklist replaces `` ;%`\|>space'"$\t\n\r `` + `&&` with `+`) — **incomplete blocklist, bypassable** via single `&`/`<`/`{cmd,arg}` (space-less injection); silently single-quoted in 1.5.1.7 | **YES — CVE-2024-45890** (DrayTek Vigor**3900** 1.5.1.3, `mainfunction.cgi` `action=download_ovpn`, post-auth OS cmd injection, CVSS 8.0, pub. 2024-11-04). **Missed in the 2026-09-14 check** because that check was scoped to the `vigor300b_firmware` list and this CVE is filed under `vigor3900_firmware`. Corrected live 2026-09-18. | NVD, OpenCVE (vigor300b **and vigor3900**), DrayTek advisories, master-abc/cve, exploit-intel | **CONFIRMED (code-level) but n-day — NOT novel.** Same endpoint/class as CVE-2024-45890 on the sibling 3900. The 300B is not in that CVE's CPE list ⇒ **CPE coverage gap** (report as affected-product extension, not a new CVE). **Auth: post-auth, operator(4)/admin/root(7), level>3; runs as root** (lighttpd no priv-drop). Ghidra decompile+disasm in `diff-out-dt/ghidra/`; see [`finding-openvpn-cmdinjection.md`](finding-openvpn-cmdinjection.md). Real new-CVE path is now only the fan-out to still-supported, out-of-CPE, unpatched models. |
+| `mainfunction.cgi` **OpenVPN disconnect** — `/etc/init.d/openvpn disconnect_from_web %s×3` (built by the OpenVPN web handler; single-quoted in 1.5.1.7 alongside `download_ovpn`) | **Yes — CVE-2024-45887** (Vigor3900 1.5.1.3, `mainfunction.cgi` **`action=doOpenVPN`**, post-auth OS cmd injection, CVSS 8.0, pub. 2024-11-04) | NVD/cyberstrike (CVE-2024-45887), OpenCVE | **n-day** — the OpenVPN handler surface is CVE'd via both `doOpenVPN` (45887) and `download_ovpn` (45890). |
+| `mainfunction.cgi` **passwd helper** — `passwd admin "%s"` → `'%s'` in 1.5.1.7 | Within the `mainfunction.cgi` **action= command-injection family** exhaustively CVE'd 2024-11-04 (CVE-2024-45884…45893). Also cf. login CVE-2022-50994 (`formpassword`). | NVD/cyberstrike batch enum (45884–45893) | **n-day-class** — no differentiated novel-CVE survives; not individually pursued. |
+| `activate.cgi` — changed in the 1.5.1.6→1.5.1.7 diff | **Yes — CVE-2020-10826** (`/cgi-bin/activate.cgi` remote cmd injection, DEBUG-mode; pre-1.5.1 surface) | NVD (CVE-2020-10826) | **n-day / pre-existing surface** — separate CGI with a prior CVE; not a novel lead. |
+
+### Secondary dedup pass — 2026-09-18 (post run-3 close-out)
+After capping run 3 as an n-day, the *other* silently-hardened `system()` sites in the
+1.5.1.6→1.5.1.7 batch were deduped to test for residual novel headroom on the 300B.
+Result: the DrayTek `mainfunction.cgi` post-auth command-injection surface is an
+**exhaustively-enumerated CVE family** — CVE-2024-45884 through 45893 (Vigor3900 1.5.1.3,
+each a distinct `action=`: setSWMGroup, autodiscovery_clear, doOpenVPN, set_ap_map_config,
+commandTable, download_ovpn, delete_wlan_profile, setSWMOption, …; all CVSS 8.0, all pub.
+2024-11-04) — which DrayTek closed by single-quoting the whole family. The OpenVPN sites
+(`doOpenVPN` 45887, `download_ovpn` 45890), the WLAN/AP-map/SWM actions, and `activate.cgi`
+(CVE-2020-10826) are all covered. **No novel-CVE lead survives on the 300B.** A new CVE
+could still only come from the same pattern on a **still-supported, out-of-CPE, unpatched**
+*other* Vigor model (background option; needs downloads) — not from the 300B itself.
 
 ## Fan-out (volume multiplier)
 | Vulnerable pattern | Other DrayTek Vigor models sharing it | Confirmed? |
