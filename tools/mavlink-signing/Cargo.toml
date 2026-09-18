@@ -1,0 +1,9 @@
+[package]
+name = "mavlink-signing"
+version = "0.1.0"
+edition = "2021"
+description = "MAVLink v2 message signing (sign / verify / anti-replay) — P6.2, no external deps"
+license = "MIT"
+
+[lib]
+path = "src/lib.rs"

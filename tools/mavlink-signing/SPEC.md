@@ -1,4 +1,9 @@
-# P6.2 — MAVLink v2 signing module (Rust) — build spec
+# P6.2 — MAVLink v2 signing module (Rust)
+
+> **Status: built (2026-09-18) — 7/7 `cargo test` green**, including two interop tests
+> against a real pymavlink-signed frame (Rust *verifies* it, and Rust *sign* reproduces it
+> byte-for-byte) and a SHA-256 known-answer test. Crate: `Cargo.toml` + `src/lib.rs`
+> (zero external dependencies). This file is both the design spec and the module's README.
 
 **Role.** A memory-safe implementation of MAVLink v2 message signing (sign + verify +
 anti-replay) — the *control* that closes the capstone's T1/T5 gap. It gives a

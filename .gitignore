@@ -49,6 +49,9 @@ drafts/private/
 *.private.md
 *.embargoed.md
 
+# --- Rust build output (P6.2 mavlink-signing crate) ---
+target/
+
 # --- OS / editor / language noise ---
 .DS_Store
 Thumbs.db
