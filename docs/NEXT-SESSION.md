@@ -41,11 +41,13 @@ path pays. Full procedure: [`docs/track1-acquisition-runbook.md`](track1-acquisi
 >   note, and the fan-out to a still-supported/unpatched model (the only new-CVE path). See
 >   [`research/draytek-vigor/finding-openvpn-cmdinjection.md`](../research/draytek-vigor/finding-openvpn-cmdinjection.md).
 >
-> **Next action on this path = the run-3 fan-out** (grep the `download_ovpn` /
-> `create_client_conf.sh` pattern across other Vigor models for a still-supported,
-> out-of-CPE, unpatched one — the only remaining new-CVE path) plus a case-study writeup.
-> A fresh target is equally reasonable now that run 3 is an n-day. The numbered steps below
-> are the vendor-agnostic procedure.
+> **Next action (updated 2026-09-18):** the DrayTek 300B novel-CVE path is **closed** — a
+> secondary dedup found the whole `mainfunction.cgi` command-injection surface is an
+> exhaustively-CVE'd family (CVE-2024-45884…45893, incl. `doOpenVPN`/`download_ovpn`). **The
+> active priority is now Path B (P5.1 UAS capstone).** A DrayTek new CVE could only come from
+> the same pattern on a still-supported, out-of-CPE, unpatched *other* Vigor model
+> (background; needs downloads), or a fresh Track 1 target. The numbered steps below are the
+> vendor-agnostic procedure for either.
 
 1. **Tools:** `.claude/skills/firmware-triage/scripts/setup-tools.sh`
    (binwalk, squashfs-tools, jefferson, ubi_reader, QEMU).
