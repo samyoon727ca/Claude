@@ -8,7 +8,8 @@ host or owned/simulated hardware. This note is the frictionless restart.
 ## 0. Confirm state first (30 seconds)
 ```
 git checkout main                                   # tooling branches are merged
-tools/run-checks.sh                                 # expect: 26 passed, 0 failed
+tools/run-checks.sh                                 # clean checkout: 26 passed, 0 failed
+                                                    # (local work/ extraction adds SVGs -> 28; only failures matter)
 ```
 Read [`docs/artifact-plan.md`](artifact-plan.md) for the plan and
 [`docs/qualification-map.md`](qualification-map.md) for competency coverage.

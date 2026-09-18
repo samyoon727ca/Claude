@@ -26,8 +26,12 @@ settings → App execution aliases.
 ## Verification
 
 `tools/run-checks.sh` is the deterministic gate (Python/shell parse, self-tests,
-SVG/mermaid/link checks, funnel smoke test). A fully-provisioned WSL reports
-**26 passed, 0 failed**. Deps needed to reach that (one-time, needs sudo):
+SVG/mermaid/link checks, funnel smoke test). A fully-provisioned WSL on a **clean
+checkout** reports **26 passed, 0 failed**. (The SVG check scans the whole working
+tree, so after a live firmware extraction the git-ignored `work/` tree adds its own
+SVGs — the DrayTek rootfs contributes two `glyphicons-halflings-regular.svg`, giving
+**28 passed**. The extra count is expected; only *failures* matter.) Deps needed to
+reach that (one-time, needs sudo):
 
 ```bash
 sudo apt update && sudo apt install -y build-essential python3-dev python3-venv
