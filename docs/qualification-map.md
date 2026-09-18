@@ -32,6 +32,10 @@ Legend: **[built]** exists now · **[building]** partially built / in progress �
 ### 3. Firmware / application / network / IoT / embedded security assessment
 - **P0.3** `firmware-triage` Skill — the assessment funnel itself. **[built]**
 - **P4.4** Hardening writeup — assessment-to-hardening on a real Linux embedded node. **[built]**
+- **P5.1 (remediation)** UAS MAVLink hardening writeup — the hardening counterpart to the
+  capstone: signing + anti-replay **applied**, telemetry encryption / companion segmentation
+  **recommended**, each with a verification method
+  ([`track2/uas-mavlink-hardening.md`](track2/uas-mavlink-hardening.md)). **[built]**
 - **P1.2 / P1.4** Triage + cross-version diff reports — run on real firmware across
   three targets (D-Link, Zyxel, DrayTek). **[built]**
 - **P2.1** Ghidra decompilation review — on DrayTek Vigor300B it **confirmed a root OS

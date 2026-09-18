@@ -146,7 +146,8 @@ loss — control-authority compromise is a safety event, the model's top loss sc
 
 **Gate readiness:** T1/T4/T5 are **blocking at PDR/CDR**; T6 clears its TRR check. Remediation follows the survivability §9 Prevent column: enable **MAVLink v2
 signing** (closes `signing` + `cmd_injection`, and supplies the timestamp that closes
-`replay`) plus a link-layer encryption/tunnel for T4.
+`replay`) plus a link-layer encryption/tunnel for T4. Full remediation guide — techniques,
+key management, and verification per finding: [`uas-mavlink-hardening.md`](uas-mavlink-hardening.md).
 
 ### Before/after — the control closes the gap (measured)
 Two independent demonstrations:
