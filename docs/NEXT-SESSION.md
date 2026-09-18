@@ -1,9 +1,12 @@
 # Next Session — Restart Paths
 
-Everything buildable in a locked-down cloud sandbox is **done and verified**
-(5 skills + the mavlink-sectest harness, 4 Track 2 docs, the briefing artifact,
-the blueprint). What remains is **hands-on execution** that needs an unrestricted
-host or owned/simulated hardware. This note is the frictionless restart.
+This round closed out **breadth**: every SSE competency (1–8) plus the systems-language
+qual now has an artifact — the Track 3 skill funnel + the mavlink-sectest harness, the
+Track 2 engineering-doc set (now including the FPGA security reference), the **P5.1 UAS
+capstone** (with a measured signing before/after), the **P6.2** Rust MAVLink-signing module,
+and the leadership brief. The **next round is depth** (see below); the one thing still gating
+external validation is a genuinely new CVE from a live Track 1 run (Path A). This note is the
+frictionless restart.
 
 ## 0. Confirm state first (30 seconds)
 ```
@@ -13,6 +16,37 @@ tools/run-checks.sh                                 # clean checkout: 27 passed,
 ```
 Read [`docs/artifact-plan.md`](artifact-plan.md) for the plan and
 [`docs/qualification-map.md`](qualification-map.md) for competency coverage.
+
+## Next round — depth (recommended)
+Breadth is done; the marginal hour now buys **depth**, not more artifacts. Two thrusts —
+propose a plan, then pick one to execute.
+
+**Thrust A — UAS capstone depth** (extend the find → build → prove arc; the infra already stands):
+1. **GNSS spoofing (T2)** — the threat model's #1 risk (9.0) and untested. Inject a spoofed GPS
+   position into ArduPilot SITL, test multi-sensor consistency + the failsafe response, and
+   write it up like the [capstone](track2/uas-capstone-assessment.md). Most defense-relevant
+   single addition.
+2. **Telemetry encryption (T4)** — stand up an encrypted transport (WireGuard/DTLS) GCS↔companion,
+   re-run `mavlink-sectest` through it, show telemetry is no longer cleartext: the *applied*
+   control for the [hardening writeup](track2/uas-mavlink-hardening.md)'s T4 row.
+3. **P6.2 → inline proxy** — make the Rust signing module enforce signing on the wire, proven
+   end-to-end by the harness.
+
+**Thrust B — hands-on FPGA** (convert [P6.1](track2/fpga-security-reference.md) from reference to demonstrated):
+1. **Simulation (no hardware):** a security RTL core (AES-GCM / HMAC bitstream-auth checker / PUF
+   model) in Verilog/VHDL with a Verilator or cocotb testbench + known-answer tests; wire its run
+   into `tools/run-checks.sh` (guarded, like the gcc/cargo steps) if a toolchain is present.
+2. **Hardware (if a board / ChipWhisperer is on hand):** a DPA power-analysis key-recovery lab
+   (directly demonstrates the P6.1 side-channel threat), or bitstream encryption + secure boot
+   on a real FPGA.
+
+**Still the credibility frontier:** a genuinely **new CVE** from a fresh Track 1 target (Path A) —
+the DrayTek 300B surface is fully CVE'd, so it's the other-model fan-out or a new device. No depth
+work substitutes for one real new disclosure.
+
+Guardrails unchanged: WSL for the gate (keep it green), a new branch — never `main`, coordinated
+disclosure / no committed blobs, the held DrayTek CVE-2024-45890 coverage-gap email stays HELD, and
+keep the docs (README map, qualification-map, artifact-plan, this file) consistent on any status change.
 
 ## Why these run locally, not in the cloud sandbox
 The cloud environment's network policy blocks vendor firmware hosts (403) and
