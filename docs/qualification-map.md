@@ -13,9 +13,9 @@ Legend: **[built]** exists now · **[building]** partially built / in progress �
 - **P4.3** UAS autopilot threat model in NIST SP 800-160 language — derives
   verifiable security requirements from a STRIDE/ATT&CK threat register. **[built]**
 - **P5.2** Milestone-style security architecture document (SRR->CDR) — shows
-  requirements decomposed and traced across lifecycle gates. **[planned]**
+  requirements decomposed and traced across lifecycle gates. **[built]**
 - **P5.1** Autopilot assessment — architecture-level attack-surface reasoning on
-  a real system. **[planned]**
+  a real system (executed vs SITL; see §3). **[built]**
 
 ### 2. Security-relevant embedded HW / FPGA features: secure boot, key management, anti-tamper
 - **P4.2** Secure-boot / hardware-root-of-trust reference explainer — RoT
@@ -25,7 +25,7 @@ Legend: **[built]** exists now · **[building]** partially built / in progress �
   Linux embedded node, mapped to controls. **[built]**
 - **P4.2** Lifecycle + anti-tamper section (tamper-resistant key storage, secure
   debug, zeroization, passive/active AT). **[built]**
-- **P5.2** Dedicated anti-tamper approach + process documentation. **[planned]**
+- **P5.2** Dedicated anti-tamper approach + process documentation. **[built]**
 - **P6.1** FPGA security reference artifact — bitstream authentication/encryption, eFUSE
   vs BBRAM keying, PUF-derived keys, DPA/side-channel + anti-tamper, and the RoT extended
   into programmable logic ([`track2/fpga-security-reference.md`](track2/fpga-security-reference.md)). **[built]**
@@ -56,7 +56,7 @@ Legend: **[built]** exists now · **[building]** partially built / in progress �
   [`track2/uas-mavlink-hardening.md`](track2/uas-mavlink-hardening.md). **[built]**
 
 ### 4. USG cyber methodology fluency (vocabulary to document around)
-- **NIST SP 800-160** — P4.3 threat model is structured in its language. **[planned]**
+- **NIST SP 800-160** — P4.3 threat model is structured in its language. **[built]**
 - **Cyber T&E Guidebook** — P2.2 emulation harness + P1.4/P2.5 test-and-evaluation
   framing of findings. **[planned]**
 - **NIST SP 800-193/147/155** — P4.2 firmware-resiliency/measurement vocabulary in use. **[built]**
@@ -87,7 +87,8 @@ Legend: **[built]** exists now · **[building]** partially built / in progress �
 - **P2.4** `finding-to-vendor-report` Skill — CVSS-scored PSIRT reports +
   disclosure email; **[built]**. **P3.1** `finding-to-cve-writeup` Skill —
   CVE JSON 5.1 record + sanitized public writeup + publish linter; **[built]**.
-- **P3.3** Public writeup — externally visible written + visual communication. **[planned]**
+- **P3.3** Public writeup — externally visible written + visual communication (two n-day
+  case studies published). **[building]**
 - **P6.3** Program-leadership security brief — a 12-slide leadership deck synthesizing
   the CVE work + the UAS threat→gap→fix story, the form the JD weights:
   [`track2/uas-security-brief.html`](track2/uas-security-brief.html). **[built]**
