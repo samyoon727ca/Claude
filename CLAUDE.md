@@ -111,5 +111,8 @@ Cert/clearance state appears in three places that must stay in sync:
 section, and `docs/portfolio-blueprint.svg` cell 8. Current: **TS/SCI + SAP
 eligibility (held)**, **Security+** and **CASP+ / SecurityX** held, **CISSP** in
 progress (USAF-funded). The SVG banner cell lists certs only (`Sec+ · CASP+ ·
-CISSP`); the markdown docs also carry the clearance line — decide deliberately
-whether the public banner should surface clearance too.
+CISSP`); the markdown docs also carry the clearance line. **Decision (2026-09-18):
+keep the clearance line OFF the public banner** — TS/SCI+SAP is surfaced at the
+application/hiring stage, not on the distributed repo. So `portfolio-blueprint.svg`
+cell 8 stays certs-only *by design*; do not "sync" TS/SCI+SAP onto it. The three
+cert places must still agree on the **cert** list (Sec+ · CASP+ · CISSP).
