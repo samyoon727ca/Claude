@@ -1,14 +1,15 @@
 # Next Session — Restart Paths
 
 Everything buildable in a locked-down cloud sandbox is **done and verified**
-(6 skills + the mavlink-sectest harness, 4 Track 2 docs, the briefing artifact,
+(5 skills + the mavlink-sectest harness, 4 Track 2 docs, the briefing artifact,
 the blueprint). What remains is **hands-on execution** that needs an unrestricted
 host or owned/simulated hardware. This note is the frictionless restart.
 
 ## 0. Confirm state first (30 seconds)
 ```
 git checkout main                                   # tooling branches are merged
-tools/run-checks.sh                                 # expect: 26 passed, 0 failed
+tools/run-checks.sh                                 # clean checkout: 26 passed, 0 failed
+                                                    # (local work/ extraction adds SVGs -> 28; only failures matter)
 ```
 Read [`docs/artifact-plan.md`](artifact-plan.md) for the plan and
 [`docs/qualification-map.md`](qualification-map.md) for competency coverage.
@@ -97,6 +98,7 @@ Goal: the hands-on autopilot assessment. Analytical foundation is already writte
 
 ## Pointers
 - Front door / repo map: [`README.md`](../README.md)
+- Latest audit + consolidated roadmap: [`audit-2026-09-18.md`](audit-2026-09-18.md)
 - Scope & ethics: [`docs/disclosure-policy.md`](disclosure-policy.md)
 - Engineering docs: [`docs/track2/`](track2/)
 - Reusable skills: `.claude/skills/`  ·  Tools: `tools/`

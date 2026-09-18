@@ -170,17 +170,18 @@ Independently re-confirmed this run, not trusting the earlier decompile notes:
    pattern across other Vigor models' public firmware (2960 / 3900 / 165x / …). Many are
    **still supported** → higher impact, fixable, distinct affected products / CVEs. (Needs
    firmware downloads — a user-confirmed step.)
-3. **Disclosure deliverables — NEEDS REFRAME (do NOT send as-is).** `finding.json`,
-   `vendor-report.md`, `disclosure-email.txt`, `CVE-…RESERVED.json`, and the held
-   `writeup-download_ovpn.md` in this directory were all drafted on the (now-falsified)
-   *novel-CVE* premise. Because this is an n-day (CVE-2024-45890), the **new-CVE request must
-   be dropped**. Reframe the remaining paperwork as either (a) a methodology case study
-   (patch-diff → decompile → sanitizer-bypass, like Run 1's n-day writeup) and/or (b) a short
-   CPE coverage-gap note to DrayTek/MITRE that CVE-2024-45890 also affects the Vigor300B
-   ≤1.5.1.6 (fixed 1.5.1.7). COI/outside-activity: cleared (independent, unattributed
-   research). **Held pending user decision on which of (a)/(b) to produce.** These committed
-   deliverables are NOT yet edited — this pass corrected only the analysis records (this
-   finding, the dedup ledger, CLAUDE.md).
+3. **Disclosure deliverables — REFRAMED (done 2026-09-18).** The new-CVE paperwork was
+   retired and reframed for the n-day (CVE-2024-45890):
+   - **Case study (published):** `writeups/draytek-vigor300b-download_ovpn-cmdinjection.md`
+     — methodology-forward (patch-diff → decompile → sanitizer-bypass), maps to
+     CVE-2024-45890, and documents the dedup miss as a transferable lesson.
+   - **CPE coverage-gap note (drafted, held):** `vendor-report.md` reframed into
+     "CVE-2024-45890 also affects Vigor300B ≤1.5.1.6 (fixed 1.5.1.7)" +
+     `disclosure-email.txt` cover email. Sending is a **user-confirmed** step.
+   - `finding.json` reclassified n-day (`existing_cve: CVE-2024-45890`,
+     `new_cve_requested: false`); `writeup-download_ovpn.md` stubbed to point here;
+     `CVE-…RESERVED.json` **deleted** (no new CVE requested).
+   COI/outside-activity: cleared (independent, unattributed research).
 
 ## Reproduction data (working, git-ignored under `diff-out-dt/`)
 - `ghidra/action_table_1516.c` — full 137-entry action table + `download_ovpn` handler + session chain.

@@ -4,7 +4,8 @@ Reverse index: each named Systems Security Engineer competency, the artifacts in
 this portfolio that evidence it, and *how* they evidence it. Artifact IDs refer
 to [`artifact-plan.md`](artifact-plan.md).
 
-Legend: **[built]** exists now · **[planned]** in the sequence · **[cert]** credential.
+Legend: **[built]** exists now · **[building]** partially built / in progress ·
+**[planned]** in the sequence · credentials: **[held]** / **[in progress]**.
 
 ---
 

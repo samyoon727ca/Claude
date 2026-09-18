@@ -26,8 +26,12 @@ settings → App execution aliases.
 ## Verification
 
 `tools/run-checks.sh` is the deterministic gate (Python/shell parse, self-tests,
-SVG/mermaid/link checks, funnel smoke test). A fully-provisioned WSL reports
-**26 passed, 0 failed**. Deps needed to reach that (one-time, needs sudo):
+SVG/mermaid/link checks, funnel smoke test). A fully-provisioned WSL on a **clean
+checkout** reports **26 passed, 0 failed**. (The SVG check scans the whole working
+tree, so after a live firmware extraction the git-ignored `work/` tree adds its own
+SVGs — the DrayTek rootfs contributes two `glyphicons-halflings-regular.svg`, giving
+**28 passed**. The extra count is expected; only *failures* matter.) Deps needed to
+reach that (one-time, needs sudo):
 
 ```bash
 sudo apt update && sudo apt install -y build-essential python3-dev python3-venv
@@ -79,9 +83,12 @@ public writeups under `writeups/`. Three Track 1 runs so far:
   Vigor**3900**, `mainfunction.cgi` `action=download_ovpn`, post-auth, CVSS 8.0, pub.
   2024-11-04); the earlier "no matching CVE / novel" claim was a **dedup miss** (the check
   was scoped to the `vigor300b_firmware` list; the CVE is filed under `vigor3900_firmware`).
-  The 300B is not in that CVE's CPE list, so residual value is only (a) a methodology case
-  study (patch-diff → decompile → sanitizer-bypass, like Run 1) and (b) a possible CPE
-  coverage-gap note to DrayTek/MITRE (affected-product extension, **not** a new CVE). Ghidra
+  The 300B is not in that CVE's CPE list, so residual value is (a) a methodology case study
+  — **published** at `writeups/draytek-vigor300b-download_ovpn-cmdinjection.md` — and (b) a
+  CPE coverage-gap note to DrayTek/MITRE (affected-product extension, **not** a new CVE) —
+  **drafted** as `research/draytek-vigor/vendor-report.md` + `disclosure-email.txt` (held;
+  sending is a user-confirmed step). The new-CVE paperwork was retired: `finding.json`
+  reclassified n-day, the held writeup stubbed, the RESERVED CVE record deleted. Ghidra
   decompile+disasm evidence under git-ignored `diff-out-dt/ghidra/`. **A genuinely new CVE
   could now only come from the fan-out to a still-supported, out-of-CPE, unpatched model.**
   See `research/draytek-vigor/finding-openvpn-cmdinjection.md` and `acquisition-log.md`.

@@ -36,6 +36,7 @@ docs/
   qualification-map.md        Every artifact -> a specific SSE competency + coverage snapshot
   portfolio-blueprint.svg     One-image end-state blueprint (the banner above)
   NEXT-SESSION.md             Two restart paths (Track 1 live run · P5.1 capstone)
+  audit-2026-09-18.md         Consistency/hygiene audit + consolidated next-steps roadmap
   disclosure-policy.md        Coordinated disclosure + legal/ethics scope
   track1-target-selection.md  Target choice: rubric + freshness pass + CVE-volume reorder
   track1-acquisition-runbook.md  Turnkey P1.1: acquire -> confirm SoC -> triage -> diff -> dedup
@@ -108,7 +109,7 @@ The tooling funnel and the engineering-document set are **built and verified on
 fixtures**; what remains is hands-on execution that needs an unrestricted host.
 
 **Built**
-- **Track 3 — six reusable Skills** (firmware-triage, binary-diff,
+- **Track 3 — five reusable Skills** (firmware-triage, binary-diff,
   finding-to-vendor-report, finding-to-cve-writeup, security-dataviz) plus the
   **mavlink-sectest** harness — the full acquire → triage → diff → report → CVE →
   visualize funnel, each verified end-to-end on synthetic fixtures.
@@ -142,10 +143,13 @@ fixtures**; what remains is hands-on execution that needs an unrestricted host.
 - **Track 1 — where a genuinely new CVE could still come from:** the DrayTek run 3 bug is
   an n-day (CVE-2024-45890), so the remaining upside is the **fan-out** — grep the same
   `download_ovpn` → `create_client_conf.sh` unquoted-args pattern across other Vigor models
-  and look for a **still-supported, out-of-CPE, unpatched** one. In parallel, close out run 3
-  as a methodology case study and (optionally) a CPE coverage-gap note to DrayTek/MITRE that
-  CVE-2024-45890 also affects the Vigor300B. A runtime PoC on an owned/emulated ≤ 1.5.1.6
-  device substantiates the case study. See the top-priority item in
+  and look for a **still-supported, out-of-CPE, unpatched** one. Run 3 itself is closed out:
+  the methodology case study is published at
+  [`writeups/draytek-vigor300b-download_ovpn-cmdinjection.md`](writeups/draytek-vigor300b-download_ovpn-cmdinjection.md),
+  and a CPE coverage-gap note to DrayTek/MITRE (CVE-2024-45890 also affects the Vigor300B) is
+  drafted in [`research/draytek-vigor/`](research/draytek-vigor/) (sending it is a
+  user-confirmed step). A runtime PoC on an owned/emulated ≤ 1.5.1.6 device would further
+  substantiate the case study. See the top-priority item in
   [`docs/artifact-plan.md`](docs/artifact-plan.md). Disclosure obligation: handle personal
   COI / outside-activity reporting first ([`docs/disclosure-policy.md`](docs/disclosure-policy.md) §5).
 - **P5.1** — the hands-on UAS capstone assessment (threat model + test harness ready).
