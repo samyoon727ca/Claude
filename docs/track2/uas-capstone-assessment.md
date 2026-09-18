@@ -118,6 +118,11 @@ probes are dropped, so it observes "the attack didn't succeed" but can't get a p
 ACK to assert PASS — the correct, honest behavior on a hardened link. The deterministic
 PASS/reject proof is the **P6.2** module (§6).
 
+> *Note: the archived signing-on report cites the `failsafe` evidence as `STAT_RUNTIME` —
+> a harness param-fetch bug (it read the next `PARAM_VALUE` off the MAVProxy-streamed link
+> instead of the requested one). Fixed in `mavlink_sectest.py` (now matches on `param_id`);
+> the failsafe **PASS** verdict stands on `FS_THR_ENABLE=1.0` from the stock run.*
+
 ## 6. Analysis & findings
 
 **The stock open build fails the entire missing-authentication cluster — exactly the

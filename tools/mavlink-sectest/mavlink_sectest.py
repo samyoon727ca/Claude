@@ -73,6 +73,32 @@ def verdict_failsafe(params):
            ("FAIL", f"failsafe disabled ({detail})")
 
 
+def fetch_param(conn, tsys, tcomp, name, timeout=3.0):
+    """Read ONE parameter by name, matching on param_id.
+
+    param_request_read_send does not guarantee the *next* PARAM_VALUE is the one we
+    asked for: a GCS/MAVProxy sharing the link streams the whole parameter table, so a
+    bare recv_match(type="PARAM_VALUE") can return an unrelated param (e.g. STAT_RUNTIME).
+    Match on param_id and drain non-matching values until the deadline. Returns the value,
+    or None if the named parameter never arrives.
+    """
+    want = name.decode() if isinstance(name, (bytes, bytearray)) else name
+    conn.mav.param_request_read_send(tsys, tcomp, name, -1)
+    deadline = time.time() + timeout
+    while True:
+        remaining = deadline - time.time()
+        if remaining <= 0:
+            return None
+        pv = conn.recv_match(type="PARAM_VALUE", blocking=True, timeout=remaining)
+        if pv is None:
+            return None
+        pid = pv.param_id
+        if isinstance(pid, (bytes, bytearray)):
+            pid = pid.decode(errors="replace")
+        if pid.rstrip("\x00") == want:
+            return pv.param_value
+
+
 class ReplayDetector:
     """Tracks frame identities; .seen(key) is True if key was already presented."""
     def __init__(self):
@@ -165,10 +191,9 @@ def run_live(url, observe_s, allow_nonsim):
     params = {}
     for name in (b"FS_THR_ENABLE", b"NAV_RCL_ACT"):   # ArduPilot / PX4 respectively
         try:
-            conn.mav.param_request_read_send(tsys, tcomp, name, -1)
-            pv = conn.recv_match(type="PARAM_VALUE", blocking=True, timeout=3)
-            if pv is not None:
-                params[pv.param_id] = pv.param_value
+            val = fetch_param(conn, tsys, tcomp, name)
+            if val is not None:
+                params[name.decode()] = val
         except Exception:
             pass
     v, d = verdict_failsafe(params); add("failsafe", v, d)
