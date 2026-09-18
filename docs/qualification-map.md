@@ -82,8 +82,9 @@ Legend: **[built]** exists now · **[building]** partially built / in progress �
   disclosure email; **[built]**. **P3.1** `finding-to-cve-writeup` Skill —
   CVE JSON 5.1 record + sanitized public writeup + publish linter; **[built]**.
 - **P3.3** Public writeup — externally visible written + visual communication. **[planned]**
-- **P6.3** Program-leadership security brief (deck or recorded talk) — an actual
-  *brief*, the form the JD weights, which no current artifact provides. **[planned]**
+- **P6.3** Program-leadership security brief — a 12-slide leadership deck synthesizing
+  the CVE work + the UAS threat→gap→fix story, the form the JD weights:
+  [`track2/uas-security-brief.html`](track2/uas-security-brief.html). **[built]**
 
 ### 8. Clearance & certifications / DoD 8140
 - **Clearance: TS/SCI with SAP eligibility — held.** Clears the hard gate on most

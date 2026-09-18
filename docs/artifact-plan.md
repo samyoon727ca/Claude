@@ -132,7 +132,7 @@ parallelize the additive gap-fillers so a stall in one never blocks the others:
 |----|-------------|-------|-----|------------|
 | P6.1 | FPGA security reference artifact **[planned]** | 2 | Bitstream authentication/encryption, eFUSE key provisioning, secure configuration, DPA/side-channel exposure, PUF-based keying; RoT extended into programmable logic; threat->requirement->T&E rows | Embedded HW **/ FPGA** features (named JD gap) |
 | P6.2 | One systems-language embedded-security build (Rust or C) **[planned]** | 3 | A real, minimal artifact — e.g. memory-safe firmware-container parser, MAVLink v2 signing implementation, or a C PoC for a confirmed finding; builds + tests | Rust/Go/C/C++ (preferred qual); Software Assurance |
-| P6.3 | Program-leadership security brief **[planned]** | 2 | A slide deck or recorded ~10-min talk translating the UAS threat model (or a CVE) for government / leadership audiences | Briefing gov customers (weighted) |
+| P6.3 | Program-leadership security brief **[built]** | 2 | 12-slide self-contained deck (`docs/track2/uas-security-brief.html`) synthesizing the CVE work + UAS threat→gap→fix for government / leadership audiences | Briefing gov customers (weighted) |
 
 ## Clearance & certifications (role gate — held)
 - **Clearance: TS/SCI with SAP eligibility — active/held.** This is the hard gate on

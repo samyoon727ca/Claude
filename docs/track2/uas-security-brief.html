@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Embedded &amp; Firmware Security — Portfolio Brief</title>
+<style>
+  :root{
+    --bg:#F1F4F9; --card:#FFFFFF; --fg:#131A24; --mut:#59667A; --faint:#8A97AA;
+    --line:#D3DAE6; --teal:#146A85; --green:#2E7D46; --orange:#B4531A; --blue:#3B7DD8;
+    --accent:#146A85;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#0F141B; --card:#161C25; --fg:#E7ECF3; --mut:#9AA7B8; --faint:#6B7789;
+      --line:#2A323D; --teal:#4FB3D0; --green:#54B072; --orange:#E0864B; --blue:#5B9CE8;
+      --accent:#4FB3D0;
+    }
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:var(--bg); color:var(--fg);
+    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    scroll-snap-type:y mandatory; scroll-behavior:smooth;
+  }
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+  .slide{
+    scroll-snap-align:start; min-height:100vh; display:flex; align-items:center;
+    justify-content:center; padding:6vh 6vw; position:relative;
+  }
+  .inner{width:100%; max-width:1000px}
+  .kicker{font:600 13px/1 ui-monospace,monospace; letter-spacing:.08em; text-transform:uppercase; color:var(--teal); margin-bottom:14px}
+  h1{font-size:clamp(28px,4.6vw,52px); line-height:1.08; margin:0 0 14px; letter-spacing:-.5px}
+  h2{font-size:clamp(22px,3.2vw,36px); line-height:1.12; margin:0 0 18px; letter-spacing:-.3px}
+  p{font-size:clamp(15px,1.7vw,19px); line-height:1.5; color:var(--fg); margin:0 0 12px}
+  .sub{color:var(--mut)}
+  ul{margin:8px 0 0; padding:0; list-style:none}
+  li{font-size:clamp(14px,1.7vw,18px); line-height:1.45; margin:10px 0; padding-left:26px; position:relative}
+  li::before{content:"▸"; color:var(--teal); position:absolute; left:0; top:0}
+  li b{color:var(--fg)}
+  .lede{font-size:clamp(17px,2vw,22px); color:var(--mut); line-height:1.45}
+  .grid{display:grid; gap:16px; margin-top:18px}
+  .g3{grid-template-columns:repeat(3,1fr)} .g2{grid-template-columns:repeat(2,1fr)}
+  @media(max-width:760px){.g3,.g2{grid-template-columns:1fr}}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 18px}
+  .card h3{margin:0 0 6px; font-size:15px; color:var(--teal); font-family:ui-monospace,monospace; letter-spacing:.03em}
+  .card p{font-size:14px; margin:0; color:var(--mut)}
+  .pill{display:inline-block; padding:3px 10px; border-radius:999px; font:600 12px/1.6 ui-monospace,monospace; border:1px solid var(--line); color:var(--mut); margin:3px 6px 3px 0}
+  .pill.ok{color:var(--green); border-color:var(--green)}
+  .pill.bad{color:var(--orange); border-color:var(--orange)}
+  .funnel{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:20px}
+  .step{background:var(--card); border:1px solid var(--line); border-radius:9px; padding:10px 12px; font:600 13px ui-monospace,monospace}
+  .step.tool{border-color:var(--green); color:var(--green)}
+  .step.man{border-color:var(--orange); color:var(--orange); border-style:dashed}
+  .arrow{color:var(--faint)}
+  .fig{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; margin-top:16px}
+  .fig svg{width:100%; height:auto; display:block}
+  .two{display:grid; grid-template-columns:1fr 1fr; gap:24px; align-items:center}
+  @media(max-width:760px){.two{grid-template-columns:1fr}}
+  table.ba{width:100%; border-collapse:collapse; margin-top:8px; font-size:15px}
+  table.ba th,table.ba td{border:1px solid var(--line); padding:8px 12px; text-align:left}
+  table.ba th{color:var(--mut); font-weight:600; font-size:13px}
+  .fail{color:var(--orange); font-weight:700} .pass{color:var(--green); font-weight:700}
+  .foot{position:absolute; bottom:18px; left:6vw; right:6vw; display:flex; justify-content:space-between;
+    font:12px ui-monospace,monospace; color:var(--faint)}
+  aside.notes{display:none}
+  body.notes aside.notes{
+    display:block; margin-top:20px; padding:12px 14px; border-left:3px solid var(--teal);
+    background:var(--card); border-radius:0 8px 8px 0; font-size:13px; color:var(--mut); line-height:1.5;
+  }
+  aside.notes b{color:var(--fg)}
+  .hint{position:fixed; bottom:10px; right:12px; font:11px ui-monospace,monospace; color:var(--faint); z-index:9}
+  @media print{ .slide{min-height:auto; page-break-after:always; padding:24px} .hint{display:none} body{background:#fff} }
+</style>
+</head>
+<body>
+
+<div class="hint">← → navigate · N notes · this deck lives in the repo</div>
+
+<!-- 1 -->
+<section class="slide">
+  <div class="inner">
+    <div class="kicker">Portfolio brief · Systems Security Engineer</div>
+    <h1>Embedded &amp; Firmware Security</h1>
+    <p class="lede">Owning security end-to-end for defense embedded systems — from
+      threat-derived requirements through implementation to test &amp; evaluation.</p>
+    <div style="margin-top:22px">
+      <span class="pill">Samuel Yoon</span>
+      <span class="pill ok">TS/SCI + SAP eligibility — held</span>
+      <span class="pill ok">Security+ · CASP+/SecurityX — held</span>
+      <span class="pill">CISSP — in progress</span>
+    </div>
+    <aside class="notes"><b>Open:</b> One-line who I am — I do hands-on embedded/firmware security
+      engineering, and the clearance + certs clear the hard gate. The rest of this brief is the
+      <i>evidence</i> that I can do the work, not just that I'm eligible.</aside>
+  </div>
+  <div class="foot"><span>UNCLASSIFIED · open-source targets · coordinated disclosure</span><span>1 / 12</span></div>
+</section>
+
+<!-- 2 -->
+<section class="slide">
+  <div class="inner">
+    <div class="kicker">Thesis</div>
+    <h2>The whole security-engineering loop, on one system class</h2>
+    <p class="lede">Derive requirements from threats → design → <b>implement the control</b> →
+      run T&amp;E → brief the result. Demonstrated across three tracks.</p>
+    <div class="grid g3">
+      <div class="card"><h3>Track 1 — Research</h3><p>Real firmware, patch-diffing, coordinated disclosure. Two n-days confirmed at the code level.</p></div>
+      <div class="card"><h3>Track 2 — Engineering</h3><p>Threat models, secure boot, hardening, milestone/anti-tamper — in USG methodology language.</p></div>
+      <div class="card"><h3>Track 3 — Tooling</h3><p>A reusable assessment funnel (5 skills) that makes each analysis faster and more consistent.</p></div>
+    </div>
+    <aside class="notes"><b>Point:</b> An SSE isn't a scanner operator or a doc writer — it's someone who
+      turns threat intel into requirements and can carry them to a tested, implemented control. Everything
+      after this slide maps to that loop.</aside>
+  </div>
+  <div class="foot"><span>Three tracks → one competency set</span><span>2 / 12</span></div>
+</section>
+
+<!-- 3 -->
+<section class="slide">
+  <div class="inner">
+    <div class="kicker">Method · Track 3</div>
+    <h2>A repeatable assessment funnel — automate the work, not the judgment</h2>
+    <div class="funnel">
+      <span class="step">Acquire</span><span class="arrow">→</span>
+      <span class="step tool">Triage</span><span class="arrow">→</span>
+      <span class="step tool">Binary-diff</span><span class="arrow">→</span>
+      <span class="step man">Confirm (Ghidra)</span><span class="arrow">→</span>
+      <span class="step man">PoC</span><span class="arrow">→</span>
+      <span class="step tool">Vendor report</span><span class="arrow">→</span>
+      <span class="step tool">CVE + writeup</span>
+    </div>
+    <p style="margin-top:22px" class="sub">Five reusable skills (green) drive the pipeline; exploitation
+      and severity calls (orange, dashed) stay human. Plain, auditable files — no exotic dependencies —
+      gated by a deterministic verification harness.</p>
+    <aside class="notes"><b>Point:</b> The compounding lever — build the skill before the third time you'd
+      do a task by hand. And I deliberately keep judgment (confirm/PoC) manual: automation that claims to
+      make severity calls is a liability.</aside>
+  </div>
+  <div class="foot"><span>acquire → triage → diff → confirm → report → CVE</span><span>3 / 12</span></div>
+</section>
+
+<!-- 4 -->
+<section class="slide">
+  <div class="inner">
+    <div class="kicker">Track 1 · Vulnerability research</div>
+    <h2>Method proven end-to-end on real vendor firmware</h2>
+    <div class="grid g2">
+      <div class="card"><h3>DIR-816L (D-Link, MIPS-BE)</h3><p>Patch-diff rediscovered an unauth HNAP
+        <span class="mono">SOAPAction</span> command injection → deduped as an <b>n-day</b> (CVE-2015-2051 class). Published case study.</p></div>
+      <div class="card"><h3>Vigor300B (DrayTek, ARM-LE)</h3><p>Ghidra confirmed a root <span class="mono">download_ovpn</span>
+        command injection → <b>CVE-2024-45890</b>. Coverage-gap notice drafted.</p></div>
+    </div>
+    <p style="margin-top:18px"><b>The discipline that matters:</b> run 3 was first logged as novel — a
+      wider sibling-model dedup caught the miss and corrected it to an n-day. Honest dedup is the single
+      most reputation-critical step in disclosure, and it's built into the method.</p>
+    <aside class="notes"><b>Point:</b> Two things sell here — (1) I can drive real firmware from acquisition
+      to a confirmed root RCE at the code level, and (2) I'll correct my own record. A false "novel" claim
+      is the fastest way to lose credibility with a PSIRT or a CNA; I caught one and fixed it.</aside>
+  </div>
+  <div class="foot"><span>2 n-days confirmed at code level · dedup discipline</span><span>4 / 12</span></div>
+</section>
+
+<!-- 5 -->
+<section class="slide">
+  <div class="inner">
+    <div class="kicker">Track 1 · Spotlight</div>
+    <h2>DrayTek Vigor300B — patch-diff to root RCE</h2>
+    <ul>
+      <li>Diffed the public <span class="mono">1.5.1.6 → 1.5.1.7</span> window → a <b>silent</b> hardening of <span class="mono">mainfunction.cgi</span> (unquoted → single-quoted args).</li>
+      <li>Ghidra decompile + ARM disasm: an <b>incomplete-blocklist sanitizer</b> — <span class="mono">&amp;</span> and brace-expansion <span class="mono">{cmd,arg}</span> survive → OS command injection.</li>
+      <li>Runs as <b>root</b> (lighttpd drops no privilege); post-auth operator/admin.</li>
+      <li>Deduped to <b>CVE-2024-45890</b> — the whole <span class="mono">action=</span> family is CVE'd (CVE-2024-45884…45893). No novel headroom on the 300B.</li>
+    </ul>
+    <aside class="notes"><b>Point:</b> This is the full reversing story in four beats — find the silent fix,
+      decode the sanitizer from disassembly, establish impact (root) and auth, then dedup rigorously.
+      The outcome being an n-day doesn't diminish the method; it demonstrates it.</aside>
+  </div>
+  <div class="foot"><span>silent fix → sanitizer bypass → root → dedup</span><span>5 / 12</span></div>
+</section>
+
+<!-- 6 -->
+<section class="slide">
+  <div class="inner">
+    <div class="kicker">Track 2 · Security engineering</div>
+    <h2>Engineering docs in USG methodology language</h2>
+    <div class="grid g2">
+      <div class="card"><h3>UAS threat model</h3><p>NIST SP 800-160 / 800-154 / 800-30 · STRIDE · ATT&amp;CK-ICS · requirements-from-threat.</p></div>
+      <div class="card"><h3>Secure boot / RoT</h3><p>Chain-of-trust, key hierarchy, lifecycle &amp; anti-tamper · 800-193/147/155.</p></div>
+      <div class="card"><h3>Hardening writeup</h3><p>Defense-in-depth on a Linux node · 800-53 r5 / CMMC / 800-171 controls map.</p></div>
+      <div class="card"><h3>Milestone + anti-tamper</h3><p>SRR→PRR gates, MBSE traceability, DoD AT process (5200.39/47E).</p></div>
+    </div>
+    <aside class="notes"><b>Point:</b> I can write and reason in the vocabulary a government customer and a
+      milestone review actually use. These are the "tell" — deliberately frozen so they don't read as
+      survey material; the "show" is the capstone next.</aside>
+  </div>
+  <div class="foot"><span>competencies 1–7 · methodology fluency</span><span>6 / 12</span></div>
+</section>
+
+<!-- 7 -->
+<section class="slide">
+  <div class="inner">
+    <div class="kicker">Capstone · P5.1</div>
+    <h2>UAS autopilot — threats become testable requirements</h2>
+    <div class="two">
+      <div>
+        <p class="sub">A data-centric threat model (ArduPilot/PX4 + MAVLink) ranks the risk, and the
+          top cluster is one theme: <b>missing authentication</b> on interfaces the design trusts but the
+          physics does not.</p>
+        <p class="sub">Each threat → a verifiable <b>SHALL</b> requirement → an automated T&amp;E check.</p>
+      </div>
+      <div class="fig" aria-label="threats by risk">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 488" role="img" aria-label="UAS autopilot — threat events by risk">
+<style>.b0{fill:var(--card)}.t0{fill:var(--fg);font:600 17px system-ui,sans-serif}.l0{fill:var(--fg);font:13px ui-monospace,monospace}.v0{fill:var(--mut);font:600 12px system-ui,sans-serif}.ax{stroke:var(--line)}.C{fill:#B4232A}.H{fill:#C6641B}.M{fill:#B8901A}</style>
+<rect class="b0" x="0" y="0" width="780" height="488"/>
+<text class="t0" x="300" y="30">Threat events by risk (NIST SP 800-30)</text>
+<line class="ax" x1="300" y1="50" x2="300" y2="464"/>
+<text class="l0" x="290" y="73.68" text-anchor="end">GNSS spoofing → position hijack</text><rect class="C" x="300" y="56" width="410" height="26" rx="3"/><text class="v0" x="718" y="73.68">9</text>
+<text class="l0" x="290" y="107.68" text-anchor="end">MAVLink command injection</text><rect class="H" x="300" y="90" width="387" height="26" rx="3"/><text class="v0" x="695" y="107.68">8.5</text>
+<text class="l0" x="290" y="141.68" text-anchor="end">Unsigned firmware upload</text><rect class="H" x="300" y="124" width="364" height="26" rx="3"/><text class="v0" x="672" y="141.68">8</text>
+<text class="l0" x="290" y="175.68" text-anchor="end">Companion computer compromise</text><rect class="H" x="300" y="158" width="341" height="26" rx="3"/><text class="v0" x="649" y="175.68">7.5</text>
+<text class="l0" x="290" y="209.68" text-anchor="end">GCS station compromise</text><rect class="H" x="300" y="192" width="341" height="26" rx="3"/><text class="v0" x="649" y="209.68">7.5</text>
+<text class="l0" x="290" y="243.68" text-anchor="end">Supply-chain firmware tamper</text><rect class="H" x="300" y="226" width="318" height="26" rx="3"/><text class="v0" x="626" y="243.68">7</text>
+<text class="l0" x="290" y="277.68" text-anchor="end">RC link jamming (DoS)</text><rect class="H" x="300" y="260" width="318" height="26" rx="3"/><text class="v0" x="626" y="277.68">7</text>
+<text class="l0" x="290" y="311.68" text-anchor="end">Telemetry eavesdrop</text><rect class="M" x="300" y="294" width="273" height="26" rx="3"/><text class="v0" x="581" y="311.68">6</text>
+<text class="l0" x="290" y="345.68" text-anchor="end">Telemetry replay</text><rect class="M" x="300" y="328" width="250" height="26" rx="3"/><text class="v0" x="558" y="345.68">5.5</text>
+</svg>
+      </div>
+    </div>
+    <aside class="notes"><b>Point:</b> This is the core SSE task — I'm not just listing threats, I'm turning
+      the top-ranked ones into requirements I can measure. The next two slides measure them.</aside>
+  </div>
+  <div class="foot"><span>threat model → SHALL requirements → T&amp;E</span><span>7 / 12</span></div>
+</section>
+
+<!-- 8 -->
+<section class="slide">
+  <div class="inner">
+    <div class="kicker">Capstone · Result</div>
+    <h2>Measured against ArduPilot SITL — the prediction held</h2>
+    <div class="two">
+      <div>
+        <p>Ran the MAVLink T&amp;E harness against a stock software-in-the-loop autopilot:
+          <b class="fail">3 FAIL</b>, all in the missing-authentication cluster the model ranked at the top.</p>
+        <ul>
+          <li><span class="mono">signing</span> — frames unsigned (T1/T5)</li>
+          <li><span class="mono">cmd_injection</span> — unsigned command accepted (T1)</li>
+          <li><span class="mono">replay</span> — replayed frame re-accepted (T5)</li>
+        </ul>
+      </div>
+      <div class="fig" aria-label="findings by risk">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 182" role="img" aria-label="Capstone findings by risk">
+<style>.b1{fill:var(--card)}.t1{fill:var(--fg);font:600 16px system-ui,sans-serif}.l1{fill:var(--fg);font:13px ui-monospace,monospace}.v1{fill:var(--mut);font:600 12px system-ui,sans-serif}.ax1{stroke:var(--line)}.bar1{fill:var(--orange)}</style>
+<rect class="b1" x="0" y="0" width="780" height="182"/>
+<text class="t1" x="300" y="30">Open findings by risk (stock SITL)</text>
+<line class="ax1" x1="300" y1="50" x2="300" y2="158"/>
+<text class="l1" x="290" y="73.68" text-anchor="end">signing (T1/T5)</text><rect class="bar1" x="300" y="56" width="410" height="26" rx="3"/><text class="v1" x="718" y="73.68">8.5</text>
+<text class="l1" x="290" y="107.68" text-anchor="end">cmd_injection (T1)</text><rect class="bar1" x="300" y="90" width="410" height="26" rx="3"/><text class="v1" x="718" y="107.68">8.5</text>
+<text class="l1" x="290" y="141.68" text-anchor="end">replay (T5)</text><rect class="bar1" x="300" y="124" width="265" height="26" rx="3"/><text class="v1" x="573" y="141.68">5.5</text>
+</svg>
+      </div>
+    </div>
+    <aside class="notes"><b>Point:</b> The value isn't "SITL is insecure" — everyone knows that. It's that I
+      predicted the failure from the threat model and then <i>measured</i> it against the exact SHALL
+      requirements, reproducibly and benignly.</aside>
+  </div>
+  <div class="foot"><span>threat → requirement → measured gap</span><span>8 / 12</span></div>
+</section>
+
+<!-- 9 -->
+<section class="slide">
+  <div class="inner">
+    <div class="kicker">Capstone · The fix, proven</div>
+    <h2>Found the gap — and proved the fix, two ways</h2>
+    <table class="ba">
+      <tr><th>Check</th><th>Stock</th><th>Signing enabled</th></tr>
+      <tr><td class="mono">signing</td><td class="fail">FAIL</td><td class="pass">PASS</td></tr>
+      <tr><td class="mono">cmd_injection</td><td class="fail">FAIL</td><td class="pass">no longer accepted</td></tr>
+      <tr><td class="mono">replay</td><td class="fail">FAIL</td><td class="pass">rejected</td></tr>
+    </table>
+    <p style="margin-top:16px"><b>(1) On the live link:</b> enabling MAVLink v2 signing → <b class="pass">0 FAIL</b>.
+      <b>(2) In code I wrote:</b> a <b>Rust</b> MAVLink v2 signing module — sign / verify / anti-replay,
+      <b>7/7 tests</b>, cross-checked byte-for-byte against pymavlink, <span class="mono">#![forbid(unsafe_code)]</span>, zero dependencies.</p>
+    <aside class="notes"><b>Point — the money slide:</b> This is the difference between a finding and an
+      engineering result. I closed the gap on the real link AND implemented the control myself in a
+      memory-safe systems language, proven by an interop test against a reference implementation.</aside>
+  </div>
+  <div class="foot"><span>signing before/after · P6.2 Rust module (7/7)</span><span>9 / 12</span></div>
+</section>
+
+<!-- 10 -->
+<section class="slide">
+  <div class="inner">
+    <div class="kicker">Coverage</div>
+    <h2>Every SSE competency has evidence</h2>
+    <div class="grid g3">
+      <div class="card"><h3>1 · Architecture / reqs</h3><p>Threat→requirement decomposition (800-160).</p></div>
+      <div class="card"><h3>2 · Embedded HW / secure boot</h3><p>RoT explainer, key hierarchy, anti-tamper.</p></div>
+      <div class="card"><h3>3 · Firmware assessment</h3><p>Two code-level n-days; the funnel.</p></div>
+      <div class="card"><h3>4 · USG methodology</h3><p>800-160/154/30, CMMC, ATT&amp;CK-ICS.</p></div>
+      <div class="card"><h3>5 · Milestone / MBSE</h3><p>SRR→PRR gates, SCRM, config mgmt.</p></div>
+      <div class="card"><h3>6 · Anti-tamper</h3><p>CPI→plan→AT&amp;E process.</p></div>
+      <div class="card"><h3>7 · Briefing</h3><p>This deck · charts · writeups.</p></div>
+      <div class="card"><h3>8 · Clearance &amp; certs</h3><p>TS/SCI+SAP · Sec+ · CASP+ · CISSP (in prog).</p></div>
+      <div class="card"><h3>+ Systems language</h3><p>Rust MAVLink signing module (P6.2).</p></div>
+    </div>
+    <aside class="notes"><b>Point:</b> Map to the JD's competency set explicitly. 1–7 have concrete artifacts,
+      8 is held, and the preferred systems-language qual is covered by the Rust module.</aside>
+  </div>
+  <div class="foot"><span>competencies 1–8 + preferred quals</span><span>10 / 12</span></div>
+</section>
+
+<!-- 11 -->
+<section class="slide">
+  <div class="inner">
+    <div class="kicker">Why it matters</div>
+    <h2>What this demonstrates</h2>
+    <ul>
+      <li><b>End-to-end ownership</b> — requirements from threat intel, through implementation, to T&amp;E.</li>
+      <li><b>Real hands-on depth</b> — code-level reversing and a memory-safe control I built, not just prose.</li>
+      <li><b>Test &amp; evaluation</b> — benign, simulation-first, reproducible, mapped to requirements.</li>
+      <li><b>Program discipline</b> — coordinated disclosure, honest dedup, provenance and hashes recorded.</li>
+    </ul>
+    <aside class="notes"><b>Point:</b> Tie it together — the clearance clears the gate, and this body of work
+      shows I do the engineering. That combination is the hire.</aside>
+  </div>
+  <div class="foot"><span>ownership · depth · T&amp;E · discipline</span><span>11 / 12</span></div>
+</section>
+
+<!-- 12 -->
+<section class="slide">
+  <div class="inner">
+    <div class="kicker">Close</div>
+    <h1>Ready to own it end-to-end.</h1>
+    <p class="lede">Embedded &amp; firmware security engineering — threat to tested control.</p>
+    <div style="margin-top:20px">
+      <span class="pill">Samuel Yoon</span>
+      <span class="pill ok">TS/SCI + SAP eligibility · Security+ · CASP+/SecurityX</span>
+      <span class="pill">CISSP in progress</span>
+    </div>
+    <p class="sub" style="margin-top:22px">All work on UNCLASSIFIED, open-source targets · vulnerability
+      research under coordinated disclosure.</p>
+    <aside class="notes"><b>Close:</b> Invite questions; offer to walk any single thread deeper — the DrayTek
+      reversing, the UAS T&amp;E, or the Rust signing implementation.</aside>
+  </div>
+  <div class="foot"><span>UNCLASSIFIED · coordinated disclosure</span><span>12 / 12</span></div>
+</section>
+
+<script>
+  (function(){
+    var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+    // Derive the current slide from scroll position on each press, so rapid keys
+    // never desync from a smooth-scroll animation.
+    function current(){
+      var mid = window.scrollY + window.innerHeight/2, k = 0;
+      for(var j=0;j<slides.length;j++){ if(slides[j].offsetTop <= mid) k = j; }
+      return k;
+    }
+    function go(n){ n = Math.max(0, Math.min(slides.length-1, n)); slides[n].scrollIntoView({behavior:'smooth'}); }
+    document.addEventListener('keydown', function(e){
+      if(['ArrowRight','ArrowDown',' ','PageDown'].indexOf(e.key)>=0){ e.preventDefault(); go(current()+1); }
+      else if(['ArrowLeft','ArrowUp','PageUp'].indexOf(e.key)>=0){ e.preventDefault(); go(current()-1); }
+      else if(e.key==='Home'){ e.preventDefault(); go(0); }
+      else if(e.key==='End'){ e.preventDefault(); go(slides.length-1); }
+      else if(e.key==='n'||e.key==='N'){ document.body.classList.toggle('notes'); }
+    }, {passive:false});
+  })();
+</script>
+</body>
+</html>
