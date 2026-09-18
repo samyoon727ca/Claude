@@ -242,22 +242,25 @@
     <div class="two">
       <div>
         <p>Ran the MAVLink T&amp;E harness against a stock software-in-the-loop autopilot:
-          <b class="fail">3 FAIL</b>, all in the missing-authentication cluster the model ranked at the top.</p>
+          <b class="fail">4 of 5</b> SHALL requirements unmet — the missing-authentication cluster
+          the model ranked at the top, plus cleartext telemetry.</p>
         <ul>
           <li><span class="mono">signing</span> — frames unsigned (T1/T5)</li>
           <li><span class="mono">cmd_injection</span> — unsigned command accepted (T1)</li>
           <li><span class="mono">replay</span> — replayed frame re-accepted (T5)</li>
+          <li><span class="mono">telemetry</span> — mission data in cleartext (T4)</li>
         </ul>
       </div>
       <div class="fig" aria-label="findings by risk">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 182" role="img" aria-label="Capstone findings by risk">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 216" role="img" aria-label="Capstone findings by risk">
 <style>.b1{fill:var(--card)}.t1{fill:var(--fg);font:600 16px system-ui,sans-serif}.l1{fill:var(--fg);font:13px ui-monospace,monospace}.v1{fill:var(--mut);font:600 12px system-ui,sans-serif}.ax1{stroke:var(--line)}.bar1{fill:var(--orange)}</style>
-<rect class="b1" x="0" y="0" width="780" height="182"/>
+<rect class="b1" x="0" y="0" width="780" height="216"/>
 <text class="t1" x="300" y="30">Open findings by risk (stock SITL)</text>
-<line class="ax1" x1="300" y1="50" x2="300" y2="158"/>
+<line class="ax1" x1="300" y1="50" x2="300" y2="192"/>
 <text class="l1" x="290" y="73.68" text-anchor="end">signing (T1/T5)</text><rect class="bar1" x="300" y="56" width="410" height="26" rx="3"/><text class="v1" x="718" y="73.68">8.5</text>
 <text class="l1" x="290" y="107.68" text-anchor="end">cmd_injection (T1)</text><rect class="bar1" x="300" y="90" width="410" height="26" rx="3"/><text class="v1" x="718" y="107.68">8.5</text>
-<text class="l1" x="290" y="141.68" text-anchor="end">replay (T5)</text><rect class="bar1" x="300" y="124" width="265" height="26" rx="3"/><text class="v1" x="573" y="141.68">5.5</text>
+<text class="l1" x="290" y="141.68" text-anchor="end">telemetry (T4)</text><rect class="bar1" x="300" y="124" width="289" height="26" rx="3"/><text class="v1" x="597" y="141.68">6.0</text>
+<text class="l1" x="290" y="175.68" text-anchor="end">replay (T5)</text><rect class="bar1" x="300" y="158" width="265" height="26" rx="3"/><text class="v1" x="573" y="175.68">5.5</text>
 </svg>
       </div>
     </div>

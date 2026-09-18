@@ -42,6 +42,7 @@ docs/
   track1-acquisition-runbook.md  Turnkey P1.1: acquire -> confirm SoC -> triage -> diff -> dedup
   track2/
     secure-boot-root-of-trust.md                        RoT, verified/measured boot, keys, anti-tamper
+    fpga-security-reference.md                          P6.1 FPGA secure config: bitstream auth/encryption, eFUSE/PUF keys, RoT into PL
     uas-autopilot-threat-model.md                       NIST SP 800-160 threat model (ArduPilot/PX4 + MAVLink)
     embedded-hardening-writeup.md                       Hardening a real Linux node -> 800-53/CMMC controls
     uas-mavlink-hardening.md                            Remediation for the capstone findings (signing, anti-replay, link encryption)

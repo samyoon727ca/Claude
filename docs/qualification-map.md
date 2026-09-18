@@ -26,8 +26,9 @@ Legend: **[built]** exists now · **[building]** partially built / in progress �
 - **P4.2** Lifecycle + anti-tamper section (tamper-resistant key storage, secure
   debug, zeroization, passive/active AT). **[built]**
 - **P5.2** Dedicated anti-tamper approach + process documentation. **[planned]**
-- **P6.1** FPGA security reference artifact — the current thin spot: bitstream
-  authentication/encryption, eFUSE keying, PUFs, RoT into programmable logic. **[planned]**
+- **P6.1** FPGA security reference artifact — bitstream authentication/encryption, eFUSE
+  vs BBRAM keying, PUF-derived keys, DPA/side-channel + anti-tamper, and the RoT extended
+  into programmable logic ([`track2/fpga-security-reference.md`](track2/fpga-security-reference.md)). **[built]**
 
 ### 3. Firmware / application / network / IoT / embedded security assessment
 - **P0.3** `firmware-triage` Skill — the assessment funnel itself. **[built]**
@@ -48,10 +49,11 @@ Legend: **[built]** exists now · **[building]** partially built / in progress �
   writes up as a second n-day case study (CVE-2024-45890). A genuinely new CVE depends on
   the fan-out to a still-supported / unpatched Vigor model. **[building]**
 - **P5.1** UAS autopilot + MAVLink assessment — IoT/embedded on a defense-relevant
-  class of system; **mavlink-sectest** run vs ArduPilot SITL (2026-09-18): the T1/T5
-  auth cluster fails as the threat model predicted (3 FAIL/1 PASS/1 INFO) — see
-  [`track2/uas-capstone-assessment.md`](track2/uas-capstone-assessment.md). Remaining:
-  the signing before/after + write-up polish. **[building]**
+  class of system; **mavlink-sectest** run vs ArduPilot SITL: stock link **4 FAIL / 1 PASS**
+  (T1/T4/T5 unmet as predicted), the signing before/after clears the T1/T5 cluster, and the
+  P6.2 module gives the deterministic proof — see
+  [`track2/uas-capstone-assessment.md`](track2/uas-capstone-assessment.md) +
+  [`track2/uas-mavlink-hardening.md`](track2/uas-mavlink-hardening.md). **[built]**
 
 ### 4. USG cyber methodology fluency (vocabulary to document around)
 - **NIST SP 800-160** — P4.3 threat model is structured in its language. **[planned]**
