@@ -1,0 +1,42 @@
+[
+  {
+    "id": "signing",
+    "threat": "T1/T5",
+    "requirement": "Autopilot SHALL reject unsigned MAVLink commands",
+    "verdict": "PASS",
+    "detail": "all 11 frames signed",
+    "risk": 8.5
+  },
+  {
+    "id": "telemetry",
+    "threat": "T4",
+    "requirement": "Mission telemetry SHALL be encrypted in transit",
+    "verdict": "INFO",
+    "detail": "no telemetry decoded",
+    "risk": 6.0
+  },
+  {
+    "id": "cmd_injection",
+    "threat": "T1",
+    "requirement": "Unauthenticated command SHALL NOT be accepted",
+    "verdict": "INFO",
+    "detail": "no COMMAND_ACK observed",
+    "risk": 8.5
+  },
+  {
+    "id": "replay",
+    "threat": "T5",
+    "requirement": "Replayed frames SHALL be rejected (anti-replay)",
+    "verdict": "INFO",
+    "detail": "replayed frame not accepted",
+    "risk": 5.5
+  },
+  {
+    "id": "failsafe",
+    "threat": "T6",
+    "requirement": "A link-loss failsafe SHALL be configured",
+    "verdict": "PASS",
+    "detail": "failsafe configured (STAT_RUNTIME=959.0)",
+    "risk": 7.0
+  }
+]

@@ -8,8 +8,8 @@ host or owned/simulated hardware. This note is the frictionless restart.
 ## 0. Confirm state first (30 seconds)
 ```
 git checkout main                                   # tooling branches are merged
-tools/run-checks.sh                                 # clean checkout: 26 passed, 0 failed
-                                                    # (local work/ extraction adds SVGs -> 28; only failures matter)
+tools/run-checks.sh                                 # clean checkout: 27 passed, 0 failed
+                                                    # (local work/ extraction adds SVGs -> 29; only failures matter)
 ```
 Read [`docs/artifact-plan.md`](artifact-plan.md) for the plan and
 [`docs/qualification-map.md`](qualification-map.md) for competency coverage.
@@ -41,11 +41,13 @@ path pays. Full procedure: [`docs/track1-acquisition-runbook.md`](track1-acquisi
 >   note, and the fan-out to a still-supported/unpatched model (the only new-CVE path). See
 >   [`research/draytek-vigor/finding-openvpn-cmdinjection.md`](../research/draytek-vigor/finding-openvpn-cmdinjection.md).
 >
-> **Next action on this path = the run-3 fan-out** (grep the `download_ovpn` /
-> `create_client_conf.sh` pattern across other Vigor models for a still-supported,
-> out-of-CPE, unpatched one — the only remaining new-CVE path) plus a case-study writeup.
-> A fresh target is equally reasonable now that run 3 is an n-day. The numbered steps below
-> are the vendor-agnostic procedure.
+> **Next action (updated 2026-09-18):** the DrayTek 300B novel-CVE path is **closed** — a
+> secondary dedup found the whole `mainfunction.cgi` command-injection surface is an
+> exhaustively-CVE'd family (CVE-2024-45884…45893, incl. `doOpenVPN`/`download_ovpn`). **The
+> active priority is now Path B (P5.1 UAS capstone).** A DrayTek new CVE could only come from
+> the same pattern on a still-supported, out-of-CPE, unpatched *other* Vigor model
+> (background; needs downloads), or a fresh Track 1 target. The numbered steps below are the
+> vendor-agnostic procedure for either.
 
 1. **Tools:** `.claude/skills/firmware-triage/scripts/setup-tools.sh`
    (binwalk, squashfs-tools, jefferson, ubi_reader, QEMU).
@@ -73,9 +75,16 @@ path pays. Full procedure: [`docs/track1-acquisition-runbook.md`](track1-acquisi
 
 ---
 
-## Path B — P5.1 UAS capstone (portfolio, no income)
+## Path B — P5.1 UAS capstone (portfolio, no income) — ACTIVE
 Goal: the hands-on autopilot assessment. Analytical foundation is already written:
 [`docs/track2/uas-autopilot-threat-model.md`](track2/uas-autopilot-threat-model.md).
+
+> **Status (2026-09-18):** SITL run + signing before/after done — stock ArduCopter fails
+> the T1/T5 cluster (3 FAIL); the signing-enabled re-run clears it (0 FAIL); and the
+> **P6.2** Rust signing module ([`../tools/mavlink-signing/`](../tools/mavlink-signing/SPEC.md),
+> 7/7 cargo tests incl. pymavlink interop) gives the deterministic proof. Results:
+> [`track2/uas-capstone-assessment.md`](track2/uas-capstone-assessment.md). **Next** =
+> resolve the T4 telemetry INFO (stream capture), then fold into the P6.3 brief.
 
 1. **Install + simulate** (open source):
    ```

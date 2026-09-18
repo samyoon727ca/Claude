@@ -51,8 +51,11 @@ converts the portfolio into evidence you *are* an SSE is externally verifiable
    still-supported, out-of-CPE, unpatched Vigor model; run 3 itself closes out as a
    methodology case study (+ optional CPE coverage-gap note), substantiated by a runtime
    PoC. Even as an n-day it advances firmware/embedded assessment (competency 3) from
-   *partial* toward *proven* on method. Top item. (Zyxel, the prior run-2 pick, is blocked
-   at acquisition — ISP-gated patched firmware.)
+   *partial* toward *proven* on method. (Zyxel, the prior run-2 pick, is blocked
+   at acquisition — ISP-gated patched firmware.) **Update 2026-09-18:** a secondary dedup
+   found the 300B `mainfunction.cgi` command-injection surface is fully CVE'd (family
+   CVE-2024-45884…45893), so this item's *new-CVE* upside now lives only in the other-model
+   fan-out (background). **The active lead shifts to item 2 — execute the UAS T&E (P5.1).**
 2. **Execute the UAS T&E** (P5.1). Run `mavlink-sectest` against real SITL and fold
    the results into the capstone — turns the harness from self-test into real result.
 3. **FPGA security artifact** (P6.1). Fills the one *named* JD requirement with zero

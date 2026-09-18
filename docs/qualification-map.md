@@ -44,7 +44,10 @@ Legend: **[built]** exists now · **[building]** partially built / in progress �
   writes up as a second n-day case study (CVE-2024-45890). A genuinely new CVE depends on
   the fan-out to a still-supported / unpatched Vigor model. **[building]**
 - **P5.1** UAS autopilot + MAVLink assessment — IoT/embedded on a defense-relevant
-  class of system; **mavlink-sectest** T&E harness built, hands-on pending. **[building]**
+  class of system; **mavlink-sectest** run vs ArduPilot SITL (2026-09-18): the T1/T5
+  auth cluster fails as the threat model predicted (3 FAIL/1 PASS/1 INFO) — see
+  [`track2/uas-capstone-assessment.md`](track2/uas-capstone-assessment.md). Remaining:
+  the signing before/after + write-up polish. **[building]**
 
 ### 4. USG cyber methodology fluency (vocabulary to document around)
 - **NIST SP 800-160** — P4.3 threat model is structured in its language. **[planned]**

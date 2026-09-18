@@ -26,6 +26,10 @@ _*.extracted/
 *.extracted/
 
 # --- Analysis workspaces & tool scratch ---
+# Harness run-outputs at the repo root are scratch; committed evidence lives under
+# docs/track2/assets/ (e.g. uas-capstone-findings.{csv,svg}).
+/report.json
+/findings.csv
 work/
 workspace/
 triage-out/
@@ -44,6 +48,9 @@ ghidra_projects/
 drafts/private/
 *.private.md
 *.embargoed.md
+
+# --- Rust build output (P6.2 mavlink-signing crate) ---
+target/
 
 # --- OS / editor / language noise ---
 .DS_Store
