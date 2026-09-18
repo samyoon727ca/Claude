@@ -26,6 +26,10 @@ _*.extracted/
 *.extracted/
 
 # --- Analysis workspaces & tool scratch ---
+# Harness run-outputs at the repo root are scratch; committed evidence lives under
+# docs/track2/assets/ (e.g. uas-capstone-findings.{csv,svg}).
+/report.json
+/findings.csv
 work/
 workspace/
 triage-out/

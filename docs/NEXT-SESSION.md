@@ -8,8 +8,8 @@ host or owned/simulated hardware. This note is the frictionless restart.
 ## 0. Confirm state first (30 seconds)
 ```
 git checkout main                                   # tooling branches are merged
-tools/run-checks.sh                                 # clean checkout: 26 passed, 0 failed
-                                                    # (local work/ extraction adds SVGs -> 28; only failures matter)
+tools/run-checks.sh                                 # clean checkout: 27 passed, 0 failed
+                                                    # (local work/ extraction adds SVGs -> 29; only failures matter)
 ```
 Read [`docs/artifact-plan.md`](artifact-plan.md) for the plan and
 [`docs/qualification-map.md`](qualification-map.md) for competency coverage.
@@ -75,9 +75,15 @@ path pays. Full procedure: [`docs/track1-acquisition-runbook.md`](track1-acquisi
 
 ---
 
-## Path B — P5.1 UAS capstone (portfolio, no income)
+## Path B — P5.1 UAS capstone (portfolio, no income) — ACTIVE
 Goal: the hands-on autopilot assessment. Analytical foundation is already written:
 [`docs/track2/uas-autopilot-threat-model.md`](track2/uas-autopilot-threat-model.md).
+
+> **Status (2026-09-18):** first SITL run done — stock ArduCopter fails the T1/T5 auth
+> cluster (3 FAIL / 1 PASS / 1 INFO); measured results in
+> [`track2/uas-capstone-assessment.md`](track2/uas-capstone-assessment.md). **Next = the
+> signing before/after** — enable MAVLink v2 signing, re-run, show `signing`/`cmd_injection`/
+> `replay` flip to PASS.
 
 1. **Install + simulate** (open source):
    ```

@@ -6,11 +6,11 @@ ArduPilot/PX4 software-in-the-loop (SITL) target, and the results are scored, ch
 and (on any failure) written up through the disclosure funnel. This is the "show"
 artifact that turns the threat model from analysis into measured result.*
 
-> **Status: harness built + verified; SITL run pending.** The T&E instrument
-> (`tools/mavlink-sectest`) passes its self-test and the analytical structure below is
-> complete. The **Results** section (§5) is a template to be filled from a real SITL run
-> on an unrestricted host — see [Reproduction](#7-reproduction). Nothing here is fabricated:
-> result cells read *pending* until measured.
+> **Status: SITL run complete (2026-09-18).** Executed against ArduPilot ArduCopter
+> SITL over `tcp:127.0.0.1:5760`. The §5 results are **measured** (from `report.json` /
+> `findings.csv`, archived under [`assets/`](assets/)); the signing-enabled before/after
+> re-run is the next step (§6). Non-MAVLink-link requirements (T2/T3/T7/T9/T10) remain
+> out-of-harness follow-on.
 
 > **Scope, safety & clearance.** UNCLASSIFIED, open-source stack (ArduPilot/PX4 + public
 > MAVLink). **Simulation-first** — the harness targets SITL on localhost and sends only a
@@ -32,14 +32,15 @@ PDR/CDR/TRR.
 
 ## 2. System under test
 
-| Item | Value (fill at run time) |
-|------|--------------------------|
-| Autopilot stack / version | *pending* (e.g. ArduCopter 4.x SITL / PX4 1.15 SITL) |
-| Simulator | *pending* (ArduPilot `sim_vehicle.py` / PX4 `jmavsim`) |
-| MAVLink dialect / version | *pending* (v2 expected) |
-| Endpoint | `udp:127.0.0.1:14550` (default) |
+| Item | Value |
+|------|-------|
+| Autopilot stack | ArduPilot **ArduCopter SITL** (heartbeat: system 1) |
+| Simulator | ArduPilot `sim_vehicle.py -v ArduCopter -w --no-mavproxy` |
+| MAVLink version | v2 (frames observed **unsigned**) |
+| Endpoint | `tcp:127.0.0.1:5760` (SITL native port) |
 | Harness | `tools/mavlink-sectest/mavlink_sectest.py` (`--selftest` green) |
-| Signing configured? | *pending* (stock SITL: **no** — drives the expected T1/T5 result) |
+| Signing configured? | **No** — 11/11 observed frames unsigned (drives the T1/T5 result) |
+| Run date | 2026-09-18 |
 
 ## 3. Method
 
@@ -80,33 +81,61 @@ T2 GNSS spoofing (signal sim / SITL sensor injection), T3 signed-firmware negati
 (bootloader), T7 companion-computer segmentation, T9 reproducible-build/supply-chain,
 T10 tamper-evident logging. Tracked as follow-on T&E in the threat model §10.
 
-## 5. Results — PENDING SITL RUN
+## 5. Results — measured 2026-09-18 (stock SITL)
 
-Fill from `report.json` / `findings.csv`. Do not populate from expectation — only from a run.
+Verbatim from `report.json` (archived: [`assets/uas-capstone-report.json`](assets/uas-capstone-report.json),
+[`assets/uas-capstone-findings.csv`](assets/uas-capstone-findings.csv)).
 
-| Test | Result (PASS/FAIL/INFO) | Observation | Risk (0–10) | Severity | Requirement met? |
-|------|:-----------------------:|-------------|:-----------:|:--------:|:----------------:|
-| `signing` | *pending* | | | | |
-| `cmd_injection` | *pending* | | | | |
-| `replay` | *pending* | | | | |
-| `telemetry` | *pending* | | | | |
-| `failsafe` | *pending* | | | | |
+| Test | Result | Observation | Risk (0–10) | Severity | SHALL met? |
+|------|:------:|-------------|:-----------:|:--------:|:----------:|
+| `signing` | **FAIL** | 11/11 frames unsigned (MAVLink v2 signing off) | 8.5 | High | ✗ |
+| `cmd_injection` | **FAIL** | unsigned command **ACCEPTED** (benign `REQUEST_MESSAGE`) | 8.5 | High | ✗ |
+| `replay` | **FAIL** | identical replayed frame accepted again (no anti-replay) | 5.5 | Medium | ✗ |
+| `telemetry` | INFO | no telemetry decoded in this config — not decisively tested | 6.0 | undet. | undet. |
+| `failsafe` | **PASS** | link-loss failsafe configured (`FS_THR_ENABLE=1.0`) | 7.0 | — | ✓ |
 
-*Chart (fill after run):* `findings-by-severity.svg` from
-`chart.py bars --csv findings.csv --label finding --value risk --color-by severity`.
+**3 FAIL · 1 PASS · 1 INFO.**
 
-## 6. Analysis & interpretation (approach)
+![UAS capstone findings by risk](assets/uas-capstone-findings.svg)
 
-- **PASS** → the derived requirement is enforced by the tested build; note the enabling
-  control (e.g. signing on) and the gate it clears.
-- **FAIL** → an unmet SHALL. Map it to its threat model row and to the
-  Prevent/Mitigate/Recover survivability column (§9), recommend the named control
-  (v2 signing, telemetry encryption, anti-replay timestamp), and score severity by the
-  cyber-physical loss it enables (control-integrity failures rank highest — a security
-  failure is a safety failure).
-- **INFO** → not decisively testable in this configuration; record why and the method that
-  would decide it (e.g. HIL, signal sim).
-- Roll findings into a gate readiness view: which SHALLs are met at PDR/CDR/TRR, which block.
+## 6. Analysis & findings
+
+**The stock open build fails the entire missing-authentication cluster — exactly the
+threat model's top-ranked risk.** T1 (command integrity) is unmet on two independent
+checks — frames are unsigned (`signing`) and an unsigned command was accepted
+(`cmd_injection`) — and T5 anti-replay fails as a direct consequence (no signature ⇒ no
+monotonic timestamp to reject a replay). This realizes ATT&CK-ICS **T0855 Unauthorized
+Command Message** across trust boundary **TB1**: any actor on the RF medium can inject or
+replay commands to the flight controller. Risk 8.5 (High) reflects the cyber-physical
+loss — control-authority compromise is a safety event, the model's top loss scenario.
+
+- `replay` scores Medium (5.5), not High: impact depends on the semantics of the
+  replayable frame, and it is subsumed once signing (with timestamps) is enabled.
+- `telemetry` (T4) is **INFO, not a pass** — this config (`--no-mavproxy`, no stream
+  requested) emitted no telemetry to inspect, so cleartext could not be *demonstrated*
+  this run. The requirement stands (MAVLink telemetry is unencrypted by default); to
+  decide it, request data streams (`SET_MESSAGE_INTERVAL` / `REQUEST_DATA_STREAM`) or run
+  with MAVProxy streaming, then capture. Tracked as a re-run item.
+- `failsafe` (T6) is the one satisfied SHALL — `FS_THR_ENABLE=1.0` — because it is a
+  *safety* default, not a security control.
+
+**Gate readiness:** T1/T5 are **blocking at PDR/CDR**; T4 undetermined (re-test); T6 clears
+its TRR check. Remediation follows the survivability §9 Prevent column: enable **MAVLink v2
+signing** (closes `signing` + `cmd_injection`, and supplies the timestamp that closes
+`replay`) plus a link-layer encryption/tunnel for T4.
+
+### Next step — before/after (prove the control closes the gap)
+Re-run with signing enabled on the link and record the delta:
+
+| Test | Now (stock) | Expected with signing |
+|------|:-----------:|:---------------------:|
+| `signing` | FAIL | PASS |
+| `cmd_injection` | FAIL | PASS |
+| `replay` | FAIL | PASS (timestamped) |
+
+That before/after is the difference between *finding* the gap and *proving the fix* — the
+SSE-level result. Implementing the signing control itself is the **P6.2** systems-language
+build (a MAVLink v2 signing module), which this assessment then re-tests.
 
 ## 7. Reproduction
 
