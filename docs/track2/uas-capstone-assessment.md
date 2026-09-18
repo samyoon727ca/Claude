@@ -6,11 +6,12 @@ ArduPilot/PX4 software-in-the-loop (SITL) target, and the results are scored, ch
 and (on any failure) written up through the disclosure funnel. This is the "show"
 artifact that turns the threat model from analysis into measured result.*
 
-> **Status: SITL run complete (2026-09-18).** Executed against ArduPilot ArduCopter
-> SITL over `tcp:127.0.0.1:5760`. The §5 results are **measured** (from `report.json` /
-> `findings.csv`, archived under [`assets/`](assets/)); the signing-enabled before/after
-> re-run is the next step (§6). Non-MAVLink-link requirements (T2/T3/T7/T9/T10) remain
-> out-of-harness follow-on.
+> **Status: SITL run + signing before/after complete (2026-09-18).** Executed against
+> ArduPilot ArduCopter SITL. §5 records both the stock run (3 FAIL) and the
+> signing-enabled re-run (0 FAIL); §6 adds a deterministic in-repo proof via the **P6.2**
+> signing module (7/7 `cargo test`, pymavlink interop). Non-MAVLink-link requirements
+> (T2/T3/T7/T9/T10) are out-of-harness follow-on; T4 (telemetry) remains undetermined
+> pending a stream capture.
 
 > **Scope, safety & clearance.** UNCLASSIFIED, open-source stack (ArduPilot/PX4 + public
 > MAVLink). **Simulation-first** — the harness targets SITL on localhost and sends only a
@@ -98,6 +99,25 @@ Verbatim from `report.json` (archived: [`assets/uas-capstone-report.json`](asset
 
 ![UAS capstone findings by risk](assets/uas-capstone-findings.svg)
 
+### After — MAVLink v2 signing enabled (same SITL, `signing setup` in MAVProxy)
+
+Re-run with signing enabled on the link (archived:
+[`assets/uas-capstone-report-signed.json`](assets/uas-capstone-report-signed.json)):
+
+| Test | Before (stock) | After (signing on) | Effect |
+|------|:--------------:|:------------------:|--------|
+| `signing` | FAIL (0 signed) | **PASS** (all 11 frames signed) | T1/T5 authenticity now enforced |
+| `cmd_injection` | FAIL (unsigned accepted) | **INFO** — no `COMMAND_ACK` | injection no longer succeeds |
+| `replay` | FAIL (replay accepted) | **INFO** — replayed frame not accepted | anti-replay now holds |
+| `telemetry` | INFO | INFO | unchanged (T4 needs a stream + encryption) |
+| `failsafe` | PASS | PASS | unchanged |
+
+Result: **0 FAIL** (was 3) — enabling signing closed the T1/T5 cluster. The harness
+downgrades `cmd_injection`/`replay` to **INFO** (not PASS) once signing is on: its unsigned
+probes are dropped, so it observes "the attack didn't succeed" but can't get a positive
+ACK to assert PASS — the correct, honest behavior on a hardened link. The deterministic
+PASS/reject proof is the **P6.2** module (§6).
+
 ## 6. Analysis & findings
 
 **The stock open build fails the entire missing-authentication cluster — exactly the
@@ -124,19 +144,26 @@ its TRR check. Remediation follows the survivability §9 Prevent column: enable 
 signing** (closes `signing` + `cmd_injection`, and supplies the timestamp that closes
 `replay`) plus a link-layer encryption/tunnel for T4.
 
-### Next step — before/after (prove the control closes the gap)
-Re-run with signing enabled on the link and record the delta:
+### Before/after — the control closes the gap (measured)
+Two independent demonstrations:
 
-| Test | Now (stock) | Expected with signing |
-|------|:-----------:|:---------------------:|
-| `signing` | FAIL | PASS |
-| `cmd_injection` | FAIL | PASS |
-| `replay` | FAIL | PASS (timestamped) |
+**(1) On the live link** — enabling MAVLink v2 signing in SITL flipped the cluster
+(§5 "After"): `signing` FAIL→PASS, `cmd_injection`/`replay` FAIL→INFO (attacks no longer
+succeed), **0 FAIL**.
 
-That before/after is the difference between *finding* the gap and *proving the fix* — the
-SSE-level result. Implementing the signing control itself is the **P6.2** systems-language
-build (a MAVLink v2 signing module — [build spec](../../tools/mavlink-signing/SPEC.md)),
-which this assessment then re-tests.
+**(2) Deterministically, in-repo** — the **P6.2** MAVLink v2 signing module
+([`tools/mavlink-signing/`](../../tools/mavlink-signing/SPEC.md), 7/7 `cargo test` green,
+cross-checked byte-for-byte against a pymavlink-signed frame) proves the control's behavior:
+
+| Input | P6.2 verdict |
+|-------|:------------:|
+| unsigned frame | `Unsigned` (reject) |
+| correctly signed | `Valid` |
+| tampered payload | `BadSignature` |
+| replayed (ts ≤ last) | `Replay` |
+
+Together these are the SSE-level result: the gap was found *and* the fix is proven — on the
+live link and in a memory-safe implementation we control (no `unsafe`, zero external deps).
 
 ## 7. Reproduction
 
