@@ -1,8 +1,13 @@
-# Finding (candidate CVE) — DrayTek Vigor300B `mainfunction.cgi` `download_ovpn` OS command injection (sanitizer bypass)
+# Finding (n-day case study) — DrayTek Vigor300B `mainfunction.cgi` `download_ovpn` OS command injection (sanitizer bypass)
 
 **Status:** confirmed at the code level via patch-diff + decompilation + disassembly.
-Auth level and sanitizer behavior **resolved** (see the two corrections below). Novel —
-no assigned CVE found for this endpoint (dedup below). PoC pending device/emulation.
+Auth level and sanitizer behavior **resolved** (see the two corrections below).
+**NOT novel — deduped as an n-day: this is CVE-2024-45890** (DrayTek Vigor3900,
+`mainfunction.cgi` `action=download_ovpn`, post-auth OS command injection, CVSS 8.0,
+published 2024-11-04). The earlier "no assigned CVE for this endpoint / plausibly novel"
+verdict was a **dedup miss**, corrected on live re-check 2026-09-18 (see Novelty § below).
+Residual value is a methodology case study + a possible CPE coverage-gap note (the 300B is
+not in CVE-2024-45890's CPE list); this is **not** a new-CVE request. PoC pending device/emulation.
 
 > **Two corrections to the initial (pre-verification) write-up — verified this run:**
 > 1. **Action name is `download_ovpn`, not `doOpenVPN`.** The action-dispatch table has
@@ -34,6 +39,7 @@ injection (CWE-78)**.
   are commented out in `etc/lighttpd/lighttpd.conf`).
 - **Auth:** **post-authentication**, requires session privilege **level ≥ 4** (`operator` or `admin`/`root`).
 - **Affected:** ≤ **v1.5.1.6** (bypassable). **Fixed:** **v1.5.1.7** — silently, by single-quoting the five `%s`.
+- **CVE:** **CVE-2024-45890** (n-day; same `download_ovpn` endpoint, already assigned on sibling model Vigor3900). This is **not** a new CVE.
 
 ## Evidence — the handler (v1.5.1.6, decompiled + disassembled)
 `diff-out-dt/ghidra/action_table_1516.c`, `asm_sanitizer_1516.txt`.
@@ -116,14 +122,27 @@ Post-auth, network-reachable, deterministic, root RCE:
 - Sensitivity: if `operator` is argued to be a low-privilege role → `PR:L` = **8.8**; if the
   web→OS transition is scored `S:C` → higher still. Primary score **7.2**.
 
-## Novelty (dedup gate)
-No CVE found for the OpenVPN / `create_client_conf` / `download_ovpn` path across NVD,
-OpenCVE (full `vigor300b_firmware` list), and DrayTek advisories. Known Vigor300B
-`mainfunction.cgi` command-injection CVEs cover **different** endpoints:
-`uploadlangs`/File (CVE-2026-3040), `apmcfgupload`/`apmcfgupptim`/session
-(CVE-2024-12986/12987), `action` (CVE-2024-43027), `cvmcfgupload`/query-string
-(CVE-2020-8515 / -15415 / 2021-43118). The reclassification (sanitizer *bypass*, post-auth)
-does not match any of these. ⇒ **plausibly novel.**
+## Novelty (dedup gate) — RESOLVED: NOT NOVEL (n-day, CVE-2024-45890)
+**Corrected 2026-09-18 on live re-check.** The `download_ovpn` command-injection endpoint is
+already **CVE-2024-45890** — DrayTek Vigor3900 1.5.1.3, `cgi-bin/mainfunction.cgi`
+`action=download_ovpn`, **post-authentication OS command injection**, CVSS 8.0, published
+2024-11-04. Same CGI, same action, same vuln class, same shared codebase (3900/2960/300B all
+ship `mainfunction.cgi`). ⇒ **n-day, not a new discovery.**
+
+The earlier verdict ("no CVE found across NVD/OpenCVE/DrayTek ⇒ plausibly novel") was a
+**dedup miss**: the search was scoped to the `vigor300b_firmware` CVE list, and CVE-2024-45890
+is filed under `vigor3900_firmware`, so it never surfaced. The other Vigor300B
+`mainfunction.cgi` CVEs (langs/CVE-2026-3040, apm/CVE-2024-12986/12987, `action`/CVE-2024-43027,
+cvmcfgupload/CVE-2020-8515 · -15415 · 2021-43118) do cover *different* endpoints — but
+`download_ovpn` is covered by the **3900** CVE, which the original dedup did not check.
+
+**Residual angle (weak — not pursued as novel):** CVE-2024-45890's CPE list appears to be
+Vigor3900-only, so the *300B* is a **CPE coverage gap**, not a new vulnerability. Correct action
+is to notify DrayTek/MITRE that CVE-2024-45890 also affects Vigor300B ≤1.5.1.6 (fixed 1.5.1.7) —
+an affected-product/CPE extension, **not** a new-CVE request. Claiming an "incomplete-fix"
+novelty would require positively proving the 3900 bug is mechanically a *different* defect at
+the same endpoint (same effect: post-auth root RCE via `download_ovpn`); absent that proof,
+treat as a duplicate.
 
 ## Validation (2026-09-14, re-verified from the shipped binaries)
 Independently re-confirmed this run, not trusting the earlier decompile notes:
@@ -136,8 +155,10 @@ Independently re-confirmed this run, not trusting the earlier decompile notes:
   (and `< ( ) { } , \`) survives. Bypass confirmed at the instruction level.
 - **Runs as root**: `server.username`/`server.groupname` commented out in
   `etc/lighttpd/lighttpd.conf`.
-- **Novelty re-checked live** (NVD full Vigor300B list, OpenCVE, `master-abc/cve`):
-  no CVE on the `download_ovpn`/`create_client_conf` path. Holds.
+- **Novelty re-checked live 2026-09-18 — verdict REVERSED:** the `download_ovpn` endpoint
+  IS covered by **CVE-2024-45890** (Vigor3900, post-auth, CVSS 8.0, pub. 2024-11-04). The
+  2026-09-14 "no CVE on this path / holds" note was a dedup miss (scoped to the 300B CVE
+  list only; the CVE is filed under the 3900). ⇒ **n-day, not novel.** See Novelty § above.
 - Component hashes: vuln CGI `821d539c…`, fixed CGI `b5085e80…` (see `finding.json`).
 
 ## Open items before disclosure
@@ -149,13 +170,17 @@ Independently re-confirmed this run, not trusting the earlier decompile notes:
    pattern across other Vigor models' public firmware (2960 / 3900 / 165x / …). Many are
    **still supported** → higher impact, fixable, distinct affected products / CVEs. (Needs
    firmware downloads — a user-confirmed step.)
-3. **`finding.json`** → `finding-to-vendor-report` (CVSS + PSIRT report) → DrayTek coordinated
-   disclosure → `finding-to-cve-writeup` post-fix. **[DRAFTED this run]** — `finding.json`,
-   `vendor-report.md` (7.2 High), `disclosure-email.txt`, `CVE-…RESERVED.json`, and the held
-   `writeup-download_ovpn.md` are all in this directory. COI/outside-activity: cleared
-   (independent, unattributed research; no disclosure bar). **Next human step: send the
-   terse first contact to DrayTek PSIRT (`info@draytek.co.uk`), then the full report to the
-   assigned contact (PGP).**
+3. **Disclosure deliverables — NEEDS REFRAME (do NOT send as-is).** `finding.json`,
+   `vendor-report.md`, `disclosure-email.txt`, `CVE-…RESERVED.json`, and the held
+   `writeup-download_ovpn.md` in this directory were all drafted on the (now-falsified)
+   *novel-CVE* premise. Because this is an n-day (CVE-2024-45890), the **new-CVE request must
+   be dropped**. Reframe the remaining paperwork as either (a) a methodology case study
+   (patch-diff → decompile → sanitizer-bypass, like Run 1's n-day writeup) and/or (b) a short
+   CPE coverage-gap note to DrayTek/MITRE that CVE-2024-45890 also affects the Vigor300B
+   ≤1.5.1.6 (fixed 1.5.1.7). COI/outside-activity: cleared (independent, unattributed
+   research). **Held pending user decision on which of (a)/(b) to produce.** These committed
+   deliverables are NOT yet edited — this pass corrected only the analysis records (this
+   finding, the dedup ledger, CLAUDE.md).
 
 ## Reproduction data (working, git-ignored under `diff-out-dt/`)
 - `ghidra/action_table_1516.c` — full 137-entry action table + `download_ovpn` handler + session chain.

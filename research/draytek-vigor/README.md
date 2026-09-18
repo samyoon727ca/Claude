@@ -18,8 +18,11 @@ and extracted filesystems are git-ignored and never committed.
 - Procedure: [`docs/track1-acquisition-runbook.md`](../../docs/track1-acquisition-runbook.md)
   — the funnel is vendor-agnostic; the *extract* step is re-fingerprinted per target
   (DrayTek packaging differs from D-Link's SEAMA/squashfs-LZMA).
-- Objective: a **novel** finding with a real CVE (DrayTek is an active CNA; coordinated
-  disclosure per [`docs/disclosure-policy.md`](../../docs/disclosure-policy.md)).
+- Objective (going in): a **novel** finding with a real CVE (DrayTek is an active CNA;
+  coordinated disclosure per [`docs/disclosure-policy.md`](../../docs/disclosure-policy.md)).
+  **Outcome:** the `download_ovpn` finding was confirmed at the code level but **deduped as an
+  n-day (CVE-2024-45890)** on live re-check — a methodology case study, not a new CVE. A new
+  CVE now depends on the model fan-out. See [`finding-openvpn-cmdinjection.md`](finding-openvpn-cmdinjection.md).
 - Plan + diff strategy: [`target-notes.md`](target-notes.md).
 
 Working dirs created at runtime (ignored): `work/`, `triage-out/`, `diff-out/`.

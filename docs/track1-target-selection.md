@@ -214,6 +214,13 @@ headroom; (4) Linux Vigor CPE (the `mainfunction.cgi` lineage) is MIPS/ARM and
 extractable, fitting the reversing specialization. **Confirm SoC/arch from the
 image** per the standing rule.
 
+> **Outcome (2026-09-18):** hypothesis (2) did not pay off for run 3 — the `download_ovpn`
+> finding from the `1.5.1.6 → 1.5.1.7` window is an **n-day (CVE-2024-45890**, the same bug
+> on the sibling Vigor3900), not a novel/incomplete-fix CVE. Dedup lesson: search **every
+> sibling model sharing the codebase**, not just the target's own CPE list (a 300B-scoped
+> search missed a CVE filed under the 3900). A genuinely new CVE now hinges on rubric points
+> (1)/(3) — the fan-out to a still-supported, out-of-CPE, unpatched Vigor model.
+
 **Honest caveat:** `mainfunction.cgi` and DrayTek Linux CPE are researched
 (CVE-2020-8515, CVE-2024-12987, others), so the mandatory NVD/advisory **dedup
 gate** still governs — the play is the *silent* fix that maps to no CVE, found by

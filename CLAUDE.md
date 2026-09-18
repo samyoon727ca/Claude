@@ -71,14 +71,20 @@ public writeups under `writeups/`. Three Track 1 runs so far:
 - **Run 2 — Zyxel CPE**: **blocked at acquisition** — 2026 patched CPE firmware is
   ISP-gated, so the fix is not provenance-acquirable to diff (`research/zyxel-cpe/`).
   This exposed the acquisition-feasibility gate that drove the run-3 re-pick.
-- **Run 3 — DrayTek Vigor300B** (ARM-LE, Comcerto): **CONFIRMED novel finding at the
-  code level.** Diffing the public `1.5.1.6 → 1.5.1.7` window found a silently-hardened
-  `download_ovpn` OS command injection in `mainfunction.cgi` — an incomplete-blocklist
-  sanitizer *bypass* that runs as **root** (post-auth operator/admin), with no matching
-  CVE (deduped vs NVD/OpenCVE/DrayTek). Ghidra decompile+disasm evidence under the
-  git-ignored `diff-out-dt/ghidra/`. **Remaining: runtime PoC → model fan-out →
-  coordinated disclosure (DrayTek is an active CNA).** See
-  `research/draytek-vigor/finding-openvpn-cmdinjection.md` and `acquisition-log.md`.
+- **Run 3 — DrayTek Vigor300B** (ARM-LE, Comcerto): confirmed at the code level, then
+  **deduped as an n-day — NOT novel.** Diffing the public `1.5.1.6 → 1.5.1.7` window found
+  the silent hardening of a `download_ovpn` OS command injection in `mainfunction.cgi` — an
+  incomplete-blocklist sanitizer *bypass* that runs as **root** (post-auth operator/admin).
+  On live re-check (2026-09-18) the endpoint proved to be **CVE-2024-45890** (DrayTek
+  Vigor**3900**, `mainfunction.cgi` `action=download_ovpn`, post-auth, CVSS 8.0, pub.
+  2024-11-04); the earlier "no matching CVE / novel" claim was a **dedup miss** (the check
+  was scoped to the `vigor300b_firmware` list; the CVE is filed under `vigor3900_firmware`).
+  The 300B is not in that CVE's CPE list, so residual value is only (a) a methodology case
+  study (patch-diff → decompile → sanitizer-bypass, like Run 1) and (b) a possible CPE
+  coverage-gap note to DrayTek/MITRE (affected-product extension, **not** a new CVE). Ghidra
+  decompile+disasm evidence under git-ignored `diff-out-dt/ghidra/`. **A genuinely new CVE
+  could now only come from the fan-out to a still-supported, out-of-CPE, unpatched model.**
+  See `research/draytek-vigor/finding-openvpn-cmdinjection.md` and `acquisition-log.md`.
 
 See also the target-selection dossier (`docs/track1-target-selection.md`) — it carries
 the 2026-09-14 re-pick rationale (acquisition-feasibility gate → DrayTek).

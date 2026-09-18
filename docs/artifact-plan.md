@@ -43,12 +43,16 @@ survey material rather than earned depth.
 **Shift the marginal hour from "tell" to "show."** Written docs are "tell"; what
 converts the portfolio into evidence you *are* an SSE is externally verifiable
 "show." Reprioritize, in order:
-1. **Novel CVE** (Track 1, DrayTek run 3: P1.x -> P3.x). **Confirmed novel at the code
-   level** — a `download_ovpn` root OS command injection in Vigor300B `mainfunction.cgi`
-   (sanitizer bypass), deduped vs NVD/OpenCVE/DrayTek. What remains to make it *proven*:
-   runtime PoC -> model fan-out -> coordinated disclosure. Turns firmware/embedded
-   assessment (competency 3) from *partial* (DIR-816L n-day) toward *proven*. Top item.
-   (Zyxel, the prior run-2 pick, is blocked at acquisition — ISP-gated patched firmware.)
+1. **A new CVE from the DrayTek fan-out** (Track 1, run 3: P1.x -> P3.x). Run 3 itself is
+   **confirmed at the code level but deduped as an n-day** — the `download_ovpn` root OS
+   command injection in Vigor300B `mainfunction.cgi` (sanitizer bypass) is already
+   **CVE-2024-45890** (same bug on the sibling Vigor3900; the initial "no matching CVE" was
+   a 300B-scoped dedup miss). The remaining new-CVE upside is the **fan-out** to a
+   still-supported, out-of-CPE, unpatched Vigor model; run 3 itself closes out as a
+   methodology case study (+ optional CPE coverage-gap note), substantiated by a runtime
+   PoC. Even as an n-day it advances firmware/embedded assessment (competency 3) from
+   *partial* toward *proven* on method. Top item. (Zyxel, the prior run-2 pick, is blocked
+   at acquisition — ISP-gated patched firmware.)
 2. **Execute the UAS T&E** (P5.1). Run `mavlink-sectest` against real SITL and fold
    the results into the capstone — turns the harness from self-test into real result.
 3. **FPGA security artifact** (P6.1). Fills the one *named* JD requirement with zero
@@ -93,7 +97,7 @@ parallelize the additive gap-fillers so a stall in one never blocks the others:
 ### Phase 2 — Confirm a bug -> vendor report (income attempt #1)
 | ID | Deliverable | Track | DoD | Competency |
 |----|-------------|-------|-----|------------|
-| P2.1 | Ghidra decompilation review of top candidates **[done: DrayTek download_ovpn confirmed novel + auth resolved]** | 1 | Unsafe sinks confirmed/rejected with notes | Embedded reversing; assessment |
+| P2.1 | Ghidra decompilation review of top candidates **[done: DrayTek download_ovpn confirmed at code level + auth resolved; deduped as n-day CVE-2024-45890]** | 1 | Unsafe sinks confirmed/rejected with notes | Embedded reversing; assessment |
 | P2.2 | Emulation harness (QEMU/FirmAE) for the target | 1/3 | Target service reachable in emulation | Cyber T&E; assessment |
 | P2.3 | Hand-built PoC on a confirmed candidate | 1 | Minimal, reliable repro (you build this) | Assessment |
 | P2.4 | `finding-to-vendor-report` Skill **[built]** | 3 | finding.json -> CVSS-scored PSIRT report + cover email; CVSS v3.1 calc verified vs NVD | Communication (written) |
