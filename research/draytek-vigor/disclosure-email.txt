@@ -1,23 +1,30 @@
-Subject: [Security] OS command injection (sanitizer bypass) in DrayTek www/cgi-bin/mainfunction.cgi (action download_ovpn) (coordinated disclosure)
+Subject: CVE-2024-45890 also affects DrayTek Vigor300B (mainfunction.cgi download_ovpn) — affected-product / CPE coverage-gap notice
 
 Hello DrayTek Security Team,
 
-I am reporting a security vulnerability in a DrayTek product under coordinated
-disclosure. Summary:
+This is NOT a new-vulnerability report. I am reporting an affected-product /
+CPE coverage gap for an existing, already-fixed CVE.
 
-- Type: OS command injection (sanitizer bypass) (CWE-78)
-- Affected component: www/cgi-bin/mainfunction.cgi (action download_ovpn)
-- Severity: CVSS v3.1 7.2 (High) — CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H
-- Preconditions: Network-reachable web-management interface; post-authentication with session privilege level >= 4 (operator, or admin/root). Web CGI runs as root (lighttpd does not drop privileges: server.username/server.groupname commented out in etc/lighttpd/lighttpd.conf).
+- Existing CVE: CVE-2024-45890 (cgi-bin/mainfunction.cgi, action=download_ovpn,
+  post-authentication OS command injection; published 2024-11-04, currently
+  listed against the Vigor3900).
+- Coverage gap: the same download_ovpn command injection is present on the
+  Vigor300B (affected <= 1.5.1.6; silently fixed in 1.5.1.7 by single-quoting the
+  create_client_conf.sh arguments). The Vigor300B is not listed on CVE-2024-45890.
+  The Vigor2960 shares the same mainfunction.cgi codebase and is worth confirming.
 
-The full report (affected versions + firmware hashes, reproduction, impact,
-suggested remediation) is attached / below.
+Because the bug is already public and patched, there is no embargo. I am not
+requesting a new CVE — only that CVE-2024-45890's affected-products list be
+corrected to include the Vigor300B (and, if confirmed, the Vigor2960).
+
+Code-level confirmation (Ghidra decompilation + ARM disassembly of the v1.5.1.6
+CGI, vulnerable CGI SHA-256 821d539c...; fixed CGI SHA-256 b5085e80...), the
+reproduction procedure, and the severity rationale are in the attached notice.
 
 Requests:
-1. Please acknowledge receipt and provide a tracking identifier.
-2. Please share a remediation ETA. I will keep all details private until a fix is
-   available or 90 days from report, and I am happy to verify a candidate fix.
-3. If applicable, please assign a CVE (or advise if I should request one).
+1. Please confirm whether the affected-products record for CVE-2024-45890 can be
+   extended to the Vigor300B (and Vigor2960).
+2. I am happy to provide the decompilation/disassembly evidence.
 
 Regards,
 Samuel Yoon (contact: samyoon727ca@gmail.com)

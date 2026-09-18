@@ -142,10 +142,13 @@ fixtures**; what remains is hands-on execution that needs an unrestricted host.
 - **Track 1 — where a genuinely new CVE could still come from:** the DrayTek run 3 bug is
   an n-day (CVE-2024-45890), so the remaining upside is the **fan-out** — grep the same
   `download_ovpn` → `create_client_conf.sh` unquoted-args pattern across other Vigor models
-  and look for a **still-supported, out-of-CPE, unpatched** one. In parallel, close out run 3
-  as a methodology case study and (optionally) a CPE coverage-gap note to DrayTek/MITRE that
-  CVE-2024-45890 also affects the Vigor300B. A runtime PoC on an owned/emulated ≤ 1.5.1.6
-  device substantiates the case study. See the top-priority item in
+  and look for a **still-supported, out-of-CPE, unpatched** one. Run 3 itself is closed out:
+  the methodology case study is published at
+  [`writeups/draytek-vigor300b-download_ovpn-cmdinjection.md`](writeups/draytek-vigor300b-download_ovpn-cmdinjection.md),
+  and a CPE coverage-gap note to DrayTek/MITRE (CVE-2024-45890 also affects the Vigor300B) is
+  drafted in [`research/draytek-vigor/`](research/draytek-vigor/) (sending it is a
+  user-confirmed step). A runtime PoC on an owned/emulated ≤ 1.5.1.6 device would further
+  substantiate the case study. See the top-priority item in
   [`docs/artifact-plan.md`](docs/artifact-plan.md). Disclosure obligation: handle personal
   COI / outside-activity reporting first ([`docs/disclosure-policy.md`](docs/disclosure-policy.md) §5).
 - **P5.1** — the hands-on UAS capstone assessment (threat model + test harness ready).
