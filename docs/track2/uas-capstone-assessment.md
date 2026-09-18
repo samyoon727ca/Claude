@@ -7,11 +7,10 @@ and (on any failure) written up through the disclosure funnel. This is the "show
 artifact that turns the threat model from analysis into measured result.*
 
 > **Status: SITL run + signing before/after complete (2026-09-18).** Executed against
-> ArduPilot ArduCopter SITL. §5 records both the stock run (3 FAIL) and the
-> signing-enabled re-run (0 FAIL); §6 adds a deterministic in-repo proof via the **P6.2**
-> signing module (7/7 `cargo test`, pymavlink interop). Non-MAVLink-link requirements
-> (T2/T3/T7/T9/T10) are out-of-harness follow-on; T4 (telemetry) remains undetermined
-> pending a stream capture.
+> ArduPilot ArduCopter SITL. §5 records both the stock run (**4 FAIL**) and the
+> signing-enabled re-run; §6 adds a deterministic in-repo proof via the **P6.2** signing
+> module (7/7 `cargo test`, pymavlink interop). All five MAVLink-link checks are now decisive;
+> non-MAVLink-link requirements (T2/T3/T7/T9/T10) are out-of-harness follow-on.
 
 > **Scope, safety & clearance.** UNCLASSIFIED, open-source stack (ArduPilot/PX4 + public
 > MAVLink). **Simulation-first** — the harness targets SITL on localhost and sends only a
@@ -89,39 +88,41 @@ Verbatim from `report.json` (archived: [`assets/uas-capstone-report.json`](asset
 
 | Test | Result | Observation | Risk (0–10) | Severity | SHALL met? |
 |------|:------:|-------------|:-----------:|:--------:|:----------:|
-| `signing` | **FAIL** | 11/11 frames unsigned (MAVLink v2 signing off) | 8.5 | High | ✗ |
+| `signing` | **FAIL** | 216/216 frames unsigned (MAVLink v2 signing off) | 8.5 | High | ✗ |
 | `cmd_injection` | **FAIL** | unsigned command **ACCEPTED** (benign `REQUEST_MESSAGE`) | 8.5 | High | ✗ |
 | `replay` | **FAIL** | identical replayed frame accepted again (no anti-replay) | 5.5 | Medium | ✗ |
-| `telemetry` | INFO | no telemetry decoded in this config — not decisively tested | 6.0 | undet. | undet. |
+| `telemetry` | **FAIL** | cleartext telemetry decoded — `ATTITUDE`, `GLOBAL_POSITION_INT`, `GPS_RAW_INT`, `VFR_HUD`, `BATTERY_STATUS` | 6.0 | Medium | ✗ |
 | `failsafe` | **PASS** | link-loss failsafe configured (`FS_THR_ENABLE=1.0`) | 7.0 | — | ✓ |
 
-**3 FAIL · 1 PASS · 1 INFO.**
+**4 FAIL · 1 PASS · 0 INFO** — four of the five requirements unmet on the stock link.
 
 ![UAS capstone findings by risk](assets/uas-capstone-findings.svg)
 
 ### After — MAVLink v2 signing enabled (same SITL, `signing setup` in MAVProxy)
 
-Re-run with signing enabled on the link (archived:
-[`assets/uas-capstone-report-signed.json`](assets/uas-capstone-report-signed.json)):
+Re-run with signing enabled on the link (initial signing-on run archived at
+[`assets/uas-capstone-report-signed.json`](assets/uas-capstone-report-signed.json) — it
+predates the `telemetry`/`failsafe` harness fixes; the table below reflects the current harness):
 
-| Test | Before (stock) | After (signing on) | Effect |
+| Test | Before (stock) | After (signing on) | What it shows |
 |------|:--------------:|:------------------:|--------|
-| `signing` | FAIL (0 signed) | **PASS** (all 11 frames signed) | T1/T5 authenticity now enforced |
-| `cmd_injection` | FAIL (unsigned accepted) | **INFO** — no `COMMAND_ACK` | injection no longer succeeds |
-| `replay` | FAIL (replay accepted) | **INFO** — replayed frame not accepted | anti-replay now holds |
-| `telemetry` | INFO | INFO | unchanged (T4 needs a stream + encryption) |
-| `failsafe` | PASS | PASS | unchanged |
+| `signing` | FAIL (0 signed) | **PASS** (all frames signed) | T1/T5 authenticity enforced |
+| `cmd_injection` | FAIL (accepted) | **INFO** — no `COMMAND_ACK` | unsigned command dropped |
+| `replay` | FAIL (accepted) | **INFO** — not re-accepted | replayed frame dropped |
+| `telemetry` | FAIL (cleartext) | **INFO** — stream request dropped | can't pull a stream once unauthenticated |
+| `failsafe` | PASS | **INFO** — param read dropped | can't read params once unauthenticated |
 
-Result: **0 FAIL** (was 3) — enabling signing closed the T1/T5 cluster. The harness
-downgrades `cmd_injection`/`replay` to **INFO** (not PASS) once signing is on: its unsigned
-probes are dropped, so it observes "the attack didn't succeed" but can't get a positive
-ACK to assert PASS — the correct, honest behavior on a hardened link. The deterministic
-PASS/reject proof is the **P6.2** module (§6).
+Enabling signing flips `signing` to **PASS** and shuts the attacks out. The instructive part:
+*every* active check the harness drives (commands, stream/param requests) goes **INFO** on the
+signed link — the harness is now an **unauthenticated peer**, and the hardened vehicle
+correctly rejects its unsigned probes. That is the security property working, but it means the
+SITL after-run can't *positively* confirm the control by itself. The deterministic proof is the
+**P6.2** module (§6): unsigned → reject, signed → valid, replayed → reject.
 
-> *Note: the archived signing-on report cites the `failsafe` evidence as `STAT_RUNTIME` —
-> a harness param-fetch bug (it read the next `PARAM_VALUE` off the MAVProxy-streamed link
-> instead of the requested one). Fixed in `mavlink_sectest.py` (now matches on `param_id`);
-> the failsafe **PASS** verdict stands on `FS_THR_ENABLE=1.0` from the stock run.*
+> *Methodology note: this stock run also validated two harness fixes — the `telemetry` (T4)
+> check now decodes a requested stream (cleartext confirmed), and the `failsafe` check reports
+> the correct parameter (`FS_THR_ENABLE`, not a stray streamed `PARAM_VALUE`). Both landed in
+> `mavlink_sectest.py` before this run.*
 
 ## 6. Analysis & findings
 
@@ -136,16 +137,14 @@ loss — control-authority compromise is a safety event, the model's top loss sc
 
 - `replay` scores Medium (5.5), not High: impact depends on the semantics of the
   replayable frame, and it is subsumed once signing (with timestamps) is enabled.
-- `telemetry` (T4) is **INFO, not a pass** — this config (`--no-mavproxy`, no stream
-  requested) emitted no telemetry to inspect, so cleartext could not be *demonstrated*
-  this run. The requirement stands (MAVLink telemetry is unencrypted by default); to
-  decide it, request data streams (`SET_MESSAGE_INTERVAL` / `REQUEST_DATA_STREAM`) or run
-  with MAVProxy streaming, then capture. Tracked as a re-run item.
+- `telemetry` (T4) is **FAIL** — with a stream requested, the harness decoded five cleartext
+  telemetry types (`ATTITUDE`, `GLOBAL_POSITION_INT`, `GPS_RAW_INT`, `VFR_HUD`,
+  `BATTERY_STATUS`). MAVLink telemetry is unencrypted by default and signing does not encrypt
+  it, so mission data (position, battery, attitude) is disclosed to any passive listener on TB1.
 - `failsafe` (T6) is the one satisfied SHALL — `FS_THR_ENABLE=1.0` — because it is a
   *safety* default, not a security control.
 
-**Gate readiness:** T1/T5 are **blocking at PDR/CDR**; T4 undetermined (re-test); T6 clears
-its TRR check. Remediation follows the survivability §9 Prevent column: enable **MAVLink v2
+**Gate readiness:** T1/T4/T5 are **blocking at PDR/CDR**; T6 clears its TRR check. Remediation follows the survivability §9 Prevent column: enable **MAVLink v2
 signing** (closes `signing` + `cmd_injection`, and supplies the timestamp that closes
 `replay`) plus a link-layer encryption/tunnel for T4.
 
