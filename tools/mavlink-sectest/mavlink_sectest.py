@@ -10,8 +10,9 @@ SHALL requirement.
 SAFETY / SCOPE (read docs/disclosure-policy.md):
   * Default endpoint is SITL on localhost. Testing a real vehicle requires
     --allow-nonsim AND a vehicle you own, on the bench, props off.
-  * The harness sends ONLY benign, non-actuating commands (it requests a
-    message). It never arms, takes off, changes flight mode, or writes params.
+  * The harness sends ONLY benign, non-actuating commands (it requests a message
+    and telemetry streams). It never arms, takes off, changes flight mode, or
+    writes params.
 
 Usage:
   mavlink_sectest.py --connect udp:127.0.0.1:14550 --out report.json --csv findings.csv
@@ -138,6 +139,16 @@ def run_live(url, observe_s, allow_nonsim):
         sys.exit("no heartbeat; is SITL running and the endpoint correct?")
     tsys, tcomp = conn.target_system, conn.target_component
     print(f"[sectest] heartbeat from system {tsys} component {tcomp}", file=sys.stderr)
+
+    # Ask the vehicle to stream telemetry (benign, read-only): a raw serial/UDP
+    # channel gets no ATTITUDE/GLOBAL_POSITION_INT unless requested, which otherwise
+    # leaves the confidentiality check (T4) with nothing to inspect. Non-actuating.
+    try:
+        conn.mav.request_data_stream_send(
+            tsys, tcomp,
+            getattr(mavutil.mavlink, "MAV_DATA_STREAM_ALL", 0), 2, 1)  # ~2 Hz, start
+    except Exception:
+        pass
 
     # --- observe frames: signing + telemetry ---
     total = signed = 0
