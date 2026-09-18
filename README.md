@@ -44,6 +44,7 @@ docs/
     secure-boot-root-of-trust.md                        RoT, verified/measured boot, keys, anti-tamper
     uas-autopilot-threat-model.md                       NIST SP 800-160 threat model (ArduPilot/PX4 + MAVLink)
     embedded-hardening-writeup.md                       Hardening a real Linux node -> 800-53/CMMC controls
+    uas-mavlink-hardening.md                            Remediation for the capstone findings (signing, anti-replay, link encryption)
     milestone-security-architecture-and-anti-tamper.md  SRR->PRR gates, MBSE, DoD anti-tamper
     uas-capstone-assessment.md                          P5.1 hands-on MAVLink T&E vs SITL (executes the threat model)
 .claude/skills/                Reusable Claude Code Skills (the assessment funnel)
