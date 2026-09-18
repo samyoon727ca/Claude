@@ -45,6 +45,7 @@ docs/
     uas-autopilot-threat-model.md                       NIST SP 800-160 threat model (ArduPilot/PX4 + MAVLink)
     embedded-hardening-writeup.md                       Hardening a real Linux node -> 800-53/CMMC controls
     milestone-security-architecture-and-anti-tamper.md  SRR->PRR gates, MBSE, DoD anti-tamper
+    uas-capstone-assessment.md                          P5.1 hands-on MAVLink T&E vs SITL (executes the threat model)
 .claude/skills/                Reusable Claude Code Skills (the assessment funnel)
   firmware-triage/             extract -> inventory -> sink-scan  (triage.sh, sink_scan.py, setup-tools.sh)
   binary-diff/                 version-to-version diff -> ranked candidates  (fw_diff.py)
