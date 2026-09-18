@@ -1,30 +1,61 @@
-Subject: CVE-2024-45890 also affects DrayTek Vigor300B (mainfunction.cgi download_ovpn) — affected-product / CPE coverage-gap notice
+Subject: CVE-2024-45890 — affected-product / CPE coverage gap: DrayTek Vigor300B (mainfunction.cgi download_ovpn)
 
 Hello DrayTek Security Team,
 
 This is NOT a new-vulnerability report. I am reporting an affected-product /
 CPE coverage gap for an existing, already-fixed CVE.
 
-- Existing CVE: CVE-2024-45890 (cgi-bin/mainfunction.cgi, action=download_ovpn,
+- Existing CVE: CVE-2024-45890 (cgi-bin/mainfunction.cgi, action=download_ovpn;
   post-authentication OS command injection; published 2024-11-04, currently
   listed against the Vigor3900).
 - Coverage gap: the same download_ovpn command injection is present on the
   Vigor300B (affected <= 1.5.1.6; silently fixed in 1.5.1.7 by single-quoting the
-  create_client_conf.sh arguments). The Vigor300B is not listed on CVE-2024-45890.
-  The Vigor2960 shares the same mainfunction.cgi codebase and is worth confirming.
+  create_client_conf.sh arguments). The Vigor300B is not on CVE-2024-45890's
+  affected-products list. The Vigor2960 shares the same mainfunction.cgi codebase
+  and is worth confirming on the same basis.
 
 Because the bug is already public and patched, there is no embargo. I am not
 requesting a new CVE — only that CVE-2024-45890's affected-products list be
 corrected to include the Vigor300B (and, if confirmed, the Vigor2960).
 
-Code-level confirmation (Ghidra decompilation + ARM disassembly of the v1.5.1.6
-CGI, vulnerable CGI SHA-256 821d539c...; fixed CGI SHA-256 b5085e80...), the
-reproduction procedure, and the severity rationale are in the attached notice.
+Technical confirmation (Vigor300B v1.5.1.6, static analysis):
+- The download_ovpn handler builds the command
+  "/etc/openvpn/create_client_conf.sh %s %s %s %s %s" from five attacker-controlled
+  HTTP parameters (remote_ip, protocal, config_name, auto_dialout, redirect_gw) and
+  executes it with system().
+- Each parameter first passes through an in-place sanitizer that replaces a
+  blocklist of shell metacharacters ( ; % ` | > space ' " $ tab newline CR, and the
+  sequence && ) with '+'. The blocklist is incomplete: a single '&' and the
+  characters < ( ) { } , \ survive to the shell. Because space is blocked, injection
+  uses '&' (a separator that needs no space) plus brace expansion {cmd,arg}
+  (space-less arguments).
+- lighttpd does not drop privileges (server.username / server.groupname are
+  commented out in etc/lighttpd/lighttpd.conf), so injected commands run as root.
+  The handler is reachable post-authentication at session privilege level > 3
+  (operator or admin).
+- Confirmed by Ghidra decompilation + ARM disassembly of the v1.5.1.6 CGI, and
+  corroborated by your own v1.5.1.7 single-quoting fix ( ' is already in the
+  sanitizer blocklist, so quoting closes the bypass ).
+- Evidence hashes:
+    vulnerable CGI (v1.5.1.6) SHA-256
+      821d539ccab6c90aa5d39d859a6526c2da2cca92c6f551acfa91fccc9430b958
+    fixed CGI (v1.5.1.7) SHA-256
+      b5085e80b797bad690abd5866178f06c1f56ff6b817ecfe355aada5ae176a3ec
+- Severity (Vigor300B instance): CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H
+  = 7.2 (High), post-authentication operator/admin -> root. (For reference,
+  CVE-2024-45890's assigner scores the Vigor3900 instance at 8.0.)
 
 Requests:
-1. Please confirm whether the affected-products record for CVE-2024-45890 can be
-   extended to the Vigor300B (and Vigor2960).
-2. I am happy to provide the decompilation/disassembly evidence.
+1. Please extend CVE-2024-45890's affected-products record to Vigor300B <= 1.5.1.6
+   (fixed 1.5.1.7), and confirm or deny the Vigor2960 on the same basis.
+2. I am happy to provide the full decompilation/disassembly evidence and the
+   reproduction procedure on request. A detailed write-up of the coverage gap is
+   attached (vendor-report.md).
+
+If CVE-2024-45890's record is maintained by a different CNA (e.g. MITRE) rather
+than DrayTek, the same affected-products correction is requested there; please let
+me know the right point of contact.
 
 Regards,
-Samuel Yoon (contact: samyoon727ca@gmail.com)
+Samuel Yoon
+samyoon727ca@gmail.com
