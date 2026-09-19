@@ -40,6 +40,7 @@ docs/
   disclosure-policy.md        Coordinated disclosure + legal/ethics scope
   track1-target-selection.md  Target choice: rubric + freshness pass + CVE-volume reorder
   track1-acquisition-runbook.md  Turnkey P1.1: acquire -> confirm SoC -> triage -> diff -> dedup
+  track1-uas-run-plan.md      Run 4 plan: UAS/autonomy pivot — PX4 re-anchor + DDS novel-CVE hunt
   track2/
     secure-boot-root-of-trust.md                        RoT, verified/measured boot, keys, anti-tamper
     fpga-security-reference.md                          P6.1 FPGA secure config: bitstream auth/encryption, eFUSE/PUF keys, RoT into PL
