@@ -80,6 +80,16 @@ parallelize the additive gap-fillers so a stall in one never blocks the others:
   (building), briefing deck (synthesis of existing work), CISSP progress (study).
   These fill named gaps *between* reversing sessions without diluting Track A.
 
+**Update 2026-09-19 — the next live run pivots to the UAS / autonomy domain.** Breadth
+and the UAS T&E (P5.1) are done, so the credibility frontier (a genuinely new CVE) now
+routes through the domain that is *also* the target market. Rather than another router
+fan-out, the next live Track 1 run points at UAS / autonomy: (1) re-anchor the existing
+MAVLink break/build to **PX4** (BSD-3 → defense-integrable) with ArduPilot as a
+cross-stack validator, and cite **CVE-2026-1579** (PX4 MAVLink-signing → `SERIAL_CONTROL`
+RCE) so the capstone is dedup-clean; (2) hunt a novel CVE in the **ROS 2 / DDS +
+micro-XRCE-DDS** middleware — the under-reviewed, Lattice-flavored autonomy layer. Full
+sequencing in [`track1-uas-run-plan.md`](track1-uas-run-plan.md) (Phase 7 below).
+
 ## Build sequence (dependencies interleave Track 1 and Track 3)
 
 ### Phase 0 — Foundations (in progress)
@@ -133,6 +143,14 @@ parallelize the additive gap-fillers so a stall in one never blocks the others:
 | P6.1 | FPGA security reference artifact **[built]** | 2 | `docs/track2/fpga-security-reference.md`: bitstream auth/encryption, eFUSE vs BBRAM key provisioning, PUF keying, DPA/side-channel + anti-tamper, RoT into programmable logic, threat->requirement->T&E table | Embedded HW **/ FPGA** features (named JD gap) |
 | P6.2 | One systems-language embedded-security build (Rust or C) **[planned]** | 3 | A real, minimal artifact — e.g. memory-safe firmware-container parser, MAVLink v2 signing implementation, or a C PoC for a confirmed finding; builds + tests | Rust/Go/C/C++ (preferred qual); Software Assurance |
 | P6.3 | Program-leadership security brief **[built]** | 2 | 12-slide self-contained deck (`docs/track2/uas-security-brief.html`) synthesizing the CVE work + UAS threat→gap→fix for government / leadership audiences | Briefing gov customers (weighted) |
+
+### Phase 7 — UAS / autonomy domain run (Track 1 live-CVE pivot)
+Full plan and rationale: [`track1-uas-run-plan.md`](track1-uas-run-plan.md).
+| ID | Deliverable | Track | DoD | Competency |
+|----|-------------|-------|-----|------------|
+| P7.1 | PX4 re-anchor + CVE-2026-1579 dedup pass across UAS artifacts **[planned]** | 1/2 | mavlink-sectest run vs **PX4 SITL** as primary + ArduPilot cross-stack; CVE-2026-1579 cited/severity-anchored; signing module framed as the build-side control | Embedded/IoT assessment; security architecture; Cyber T&E |
+| P7.2 | ROS 2 / DDS + micro-XRCE-DDS assessment & novel-CVE hunt **[planned]** | 1 | SROS2/DDS discovery+auth, uXRCE-DDS bridge trust boundary, and RTPS/CDR parsing assessed through the dedup gate; outcome is a coordinated-disclosure CVE **or** a rigorous negative-result assessment | Embedded/IoT assessment; Sw assurance; Cyber T&E |
+| P7.3 | Flight-controller secure-boot teardown (cost-gated) **[planned]** | 1/2 | Pixhawk-class board (owned): UART/JTAG/SPI dump, bootloader + signed-firmware chain analysis; build-side signed-boot design mapped to P4.2 | Embedded HW / secure boot; anti-tamper; Cyber T&E |
 
 ## Clearance & certifications (role gate — held)
 - **Clearance: TS/SCI with SAP eligibility — active/held.** This is the hard gate on

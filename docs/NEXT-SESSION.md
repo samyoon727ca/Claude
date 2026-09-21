@@ -45,7 +45,9 @@ propose a plan, then pick one to execute.
 
 **Still the credibility frontier:** a genuinely **new CVE** from a fresh Track 1 target (Path A) —
 the DrayTek 300B surface is fully CVE'd, so it's the other-model fan-out or a new device. No depth
-work substitutes for one real new disclosure.
+work substitutes for one real new disclosure. **The next live run pivots this to the UAS / autonomy
+domain (PX4 re-anchor + a ROS 2 / DDS novel-CVE hunt) — see
+[`track1-uas-run-plan.md`](track1-uas-run-plan.md).**
 
 Guardrails unchanged: WSL for the gate (keep it green), a new branch — never `main`, coordinated
 disclosure / no committed blobs, and
@@ -150,6 +152,7 @@ Goal: the hands-on autopilot assessment. Analytical foundation is already writte
 
 ## Pointers
 - Front door / repo map: [`README.md`](../README.md)
+- Next live run (UAS/autonomy): [`track1-uas-run-plan.md`](track1-uas-run-plan.md)
 - Latest audit + consolidated roadmap: [`audit-2026-09-18.md`](audit-2026-09-18.md)
 - Scope & ethics: [`docs/disclosure-policy.md`](disclosure-policy.md)
 - Engineering docs: [`docs/track2/`](track2/)
