@@ -12,6 +12,17 @@ artifact that turns the threat model from analysis into measured result.*
 > module (7/7 `cargo test`, pymavlink interop). All five MAVLink-link checks are now decisive;
 > non-MAVLink-link requirements (T2/T3/T7/T9/T10) are out-of-harness follow-on.
 
+> **Phase 1 re-anchor (2026-09-21) — PX4-primary + CVE-2026-1579.** Per the
+> [Run 4 plan](../track1-uas-run-plan.md), the flight-stack posture is now **PX4-primary**
+> (PX4 is BSD-3 → defense-integrable; ArduPilot GPLv3 is the cross-stack validator). The run
+> measured below is the **ArduPilot** data point; the **PX4 SITL re-run is the pending step**
+> to make PX4 the primary demonstrated stack. The T1/T5 (`signing`/`cmd_injection`) findings
+> are the **same weakness class as CVE-2026-1579** — PX4 v1.16.0, MAVLink signing off ⇒
+> unauthenticated `SERIAL_CONTROL` shell ⇒ RCE, **CVSS 9.8**, CWE-306
+> ([CISA ICSA-26-090-02](https://www.cisa.gov/news-events/ics-advisories/icsa-26-090-02), 2026-03-31).
+> This assessment **cites and reproduces** that public CVE; it does **not** claim the finding
+> as novel. Dedup basis: [`known-territory.md`](../../research/uas-autonomy/known-territory.md).
+
 > **Scope, safety & clearance.** UNCLASSIFIED, open-source stack (ArduPilot/PX4 + public
 > MAVLink). **Simulation-first** — the harness targets SITL on localhost and sends only a
 > benign, non-actuating `REQUEST_MESSAGE`; it never arms, changes mode, or writes
@@ -41,6 +52,12 @@ PDR/CDR/TRR.
 | Harness | `tools/mavlink-sectest/mavlink_sectest.py` (`--selftest` green) |
 | Signing configured? | **No** — 11/11 observed frames unsigned (drives the T1/T5 result) |
 | Run date | 2026-09-18 |
+
+**Stack posture (Phase 1 re-anchor).** PX4 is the **primary** target stack going forward
+(BSD-3 licensing → a hardening/signing artifact a prime could actually adopt); the run in
+this table is the **ArduPilot cross-stack** data point, and the **PX4 SITL re-run
+(`make px4_sitl`) is the pending step**. The threat model and harness are stack-agnostic
+(both speak MAVLink v2), so the SHALL set and the checks transfer unchanged.
 
 ## 3. Method
 
@@ -136,6 +153,11 @@ monotonic timestamp to reject a replay). This realizes ATT&CK-ICS **T0855 Unauth
 Command Message** across trust boundary **TB1**: any actor on the RF medium can inject or
 replay commands to the flight controller. Risk 8.5 (High) reflects the cyber-physical
 loss — control-authority compromise is a safety event, the model's top loss scenario.
+This is the **same weakness class as CVE-2026-1579** (PX4 v1.16.0: MAVLink signing off ⇒
+unauthenticated `SERIAL_CONTROL` shell ⇒ RCE; **CVSS 9.8**, CWE-306, CISA ICSA-26-090-02,
+2026-03-31): the harness measures on the open stack exactly the missing-authentication
+defect that CVE scores at near-maximum severity. The finding is **cited and reproduced,
+not claimed novel** ([dedup basis](../../research/uas-autonomy/known-territory.md)).
 
 - `replay` scores Medium (5.5), not High: impact depends on the semantics of the
   replayable frame, and it is subsumed once signing (with timestamps) is enabled.

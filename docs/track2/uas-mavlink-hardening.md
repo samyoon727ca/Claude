@@ -31,7 +31,10 @@ yet applied · **[verified]** already met, confirmed. Findings/threat IDs are fr
 
 **The gap (measured).** On the stock link every frame was unsigned, an unsigned command
 was accepted, and a byte-identical frame was re-accepted — the autopilot cannot tell an
-authorized operator from any actor on the RF medium (ATT&CK-ICS **T0855**).
+authorized operator from any actor on the RF medium (ATT&CK-ICS **T0855**). This is the
+defect **CVE-2026-1579** scores at **CVSS 9.8** on PX4 (signing off ⇒ unauthenticated
+`SERIAL_CONTROL` shell ⇒ RCE; CWE-306, CISA ICSA-26-090-02) — the control below is its
+published mitigation, implemented as an enforceable module rather than a config toggle.
 
 **The technique.** MAVLink v2 message signing. A signed frame sets `incompat_flags` bit
 `0x01` and appends a 13-byte block after the payload CRC: `link_id` (1) + `timestamp` (6,
@@ -61,7 +64,10 @@ is the anti-replay (T5), and it falls out of signing for free.
 **Implementation.** A memory-safe reference implementation of exactly this
 (sign / verify / anti-replay) is the **P6.2** module —
 [`tools/mavlink-signing/`](../../tools/mavlink-signing/SPEC.md) — `#![forbid(unsafe_code)]`,
-zero external dependencies, cross-checked byte-for-byte against pymavlink.
+zero external dependencies, cross-checked byte-for-byte against pymavlink. It is
+**MIT-licensed** — permissive like PX4's BSD-3, so an integrator could actually adopt it (a
+GPLv3 control they would not): the build-side answer to CVE-2026-1579's "enable signing"
+guidance, as enforceable code rather than a toggle.
 
 ```mermaid
 flowchart TD
