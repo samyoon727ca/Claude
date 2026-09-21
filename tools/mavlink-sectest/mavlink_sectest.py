@@ -22,6 +22,7 @@ import argparse
 import csv
 import hashlib
 import json
+import struct
 import sys
 import time
 
@@ -74,6 +75,28 @@ def verdict_failsafe(params):
            ("FAIL", f"failsafe disabled ({detail})")
 
 
+# MAV_PARAM_TYPE integer codes: (u)int8=1/2, (u)int16=3/4, (u)int32=5/6.
+_INT_PARAM_TYPES = {1, 2, 3, 4, 5, 6}
+_SIGNED_PARAM_TYPES = {2, 4, 6}
+
+
+def decode_param_value(value, param_type):
+    """Recover an integer param's true value from the MAVLink float field.
+
+    PX4 sends integer-typed params (e.g. NAV_RCL_ACT) by packing the raw bytes into
+    PARAM_VALUE's float field, so a bare float read shows garbage like 2.8e-45 (the
+    byte pattern 0x00000002 = int 2). ArduPilot types its params REAL32, so this only
+    fires for genuinely integer-typed params and leaves floats untouched.
+    """
+    if param_type in _INT_PARAM_TYPES:
+        try:
+            raw = struct.pack("<f", float(value))
+            return int.from_bytes(raw, "little", signed=param_type in _SIGNED_PARAM_TYPES)
+        except (struct.error, OverflowError, ValueError):
+            return value
+    return value
+
+
 def fetch_param(conn, tsys, tcomp, name, timeout=3.0):
     """Read ONE parameter by name, matching on param_id.
 
@@ -97,7 +120,7 @@ def fetch_param(conn, tsys, tcomp, name, timeout=3.0):
         if isinstance(pid, (bytes, bytearray)):
             pid = pid.decode(errors="replace")
         if pid.rstrip("\x00") == want:
-            return pv.param_value
+            return decode_param_value(pv.param_value, pv.param_type)
 
 
 class ReplayDetector:
@@ -263,6 +286,9 @@ def selftest():
     check("telemetry none", verdict_telemetry_plaintext(set())[0], "INFO")
     check("failsafe on", verdict_failsafe({"FS_THR_ENABLE": 1.0})[0], "PASS")
     check("failsafe off", verdict_failsafe({"FS_THR_ENABLE": 0})[0], "FAIL")
+    # PX4 int-param decode: NAV_RCL_ACT=2 arrives as the byte-reinterpreted float 2.8e-45
+    check("param int32 decode (PX4)", decode_param_value(2.802596928649634e-45, 6), 2)
+    check("param real32 passthrough", decode_param_value(1.0, 9), 1.0)
 
     rd = ReplayDetector()
     b = b"\x01\x02\x03"

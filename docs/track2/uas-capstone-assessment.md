@@ -12,13 +12,13 @@ artifact that turns the threat model from analysis into measured result.*
 > module (7/7 `cargo test`, pymavlink interop). All five MAVLink-link checks are now decisive;
 > non-MAVLink-link requirements (T2/T3/T7/T9/T10) are out-of-harness follow-on.
 
-> **Phase 1 re-anchor (2026-09-21) — PX4-primary + CVE-2026-1579.** Per the
-> [Run 4 plan](../track1-uas-run-plan.md), the flight-stack posture is now **PX4-primary**
-> (PX4 is BSD-3 → defense-integrable; ArduPilot GPLv3 is the cross-stack validator). The run
-> measured below is the **ArduPilot** data point; the **PX4 SITL re-run is the pending step**
-> to make PX4 the primary demonstrated stack. The T1/T5 (`signing`/`cmd_injection`) findings
-> are the **same weakness class as CVE-2026-1579** — PX4 v1.16.0, MAVLink signing off ⇒
-> unauthenticated `SERIAL_CONTROL` shell ⇒ RCE, **CVSS 9.8**, CWE-306
+> **Phase 1 re-anchor (2026-09-21) — PX4-primary + CVE-2026-1579, both stacks measured.** Per
+> the [Run 4 plan](../track1-uas-run-plan.md), the flight-stack posture is now **PX4-primary**
+> (PX4 is BSD-3 → defense-integrable; ArduPilot GPLv3 is the cross-stack validator). **PX4 SITL
+> has now been run** (§5.1) and reproduces the **identical 4 FAIL / 1 PASS** cluster ArduPilot
+> showed — cross-stack confirmation. The T1/T5 (`signing`/`cmd_injection`) findings are the
+> **same weakness class as CVE-2026-1579** — PX4 v1.16.0, MAVLink signing off ⇒ unauthenticated
+> `SERIAL_CONTROL` shell ⇒ RCE, **CVSS 9.8**, CWE-306
 > ([CISA ICSA-26-090-02](https://www.cisa.gov/news-events/ics-advisories/icsa-26-090-02), 2026-03-31).
 > This assessment **cites and reproduces** that public CVE; it does **not** claim the finding
 > as novel. Dedup basis: [`known-territory.md`](../../research/uas-autonomy/known-territory.md).
@@ -55,9 +55,10 @@ PDR/CDR/TRR.
 
 **Stack posture (Phase 1 re-anchor).** PX4 is the **primary** target stack going forward
 (BSD-3 licensing → a hardening/signing artifact a prime could actually adopt); the run in
-this table is the **ArduPilot cross-stack** data point, and the **PX4 SITL re-run
-(`make px4_sitl`) is the pending step**. The threat model and harness are stack-agnostic
-(both speak MAVLink v2), so the SHALL set and the checks transfer unchanged.
+this table is the **ArduPilot** data point, and **PX4 SITL has now been measured** too
+(**§5.1** — PX4 v1.18.0-beta1, `make px4_sitl gz_x500`, MAVLink on `udp:127.0.0.1:14550`).
+The threat model and harness are stack-agnostic (both speak MAVLink v2), so the SHALL set and
+the checks transfer unchanged — which the identical result across both stacks confirms.
 
 ## 3. Method
 
@@ -142,6 +143,35 @@ SITL after-run can't *positively* confirm the control by itself. The determinist
 > check now decodes a requested stream (cleartext confirmed), and the `failsafe` check reports
 > the correct parameter (`FS_THR_ENABLE`, not a stray streamed `PARAM_VALUE`). Both landed in
 > `mavlink_sectest.py` before this run.*
+
+### 5.1 PX4 cross-stack run — measured 2026-09-21 (the primary stack)
+
+Re-run against **PX4 SITL** to make PX4 the primary demonstrated stack (Phase 1). Setup: **PX4
+v1.18.0-beta1**, `make px4_sitl gz_x500` (Gazebo Jetty / `gz-transport15`) on Ubuntu 26.04 WSL;
+harness → `udp:127.0.0.1:14550` (MAVLink instance #0, the GCS link; heartbeat from system 1).
+Archived: [`assets/uas-capstone-report-px4.json`](assets/uas-capstone-report-px4.json),
+[`assets/uas-capstone-findings-px4.csv`](assets/uas-capstone-findings-px4.csv).
+
+| Test | Result | Observation | SHALL met? |
+|------|:------:|-------------|:----------:|
+| `signing` | **FAIL** | 1885/1885 frames unsigned (PX4 MAVLink v2 signing off by default) | ✗ |
+| `cmd_injection` | **FAIL** | unsigned command **ACCEPTED** | ✗ |
+| `replay` | **FAIL** | identical replayed frame accepted again | ✗ |
+| `telemetry` | **FAIL** | cleartext `ATTITUDE`, `GLOBAL_POSITION_INT`, `GPS_RAW_INT`, `VFR_HUD`, `BATTERY_STATUS` | ✗ |
+| `failsafe` | **PASS** | `NAV_RCL_ACT=2` (RC-loss action = *Return*) | ✓ |
+
+**4 FAIL · 1 PASS — identical to ArduPilot (§5).** This is the cross-stack confirmation: the
+missing-authentication default is a property of the open MAVLink ecosystem, not one vendor. And
+the `signing` FAIL + `cmd_injection` **ACCEPTED** pair **is CVE-2026-1579 measured on PX4** — the
+exact unauthenticated-command defect (signing off ⇒ unsigned commands accepted) that CVE scores
+9.8, reproduced (not claimed).
+
+> *Methodology note (PX4 int params): PX4 returns integer-typed params (e.g. `NAV_RCL_ACT`) by
+> packing the raw bytes into MAVLink's float field, so the first run surfaced the value as a raw
+> `2.802596928649634e-45` — the byte pattern `0x00000002` = int `2`. The verdict was correct
+> throughout (non-zero ⇒ configured ⇒ PASS); only the display was wrong. The harness now decodes
+> PX4 int-typed params (`decode_param_value`, covered by `--selftest`), so it reports
+> `NAV_RCL_ACT=2`. ArduPilot types its params `REAL32`, so its floats are untouched.*
 
 ## 6. Analysis & findings
 
