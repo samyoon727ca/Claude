@@ -21,10 +21,11 @@ honestly against the [dedup gate](phase2-h5-test-procedure.md) and the
 > ([`disclosure-policy.md`](../../docs/disclosure-policy.md) §5). No committed blobs.
 
 **Environment.** WSL Ubuntu · project `~/xrce_probe` · target PX4 SITL + local Micro-XRCE-DDS
-Agent · transport UDP/IPv4 · agent `127.0.0.1:8888`. The probe (`xrce_probe.c`, the exact peer
-listed in the [procedure](phase2-h5-test-procedure.md)) is a minimal unauthenticated XRCE client:
-open session → participant → topic → publisher → datawriter on `rt/fmu/in/vehicle_command`, then
-publish a `VehicleCommand` ARM (command 400) and observe the effect in `pxh>`.
+Agent · transport UDP/IPv4 · agent `127.0.0.1:8888`. The probe source is committed at
+[`xrce_probe/`](xrce_probe/) (`xrce_probe.c` + `CMakeLists.txt`): a minimal unauthenticated XRCE
+client that opens session → participant → topic → publisher → datawriter on
+`rt/fmu/in/vehicle_command`, then publishes a `VehicleCommand` ARM (command 400) and observes the
+effect in `pxh>`.
 
 ---
 
@@ -45,8 +46,8 @@ uxr_init_udp_transport(uxrUDPTransport* transport, uxrIpProtocol ip_protocol,
                        const char* ip, const char* port);
 ```
 
-Dropping the `&platform` argument compiled cleanly. (Left-over: the now-unused
-`uxrUDPPlatform platform;` local should be removed from `main()` for a clean artifact.)
+Dropping the `&platform` argument compiled cleanly. (The now-unused `uxrUDPPlatform platform;`
+local was removed from `main()` in the [committed source](xrce_probe/xrce_probe.c).)
 
 ## 2. Probe execution — observed output
 
