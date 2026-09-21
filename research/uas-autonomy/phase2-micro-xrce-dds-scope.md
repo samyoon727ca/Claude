@@ -114,6 +114,8 @@ Ranked by *expected value* = novelty headroom × impact. Each names a test.
   integration**. **Test:** stand up PX4 SITL + Agent; from an *unrelated* DDS/XRCE peer, attempt
   to publish to command topics and observe flight-stack effect in SITL. **Dedup carefully** — the
   "MAVLink-signing-off" class is CVE'd; confirm the *DDS-bridge* instance is not already covered.
+  → **Executable procedure: [`phase2-h5-test-procedure.md`](phase2-h5-test-procedure.md)** (runs on
+  the Phase 1 SITL rig; clause-1 command + clause-2 confidentiality, dedup gate, DDS-Security "after").
 - **H6 — Agent multi-thread races (Sender/Receiver/Processing/Heartbeat)** *(memory-safety;
   UAF/TOCTOU).* Session teardown vs. in-flight processing on shared ProxyClient state — the same
   race shape as PX4 **CVE-2026-32724** (`MavlinkShell` UAF), one component over. **Test:** TSan
