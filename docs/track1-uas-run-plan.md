@@ -167,6 +167,14 @@ embedded/IoT assessment (3), security architecture (1/4), Cyber T&E (7).
 
 ## 5. Phase 2 — CVE-upside flagship: ROS 2 / DDS + PX4 micro-XRCE-DDS bridge
 
+> **Status: SCOPED 2026-09-21** → [`../research/uas-autonomy/phase2-micro-xrce-dds-scope.md`](../research/uas-autonomy/phase2-micro-xrce-dds-scope.md).
+> Target locked to the **Micro-XRCE-DDS Agent** (Phase 0's thinnest layer). Surface mapped in
+> 6 layers (transport framing → XRCE parse → Micro-CDR `ucdr` deserialize → entity XML/binary
+> rep → session/stream state → PX4 integration seam) with 6 ranked hypotheses. **Priority: H1**
+> (fuzz the `ucdr` parser — most likely clean CVE) **+ H5** (PX4 default bridge = no
+> DDS-Security ⇒ unauthenticated command-topic surface, the CVE-2026-1579 pattern one layer up —
+> highest impact). Next: acquire+build source (ASan/UBSan), stand up the fuzz + SITL rigs.
+
 The genuinely new work, and the only surface here where a novel CVE is realistically on
 the table. It is also the most Lattice-flavored layer (autonomy middleware / mesh).
 
