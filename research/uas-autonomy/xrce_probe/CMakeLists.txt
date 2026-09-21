@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.16)
+project(xrce_probe C)
+find_package(microxrcedds_client REQUIRED)
+add_executable(xrce_probe xrce_probe.c)
+target_link_libraries(xrce_probe microxrcedds_client)
