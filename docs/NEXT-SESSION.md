@@ -43,11 +43,18 @@ propose a plan, then pick one to execute.
    (directly demonstrates the P6.1 side-channel threat), or bitstream encryption + secure boot
    on a real FPGA.
 
-**Still the credibility frontier:** a genuinely **new CVE** from a fresh Track 1 target (Path A) —
-the DrayTek 300B surface is fully CVE'd, so it's the other-model fan-out or a new device. No depth
-work substitutes for one real new disclosure. **The next live run pivots this to the UAS / autonomy
-domain (PX4 re-anchor + a ROS 2 / DDS novel-CVE hunt) — see
-[`track1-uas-run-plan.md`](track1-uas-run-plan.md).**
+**Still the credibility frontier:** a genuinely **new CVE** from a live Track 1 run — no depth
+work substitutes for one real disclosure. **The UAS / autonomy run (Run 4) is now in flight:**
+Phase 0 (dedup / known-territory map) and Phase 1 (PX4 re-anchor + measured SITL) are **done**;
+**Phase 2** — the micro-XRCE-DDS Agent novel-CVE hunt — is the active thread. H5 (unauth command
+injection) ran and recorded a *blocked-at-publisher* (`0x80 DDS_ERROR`) result, pivoting the effort
+to **H1: fuzz the thin `ucdr` decode parser** (the surface Phase 0 flagged as least-mined).
+**Concrete next action** → run the H1 harness per its spec:
+[`../research/uas-autonomy/phase2-h1-fuzz-harness-spec.md`](../research/uas-autonomy/phase2-h1-fuzz-harness-spec.md)
+(buildable skeleton [`../research/uas-autonomy/ucdr_fuzz/`](../research/uas-autonomy/ucdr_fuzz/) —
+`./build/ucdr_fuzz_standalone --selftest` is green today; on WSL: build with clang, seed the
+corpus from a loopback capture, run libFuzzer, then the §6 dedup gate). Full sequence + the router
+fallbacks: [`track1-uas-run-plan.md`](track1-uas-run-plan.md).
 
 Guardrails unchanged: WSL for the gate (keep it green), a new branch — never `main`, coordinated
 disclosure / no committed blobs, and
@@ -153,6 +160,7 @@ Goal: the hands-on autopilot assessment. Analytical foundation is already writte
 ## Pointers
 - Front door / repo map: [`README.md`](../README.md)
 - Next live run (UAS/autonomy): [`track1-uas-run-plan.md`](track1-uas-run-plan.md)
+- **Active Phase 2 next action** — H1 `ucdr` fuzz spec: [`../research/uas-autonomy/phase2-h1-fuzz-harness-spec.md`](../research/uas-autonomy/phase2-h1-fuzz-harness-spec.md) · harness [`../research/uas-autonomy/ucdr_fuzz/`](../research/uas-autonomy/ucdr_fuzz/)
 - Latest audit + consolidated roadmap: [`audit-2026-09-18.md`](audit-2026-09-18.md)
 - Scope & ethics: [`docs/disclosure-policy.md`](disclosure-policy.md)
 - Engineering docs: [`docs/track2/`](track2/)
