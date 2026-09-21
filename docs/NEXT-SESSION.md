@@ -25,7 +25,10 @@ propose a plan, then pick one to execute.
 1. **GNSS spoofing (T2)** — the threat model's #1 risk (9.0) and untested. Inject a spoofed GPS
    position into ArduPilot SITL, test multi-sensor consistency + the failsafe response, and
    write it up like the [capstone](track2/uas-capstone-assessment.md). Most defense-relevant
-   single addition.
+   single addition. **Test plan drafted** →
+   [`track2/uas-gnss-spoofing-test-plan.md`](track2/uas-gnss-spoofing-test-plan.md) (injection
+   method, test matrix S1–S6, pass/fail criteria, `gnss_spoof_test.py` harness spec with offline
+   self-test, before/after hardening). **Pending the SITL run** to fill §9 results.
 2. **Telemetry encryption (T4)** — stand up an encrypted transport (WireGuard/DTLS) GCS↔companion,
    re-run `mavlink-sectest` through it, show telemetry is no longer cleartext: the *applied*
    control for the [hardening writeup](track2/uas-mavlink-hardening.md)'s T4 row.
@@ -45,8 +48,11 @@ the DrayTek 300B surface is fully CVE'd, so it's the other-model fan-out or a ne
 work substitutes for one real new disclosure.
 
 Guardrails unchanged: WSL for the gate (keep it green), a new branch — never `main`, coordinated
-disclosure / no committed blobs, the held DrayTek CVE-2024-45890 coverage-gap email stays HELD, and
+disclosure / no committed blobs, and
 keep the docs (README map, qualification-map, artifact-plan, this file) consistent on any status change.
+(The DrayTek CVE-2024-45890 coverage-gap email was **sent 2026-09-21**; the vendor confirmed 2960/300B/3900
+share the 1.5.1.7 fix but declines the CVE edit as non-CNA — vendor-side disclosure is closed. See the
+[acquisition-log disclosure log](../research/draytek-vigor/acquisition-log.md#disclosure-log).)
 
 ## Why these run locally, not in the cloud sandbox
 The cloud environment's network policy blocks vendor firmware hosts (403) and

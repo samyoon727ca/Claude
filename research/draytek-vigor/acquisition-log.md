@@ -65,6 +65,23 @@ could still only come from the same pattern on a **still-supported, out-of-CPE, 
 |--------------------|---------------------------------------|:----------:|
 | OpenVPN web-config → `create_client_conf.sh` unquoted args in `mainfunction.cgi` | Vigor OpenVPN web config is broad across the Linux line (2960/3900/165x/…); many still supported (≠ EoL 300B) → higher-impact, fixable, CVE-worthy | pending (grep the same CGI across models' public firmware) |
 
+## Disclosure log
+| Date | Action | Detail |
+|------|--------|--------|
+| 2026-09-21 | **Coverage-gap notice SENT** | Emailed DrayTek the CVE-2024-45890 affected-product / CPE coverage-gap notice ([`disclosure-email.txt`](disclosure-email.txt) + [`vendor-report.md`](vendor-report.md)). **Not** a new-vuln report; requested extending CVE-2024-45890's affected-products list to Vigor300B (≤1.5.1.6, fixed 1.5.1.7) and confirmation of the Vigor2960. COI / outside-activity disclosure handled first per [`../../docs/disclosure-policy.md`](../../docs/disclosure-policy.md) §5. |
+| 2026-09-21 | **Vendor reply received** | DrayTek FAE Department replied: *"2960/300B/3900 are similar, so 1.5.1.7 is released for all 3 models. Unfortunately, the CVE isn't submited [sic] by us, and I'm unable to contact the reporter to alter it."* |
+
+**Disposition.** The reply **confirms the technical premise**: DrayTek acknowledges the
+Vigor**2960 / 300B / 3900** share the same firmware line and that **1.5.1.7 is the fix for all
+three** — i.e. the 300B (and 2960) are affected by the `download_ovpn` bug fixed in 1.5.1.7,
+exactly the coverage gap reported. DrayTek **declines/cannot alter the CVE record** because they
+are **not the CNA/assigner** for CVE-2024-45890 and cannot reach the original reporter. This is
+the branch the email itself anticipated (disclosure-email.txt lines 55–57): the affected-products
+correction must be routed to **the CNA (MITRE) or the original reporter**, not the vendor.
+Vendor-side disclosure is therefore **complete and closed**; the residual action is an optional
+CPE-correction request to MITRE/CNA (user-confirmed, non-urgent — the bug is already public and
+patched). Still **not a new CVE**.
+
 ## Next steps
 1. ~~**Ghidra decompile-diff** `mainfunction.cgi` 1.5.1.6 vs 1.5.1.7 + confirm the auth gate.~~
    **DONE (run 3).** Command built by `FUN_0001e9d8` (`download_ovpn`); 5 web params confirmed;

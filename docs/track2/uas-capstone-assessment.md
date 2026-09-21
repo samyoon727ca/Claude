@@ -77,7 +77,9 @@ theme the threat model's high-risk cluster predicts. The assessment's value is m
 and framing that gap against the SHALL set, not "discovering" that SITL is insecure.
 
 **Not covered by this harness** (assessed by other methods; out of this run's scope):
-T2 GNSS spoofing (signal sim / SITL sensor injection), T3 signed-firmware negative test
+T2 GNSS spoofing (signal sim / SITL sensor injection — **now planned** in
+[`uas-gnss-spoofing-test-plan.md`](uas-gnss-spoofing-test-plan.md), pending its own SITL run),
+T3 signed-firmware negative test
 (bootloader), T7 companion-computer segmentation, T9 reproducible-build/supply-chain,
 T10 tamper-evident logging. Tracked as follow-on T&E in the threat model §10.
 
