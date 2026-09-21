@@ -85,6 +85,14 @@ airframe.
 
 ## 3. Phase 0 — Dedup gate & known-territory map (do this first)
 
+> **Status: BUILT 2026-09-21** → [`../research/uas-autonomy/known-territory.md`](../research/uas-autonomy/known-territory.md).
+> Sweep done (CVE-2026-1579 **verified**: PX4 v1.16.0 SITL, CVSS 9.8, CISA ICSA-26-090-02).
+> **Headline finding:** the PX4 MAVLink surface (a 2026 CVE cluster) and Fast-DDS core
+> RTPS/CDR parsing are **heavily mined** → cite, don't claim; the **micro-XRCE-DDS Agent is
+> the thinnest-covered layer** (only 2 field-validation DoS CVEs) → the primary Phase 2
+> novel-CVE aim, followed by the PX4↔uXRCE-DDS integration seam. Re-run the sweep before any
+> candidate goes deep.
+
 Three straight dedup outcomes make this the highest-ROI habit in the whole plan.
 **Before any deep RE**, build a one-page known-territory map so effort aims only at
 unclaimed surface. Sweep, at minimum:
