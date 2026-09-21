@@ -48,6 +48,7 @@ docs/
     uas-mavlink-hardening.md                            Remediation for the capstone findings (signing, anti-replay, link encryption)
     milestone-security-architecture-and-anti-tamper.md  SRR->PRR gates, MBSE, DoD anti-tamper
     uas-capstone-assessment.md                          P5.1 hands-on MAVLink T&E vs SITL (executes the threat model)
+    uas-gnss-spoofing-test-plan.md                      T2 GNSS-spoofing Cyber T&E plan (SITL sensor injection; pending run)
     uas-security-brief.html                             P6.3 leadership brief (self-contained slide deck; open in a browser)
 .claude/skills/                Reusable Claude Code Skills (the assessment funnel)
   firmware-triage/             extract -> inventory -> sink-scan  (triage.sh, sink_scan.py, setup-tools.sh)
@@ -151,12 +152,13 @@ fixtures**; what remains is hands-on execution that needs an unrestricted host.
   and look for a **still-supported, out-of-CPE, unpatched** one. Run 3 itself is closed out:
   the methodology case study is published at
   [`writeups/draytek-vigor300b-download_ovpn-cmdinjection.md`](writeups/draytek-vigor300b-download_ovpn-cmdinjection.md),
-  and a CPE coverage-gap note to DrayTek/MITRE (CVE-2024-45890 also affects the Vigor300B) is
-  drafted in [`research/draytek-vigor/`](research/draytek-vigor/) (sending it is a
-  user-confirmed step). A runtime PoC on an owned/emulated ≤ 1.5.1.6 device would further
-  substantiate the case study. See the top-priority item in
-  [`docs/artifact-plan.md`](docs/artifact-plan.md). Disclosure obligation: handle personal
-  COI / outside-activity reporting first ([`docs/disclosure-policy.md`](docs/disclosure-policy.md) §5).
+  and a CPE coverage-gap note to DrayTek (CVE-2024-45890 also affects the Vigor300B) was
+  **sent 2026-09-21** ([`research/draytek-vigor/`](research/draytek-vigor/)); the vendor confirmed
+  the 2960/300B/3900 share the 1.5.1.7 fix but declines the CVE edit as non-CNA, so vendor-side
+  disclosure is closed and any CPE correction now routes to the CNA (MITRE). A runtime PoC on an
+  owned/emulated ≤ 1.5.1.6 device would further substantiate the case study. See the top-priority
+  item in [`docs/artifact-plan.md`](docs/artifact-plan.md). Disclosure obligation was handled per
+  ([`docs/disclosure-policy.md`](docs/disclosure-policy.md) §5) — COI / outside-activity reporting first.
 - **P5.1** — the hands-on UAS capstone assessment (threat model + test harness ready).
 
 ## License

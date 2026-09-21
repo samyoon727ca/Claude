@@ -86,8 +86,10 @@ public writeups under `writeups/`. Three Track 1 runs so far:
   The 300B is not in that CVE's CPE list, so residual value is (a) a methodology case study
   — **published** at `writeups/draytek-vigor300b-download_ovpn-cmdinjection.md` — and (b) a
   CPE coverage-gap note to DrayTek/MITRE (affected-product extension, **not** a new CVE) —
-  **drafted** as `research/draytek-vigor/vendor-report.md` + `disclosure-email.txt` (held;
-  sending is a user-confirmed step). The new-CVE paperwork was retired: `finding.json`
+  `research/draytek-vigor/vendor-report.md` + `disclosure-email.txt`, **sent to DrayTek
+  2026-09-21**. Vendor reply confirmed the 2960/300B/3900 share the 1.5.1.7 fix but declines the
+  CVE edit as non-CNA → vendor-side disclosure **closed**; optional CPE correction now routes to
+  MITRE (see `acquisition-log.md` §Disclosure log). The new-CVE paperwork was retired: `finding.json`
   reclassified n-day, the held writeup stubbed, the RESERVED CVE record deleted. Ghidra
   decompile+disasm evidence under git-ignored `diff-out-dt/ghidra/`. **A genuinely new CVE
   could now only come from the fan-out to a still-supported, out-of-CPE, unpatched model.**

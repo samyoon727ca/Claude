@@ -175,9 +175,12 @@ Independently re-confirmed this run, not trusting the earlier decompile notes:
    - **Case study (published):** `writeups/draytek-vigor300b-download_ovpn-cmdinjection.md`
      — methodology-forward (patch-diff → decompile → sanitizer-bypass), maps to
      CVE-2024-45890, and documents the dedup miss as a transferable lesson.
-   - **CPE coverage-gap note (drafted, held):** `vendor-report.md` reframed into
+   - **CPE coverage-gap note (SENT 2026-09-21):** `vendor-report.md` reframed into
      "CVE-2024-45890 also affects Vigor300B ≤1.5.1.6 (fixed 1.5.1.7)" +
-     `disclosure-email.txt` cover email. Sending is a **user-confirmed** step.
+     `disclosure-email.txt` cover email, emailed to DrayTek. Vendor confirmed the
+     2960/300B/3900 share the 1.5.1.7 fix but declines the CVE edit as non-CNA →
+     vendor-side disclosure closed; optional CPE correction routes to MITRE. See
+     [`acquisition-log.md`](acquisition-log.md#disclosure-log) §Disclosure log.
    - `finding.json` reclassified n-day (`existing_cve: CVE-2024-45890`,
      `new_cve_requested: false`); `writeup-download_ovpn.md` stubbed to point here;
      `CVE-…RESERVED.json` **deleted** (no new CVE requested).
