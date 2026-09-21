@@ -124,14 +124,16 @@ Phases 1–2 passes through before deep time is spent.
 
 ## 4. Phase 1 — Re-anchor + dedup-clean the existing break/build (ships first)
 
-> **Status: doc re-anchor DONE 2026-09-21; PX4 SITL measured run PENDING.** The
+> **Status: DONE 2026-09-21.** Doc re-anchor + PX4 SITL measured run both complete. The
 > **CVE-2026-1579 citation + severity anchor + PX4-primary/ArduPilot-cross-stack framing**
 > are threaded through the [capstone](track2/uas-capstone-assessment.md),
 > [threat model](track2/uas-autopilot-threat-model.md),
 > [hardening writeup](track2/uas-mavlink-hardening.md), and [brief](track2/uas-security-brief.html)
-> (the P6.2 module is framed as the MIT-licensed, adoptable build-side control). **Remaining
-> break step (user-executed):** run `mavlink-sectest` against **PX4 SITL** (`make px4_sitl`)
-> and record the stock FAIL cluster + signing-enabled clear as the primary demonstrated stack.
+> (the P6.2 module is framed as the MIT-licensed, adoptable build-side control). **PX4 SITL run
+> complete:** PX4 v1.18.0-beta1 (`make px4_sitl gz_x500`) reproduced the **identical 4 FAIL / 1
+> PASS** cluster ArduPilot showed — cross-stack confirmation, and CVE-2026-1579 measured on PX4
+> ([capstone §5.1](track2/uas-capstone-assessment.md)). Optional remaining: the signing-enabled
+> PX4 "after" (per the PX4 security-hardening guide). DoD met.
 
 Low-cost because the work already exists; the point is to make it PX4-primary and
 dedup-clean so it ships as a defensible artifact within weeks.
