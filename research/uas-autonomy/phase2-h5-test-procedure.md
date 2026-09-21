@@ -84,7 +84,13 @@ Three variants map to the scope doc's trust boundaries; run whichever the enviro
 Run **A1 first** (read-only, safest). A2/A3 arm/fly the **simulated** vehicle — safe because it is
 pure SITL; never against hardware.
 
-## 5. Pass / fail criteria & results — *pending run*
+## 5. Pass / fail criteria & results — *initial run recorded*
+
+> **Run record:** the first execution is written up in
+> [`phase2-h5-test-results.md`](phase2-h5-test-results.md). Headline: unauthenticated session
+> accepted; participant + topic created; **publisher creation failed (`0x80 DDS_ERROR`)** upstream
+> of any sample, so **command injection is not demonstrated**. The A1–A5 matrix below stays open
+> until the entity-creation path is understood.
 
 - **Clause 1 (command) = FAIL** if an unauthorized peer's `/fmu/in/` publish produces the
   flight-stack effect (arm / mode change / setpoint following), observed via `/fmu/out/vehicle_status`
