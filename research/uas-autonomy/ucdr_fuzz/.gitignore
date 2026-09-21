@@ -1,0 +1,12 @@
+# Build output + fuzzing artifacts — never commit these (blobs/corpus rule, scope §7).
+# Record source commit hashes + corpus provenance in the paperwork, not the bytes.
+build/
+corpus/
+seeds/
+crash-*
+leak-*
+oom-*
+timeout-*
+*.o
+*.profraw
+fuzz-*.log

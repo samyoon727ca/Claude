@@ -175,7 +175,7 @@ embedded/IoT assessment (3), security architecture (1/4), Cyber T&E (7).
 > rep → session/stream state → PX4 integration seam) with 6 ranked hypotheses. **Priority: H1**
 > (fuzz the `ucdr` parser — most likely clean CVE) **+ H5** (PX4 default bridge = no
 > DDS-Security ⇒ unauthenticated command-topic surface, the CVE-2026-1579 pattern one layer up —
-> highest impact). Next: acquire+build source (ASan/UBSan), stand up the fuzz + SITL rigs.
+> highest impact). Next: acquire+build source (ASan/UBSan), stand up the fuzz + SITL rigs — **H1 fuzz-harness spec drafted** ([`../research/uas-autonomy/phase2-h1-fuzz-harness-spec.md`](../research/uas-autonomy/phase2-h1-fuzz-harness-spec.md), skeleton self-tests); H5 first run recorded (blocked at publisher `0x80`, pivot to H1).
 
 The genuinely new work, and the only surface here where a novel CVE is realistically on
 the table. It is also the most Lattice-flavored layer (autonomy middleware / mesh).

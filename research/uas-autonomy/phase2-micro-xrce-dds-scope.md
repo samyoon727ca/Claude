@@ -91,6 +91,7 @@ Ranked by *expected value* = novelty headroom × impact. Each names a test.
   arrays with attacker-controlled length or alignment is the classic bounds-check gap (the lib
   has prior alignment bugfixes, e.g. zero-length-sequence). **Test:** ASan/UBSan build + a
   libFuzzer/AFL++ harness on the XRCE message-parse entry, seeded with real client traffic.
+  → **Executable spec: [`phase2-h1-fuzz-harness-spec.md`](phase2-h1-fuzz-harness-spec.md)** (fuzz targets A/B, build flags, corpus/seed plan, dedup gate; harness skeleton [`ucdr_fuzz/`](ucdr_fuzz/) self-tests today).
 - **H2 — FRAGMENT reassembly overflow / OOM** *(memory-safety / resource).* Multi-fragment
   XRCE messages reassemble into a growing buffer; length/offset/total-size handling is a common
   overflow/OOM spot and is more complex than the single-packet path the known CVEs hit.
