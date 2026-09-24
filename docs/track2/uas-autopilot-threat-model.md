@@ -70,7 +70,9 @@ safety-critical core; code and parameters there are life-of-flight authority.
 
 **Key design facts that drive the threats.** MAVLink v1 has **no authentication**;
 MAVLink v2 supports per-message **signing (HMAC-SHA256)** but it is frequently left
-disabled. Civil **GNSS is unauthenticated** and spoofable with commodity SDR. The
+disabled — realized as **CVE-2026-1579** (PX4 v1.16.0: signing off ⇒ unauthenticated
+`SERIAL_CONTROL` shell ⇒ RCE, **CVSS 9.8**, CWE-306, CISA ICSA-26-090-02, 2026-03-31).
+Civil **GNSS is unauthenticated** and spoofable with commodity SDR. The
 **bootloader accepts firmware/parameters** over USB/serial; signed-firmware support
 exists but is often not enabled on non-defense hardware.
 

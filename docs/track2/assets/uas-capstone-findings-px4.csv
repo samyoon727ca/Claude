@@ -1,0 +1,5 @@
+finding,risk
+signing (T1/T5),8.5
+telemetry (T4),6.0
+cmd_injection (T1),8.5
+replay (T5),5.5

@@ -1,196 +1,145 @@
-# Known-Territory Map — UAS / Autonomy (Run 4 Phase 0 dedup gate)
+# Phase 0 — UAS/Autonomy Known-Territory Map
 
-> **Status: LIVE GATE (swept 2026-09-24).** This is the Phase 0 deliverable required by
-> [`track1-uas-run-plan.md`](../../docs/track1-uas-run-plan.md) §3. Every candidate finding
-> in Phases 1–2 passes through this map **before** deep RE time is spent. Three straight
-> router runs deduped as n-days and the run-3 lesson (a `download_ovpn` bug was already
-> CVE-2024-45890, filed under a *sibling* model a scoped search missed) is the reason this
-> gate exists. **Re-run the sweep at claim time** — this is a snapshot, not a substitute for
-> the primary NVD/GHSA check the moment a candidate looks novel.
+*The dedup gate for [Run 4](../../docs/track1-uas-run-plan.md). Before any deep RE in
+Phase 1 (PX4 re-anchor) or Phase 2 (DDS novel-CVE hunt), a candidate finding is checked
+against this map so effort aims only at **unclaimed** surface. Built to answer one
+question per layer: **is this already CVE'd / published (cite it) or genuinely
+under-reviewed (hunt it)?***
 
-> **Scope & ethics (unchanged).** Unclassified, open-source targets (PX4, ArduPilot, ROS 2,
-> DDS). Simulation-first. Coordinated disclosure; no committed blobs. See
-> [`disclosure-policy.md`](../../docs/disclosure-policy.md). This file is working-area
-> paperwork (committed); firmware/binary blobs stay git-ignored.
+> **Status: LIVE MAP — swept 2026-09-21.** This is working-area paperwork
+> (`research/uas-autonomy/`; blobs git-ignored per `.gitignore`). Re-run the sweep before
+> each candidate goes deep — the landscape moves (the 2026 PX4 cluster below all landed
+> this year). Sources in §7; every claim is dated and linked.
 
----
+## 1. Method & scope
 
-## 0. How to use this gate
+Swept **NVD / OpenCVE / CISA ICS advisories / GitHub Security Advisories / vendor release
+notes / arXiv + ACM** for: `PX4/PX4-Autopilot`, `ArduPilot/ardupilot`,
+`eProsima/Fast-DDS`, `eProsima/Fast-CDR`, `eProsima/Micro-XRCE-DDS(-Agent)`, `ros2`,
+`SROS2 / DDS-Security`. Verdicts are one of:
 
-Before spending deep RE hours on any candidate, answer three questions against the tables
-below:
+- **MINED** — obvious surface already CVE'd/published → **cite, do not claim novelty.**
+- **PARTIAL** — some coverage; logic/edge cases may remain → hunt with a specific angle.
+- **THIN** — little public coverage → **most plausible novel-CVE headroom.**
 
-1. **Is the exact bug already a CVE/GHSA?** → n-day. Reproduce as a *demonstration*, don't
-   claim novelty.
-2. **Is the bug *class* on this *component* already claimed?** (the run-3 miss) → treat as
-   almost-certainly-dup; search siblings and the whole codebase family, not just one CPE
-   list, before spending time.
-3. **Is this documented default behavior the vendor already tells users to harden?** →
-   hardening / negative-result finding, not a CVE. Still ships (the DrayTek ethos), framed
-   honestly.
+## 2. Known-territory by layer
 
-Only a candidate that clears all three earns deep time. **The dedup verdict column is the
-output of the gate.**
+### 2.1 PX4 MAVLink — link auth + message parsing → **MINED (2026 cluster)**
+| CVE | What | Note |
+|-----|------|------|
+| **CVE-2026-1579** | MAVLink 2 signing off (default) ⇒ unauthenticated `SERIAL_CONTROL` = interactive shell ⇒ RCE. CWE-306. **CVSS 3.1 9.8 / 4.0 9.3.** Pub 2026-03-31; **CISA ICSA-26-090-02**. Affects PX4 **v1.16.0 SITL**. | **The T1/T5 anchor.** Same class as the [capstone](../../docs/track2/uas-capstone-assessment.md) signing/`cmd_injection` findings — Phase 1 **cites & reproduces**, never claims. |
+| CVE-2026-32743 | Stack buffer overflow in `MavlinkLogHandler`, via MAVLink log requests | MAVLink parsing actively fuzzed |
+| CVE-2026-32724 | Heap use-after-free in `MavlinkShell::available()` (RX thread vs telemetry-sender race) | Shell/threading surface covered |
+| CVE-2026-86097 | NULL-ptr deref in `param_set_default_file()` / `param_set_backup_file()` (through **1.17.0**) → crash | Param surface covered |
+| CVE-2026-84698 | Heap buffer overflow in `sd_bench` (CVSS 6.5) | Command surface covered |
 
----
+**Verdict:** the PX4 MAVLink link-auth, parser, shell, and param surfaces are being
+actively fuzzed and CVE'd *through 2026*. **Low novel headroom** on the obvious MAVLink
+surface. This is exactly why Phase 1 is framed as reproduce-and-cite (zero dedup risk),
+not discovery.
 
-## 1. PX4 — MAVLink surface (Phase 1 anchor; treat as demonstration, not novelty)
+### 2.2 Fast-DDS core RTPS / CDR wire parsing → **MINED (memory-safety DoS)**
+| CVE | What |
+|-----|------|
+| CVE-2024-28231 | DATA submessage handling → heap overflow → remote process kill |
+| CVE-2024-30258 | Malformed RTPS ⇒ crash on `pthread` create (DoS) |
+| CVE-2024-30259 | Malformed RTPS ⇒ heap buffer overflow on subscriber (DoS) |
+| CVE-2023-39945/39946/39948 | fastcdr `BadParamException` uncaught; `PID_PROPERTY_LIST` crafted-CDR heap overflow; remote crash |
+| CVE-2025-62603 | Parser reads whole `DataHolderSeq` (not a minimal peek) ⇒ OOM out-of-bounds read (CVSS 7.5) |
 
-The MAVLink receiver / FTP / shell parsing surface is being **actively mined in 2026** — a
-dense cluster of memory-safety and logic CVEs landed this year. Reproducing any one is a
-strong Phase-1 demonstration; finding a *new* one here is low-probability given current
-attention.
+**Verdict:** the "malformed RTPS/CDR ⇒ crash/DoS" shape is **heavily mined** across 2023–2025.
+**High n-day risk** — deprioritize as a novelty bet unless a *genuinely new* code path is
+identified through the gate.
 
-| CVE / advisory | Class | Affected / fixed | Sev (as reported) | Dedup verdict |
-|---|---|---|---|---|
-| **CVE-2026-1579** | Unauth command incl. `SERIAL_CONTROL` shell → RCE when MAVLink 2 signing is off (**the default**) | ≤ v1.16.0 SITL noted; protocol-level | **9.8** v3.1 / 9.3 v4.0, CWE-306; pub. 2026-03-31; **CISA ICSA-26-090-02** | **ANCHOR.** Documented default; PX4 now ships a *MAVLink Security Hardening* guide. Our capstone T1/T5 = reproduction of this class. **Zero novelty — cite, don't claim.** |
-| CVE-2026-32743 | Stack buffer overflow, `MavlinkLogHandler` (`LogEntry.filepath` 60 B, `sscanf` no width) via MAVLink log request after deep-dir create over MAVLink FTP | ≤ 1.17.0-rc2; fixed `616b25a2` | stack overflow / DoS | Reproduce-only. MAVLink parse surface is hot. |
-| CVE-2026-32724 | Heap use-after-free `MavlinkShell::available()` — receiver/telemetry thread race | recent | UAF | Reproduce-only. |
-| CVE-2026-32713 | MAVLink FTP session-validation logic error (`&&` vs `||`) → ops on invalid session/closed fd | recent | ~6.5 | Reproduce-only. |
-| CVE-2026-32709 | Path traversal | recent | ~6.8 | Reproduce-only. |
-| GHSA-55wq-2hgm-75m4 | Stack buffer overflow in `mavlink_receiver.cpp` (refuses to execute) | — | DoS | Reproduce-only. |
+### 2.3 DDS-Security / SROS2 — auth, permissions, governance → **PARTIAL**
+| Source | What |
+|--------|------|
+| **"On the (In)Security of Secure ROS 2"**, ACM CCS 2022 | Formal verification found **4** SROS2 vulns (unauthorized permissions / info theft); acknowledged by ROS 2 and **fixed** in latest SROS2 |
+| Alias Robotics (cited by CISA) | ~**15** vulns across the top-6 DDS implementations; open-source detection tooling contributed to SROS2 |
+| CVE-2025-62599 | Fast-DDS **security-mode** SPDP: tampering the length field in `readPropertySeq` of `PID_IDENTITY_TOKEN` / `PID_PERMISSION_TOKEN` ⇒ integer overflow ⇒ OOM |
 
-**Implication for Phase 1:** the plan's re-anchor is correct and dedup-risk is **zero** —
-we are explicitly *citing* CVE-2026-1579 and reproducing the T1/T5 cluster, not claiming it.
+**Verdict:** the SROS2 permissions/governance *logic* had a formal-methods pass (4 found,
+fixed) — not virgin, but **implementation-specific policy/handshake edge cases** still
+yield bugs (2025-62599 in the security-mode token parser). Hunt with a *specific* angle
+(a particular impl's governance/permissions parser, a cross-impl policy mismatch), not a
+generic "is SROS2 secure?".
 
----
+### 2.4 micro-XRCE-DDS Agent — PX4 `uXRCE-DDS` bridge → **THIN (best headroom)**
+| CVE | What |
+|-----|------|
+| CVE-2025-63547 | Crafted **MTU length** field ⇒ DoS (CVSS 7.5), Agent v3.0.1 |
+| CVE-2025-63548 | Non-valid value in **any Boolean field** ⇒ improper validation ⇒ internal exception ⇒ resource exhaustion (DoS, CVSS 7.5), Agent v3.0.1 |
 
-## 2. eProsima Fast-DDS — RTPS / CDR wire parsing (the Phase 2 "novelty bet" — now crowded)
+**Verdict:** **only two public CVEs, both simple field-validation DoS.** This is the
+**least-audited layer** and the plan's primary novel-CVE target. The two knowns imply the
+XRCE input-validation surface is shallowly tested; untouched publicly: **deeper XRCE
+submessage parsing, the client↔agent trust boundary / session & privilege handling, and
+the PX4-specific integration seam** (how PX4 configures and exposes the Agent). This is
+where Phase 2 should aim first.
 
-This is the surface Phase 2 hoped a novel CVE would live in. **It is also being actively
-mined in 2025–2026.** A naive "fuzz the DDS wire, report a crash" plan is now **high-collision
-and trends to low-value DoS**.
+### 2.5 ArduPilot → **PARTIAL (active academic RE) — cross-validator, not the bet**
+- **arXiv 2512.01164** — *Reverse Engineering and Control-Aware Security Analysis of the
+  ArduPilot UAV Framework* — active, published RE-for-security. Plus a broad MAVLink
+  academic corpus (MAVSec, refined session-type MAVLink monitors, etc.).
 
-| CVE | Class | Fixed in | Verdict |
-|---|---|---|---|
-| **CVE-2026-22590** | OOB read processing RTPS `DATA_FRAG` (large sample size + small payload), CWE-125 | 2.6.12 / 2.14.6 / 3.2.4 / 3.3.1 / 3.4.2 | Critical; recent. RTPS submessage parsing is claimed ground. |
-| CVE-2025-64438 | OOM DoS via RTPS `GAP` under RELIABLE QoS (tiny GAP + huge range → unbounded `processGapMsg()` loop) | 3.4.1 / 3.3.1 / 2.6.11 | DoS. |
-| CVE-2025-62602 | Heap overflow modifying `DATA` submessage in an SPDP packet **when security mode is enabled** | 3.4.1 / 3.3.1 / 2.6.11 | Note: touches the *secure* path. |
-| CVE-2025-62599 / CVE-2025-62603 | CDR parser deserializes entire `DataHolderSeq` in `ParticipantGenericMessage` → OOM / remote termination | 2025 batch | CDR/Fast-CDR parse dup. |
-| CVE-2024-30259 | Heap overflow on subscriber from malformed RTPS packet | ≤ 2.14.1 / 2.13.5 / 2.10.4 / 2.6.8 | Prior art for "malformed RTPS → subscriber crash". |
+**Verdict:** ArduPilot security RE is being actively published ⇒ keep ArduPilot as the
+**cross-stack validation** target (demonstrate a weakness+fix on both stacks), **not** the
+novelty bet. Matches the Run 4 licensing rationale (PX4 BSD-3 is the primary/build stack).
 
----
+## 3. Where the novel-CVE headroom actually is (Phase 2 aim, ranked)
 
-## 3. Micro-XRCE-DDS-Agent — the *exact* component the probe touches
+1. **micro-XRCE-DDS Agent — beyond field-validation DoS (§2.4).** Deeper XRCE parsing,
+   session/privilege handling, client↔agent trust boundary. Thinnest coverage; newest code.
+2. **PX4 ↔ uXRCE-DDS integration seam.** The Agent-in-isolation has 2 CVEs; the *PX4
+   configuration* of the bridge (topics exposed, privilege inheritance ROS 2 → flight
+   stack) is essentially untested publicly and is the most Lattice-flavored surface.
+3. **DDS-Security implementation policy/handshake edge cases (§2.3).** Specific-impl
+   governance/permissions parsing or a cross-impl policy mismatch — not generic SROS2.
+4. *(De-prioritized)* Fast-DDS core RTPS/CDR memory-safety DoS — mined (§2.2); pursue only
+   a demonstrably new code path.
 
-This is the bridge the Phase 2 probe (`xrce_probe.md`, this dir) exercises. **The agent's malformed-field
-parsing is already claimed** — two 2025-series CVEs are precisely the "send a bad field, crash
-the agent" shape on this exact component.
+## 4. Phase 1 dedup citations (keep the existing UAS work clean)
 
-| CVE | Class | Version | Sev | Verdict |
-|---|---|---|---|---|
-| **CVE-2025-63547** | Malformed **MTU length field** → agent drops packets / error state | v3.0.1 | 7.5 v3.1; pub. 2026-05-01 | Exact component + class the probe's parser path would hit. |
-| **CVE-2025-63548** | **Invalid Boolean field** value → internal exception → resource-exhaustion DoS, CWE-241 | v3.0.1 | 7.5 | Same. |
+The [capstone](../../docs/track2/uas-capstone-assessment.md),
+[threat model](../../docs/track2/uas-autopilot-threat-model.md), and
+[brief](../../docs/track2/uas-security-brief.html) must **cite** these so the T1/T5 story
+reads as reproduce-and-anchor, not implicit discovery:
+- **CVE-2026-1579** — the T1/T5 signing/injection anchor (severity = CVSS 9.8).
+- The 2026 PX4 MAVLink cluster (32743 / 32724 / 86097 / 84698) — evidence the MAVLink
+  surface is actively CVE'd, i.e. the *reason* the capstone frames itself as T&E of a
+  known-weak default, not a new bug.
+- The [GNSS spoofing plan](../../docs/track2/uas-gnss-spoofing-test-plan.md) targets **T2
+  (position integrity)** — *not* covered by 1579 or the cluster above, so it stays
+  **dedup-clean** as depth work. Confirm no GNSS/EKF-specific PX4/ArduPilot CVE lands on
+  the same claim before writing it up.
 
-**Implication:** a raw parser-crash finding against the agent is now almost certainly a dup
-of, or same-class as, 63547/63548. **Confirm the agent version PX4 actually pins** and re-check
-these two before spending time on any malformed-XRCE-field candidate.
+## 5. Disclosure channels (confirm before any outbound — do not send yet)
 
----
+- **PX4 / Dronecode:** security policy + GitHub Security Advisories on `PX4/PX4-Autopilot`;
+  hardening guidance at `docs.px4.io/main/en/mavlink/security_hardening`.
+- **eProsima (Fast-DDS / Fast-CDR / Micro-XRCE-DDS):** repo `SECURITY.md` / GHSA advisory
+  process on the respective GitHub repos.
+- Per [`disclosure-policy.md`](../../docs/disclosure-policy.md) §5, personal COI /
+  outside-activity reporting precedes any outbound contact; coordinated disclosure only.
 
-## 4. ROS 2 / SROS2 / DDS-Security — logic & authorization surface
+## 6. The dedup gate (reusable — every candidate passes this before deep time)
 
-Less memory-safety, more design/authz. Documented design flaws exist; this is where a *logic*
-finding (not a parser crash) could plausibly still live.
+1. Exact-match the component + code path against **NVD + OpenCVE + GHSA** (both the library
+   repo *and* every downstream that vendors it — the run-3 lesson: search siblings, not just
+   the target's own CPE list).
+2. Search **CISA ICS advisories** and vendor release notes for a silent fix.
+3. Search **arXiv / ACM / vendor blogs** (Alias Robotics, ROS 2 security WG) for a published
+   (non-CVE) disclosure of the same class.
+4. Classify: **MINED** (cite) / **PARTIAL** (hunt with a named angle) / **THIN** (hunt).
+5. Only **THIN**/angled-**PARTIAL** candidates earn deep RE time.
 
-- **CCS'22, "On the (In)Security of Secure ROS 2"** — V1 inadequate permission revocation
-  (revoked cert keeps access), V2 inadequate namespace isolation (cross-domain leak), V3
-  discovery protocol leaks topology to a passive attacker. Root cause: DDS QoS/access-control
-  policies only settable at participant init; a node can refuse the update. **Design-level,
-  documented.**
-- **2025 supply-chain PoC** — trojaned `sros2` CLI exfiltrates keystore/enclave credentials
-  during creation. Not our attack surface (build-time trust), noted for completeness.
-- **Correctness gaps (2025, Alias Robotics / community):** discovery-encryption + topic-level
-  protection enabled together stops endpoints matching; **incomplete privilege inheritance**
-  has produced real security bugs.
+## 7. Sources (swept 2026-09-21)
 
----
-
-## 5. ArduPilot — cross-stack validator (Phase 1 second data point)
-
-| CVE | Class | Affected | Sev | Verdict |
-|---|---|---|---|---|
-| CVE-2026-36522 | Unauth **NaN injection** via MAVLink `PARAM_SET` → silent flight-critical-param corruption on production HW (FP exceptions off); abort on SITL | ArduPlane 4.0.1 | 9.1, CWE-1287 | Cross-stack reproduction candidate; already a CVE. |
-| CVE-2026-38971 | OOB read in `GCS_serial_control.cpp` `handle_serial_control()` | ≤ Plane-4.6.3 | OOB read | Cross-stack; already a CVE. |
-
-Reinforces §2 of the run plan: ArduPilot is the **cross-validation** target (its RE-for-security
-is actively published), **not** the novelty bet.
-
----
-
-## 6. Synthesis — what this gate changes about the plan
-
-1. **The "unauthenticated command / no-auth default" thesis is fully claimed territory.**
-   CVE-2026-1579 (9.8, CISA advisory, PX4 hardening guide) is the flagship, and MAVLink
-   signing-off is documented default behavior. The `xrce_probe` (this dir) clause-1/2
-   observations (unauth session, cleartext telemetry) are a **demonstration / hardening**
-   result — **not a CVE.** This matches the probe's own honest caveat.
-
-2. **The DDS/XRCE wire-parsing surface — the plan's stated novelty bet — is now crowded.**
-   Fast-DDS RTPS/CDR (§2) and, critically, the **Micro-XRCE-DDS-Agent itself** (§3) are being
-   actively mined in 2025–2026, including the exact component and bug-class the probe would
-   explore. A "fuzz the agent → report a crash" plan is high-collision and trends to
-   low-value DoS.
-
-3. **The MAVLink receiver/FTP/shell surface (PX4 + ArduPilot) is a hot 2026 cluster** (§1, §5).
-   Reproduce for Phase 1; do not expect a new bug there.
-
-4. **If an unclaimed corner exists, it is more likely logic / trust-boundary / authorization
-   than raw memory-safety.** The probe's *partial* result is the tell: the interesting
-   question is **not** "the default bridge has no auth" (known, §1) but **"what can an
-   unauthenticated peer's entities actually do against a security-*enabled* deployment — can a
-   rogue XRCE client's participant/writer match PX4's FMU readers, and with what
-   privileges?"** That is an **authorization / entity-ownership / matching** question (§4
-   territory: privilege inheritance, policy desync), not a parser question — and it is the one
-   corner this sweep did **not** find directly claimed.
-
-### Re-scoped Phase 2 aim (recommendation)
-
-- **Bias the hunt toward the client↔agent trust boundary and the security-enabled config:**
-  privilege inheritance / entity-ownership across the XRCE bridge, matching behavior under
-  SROS2 governance/permissions, cross-domain isolation — the logic corner, not the wire crash.
-- **Treat any DDS/XRCE parser DoS as presumptively a dup** (§2/§3); only pursue with a fresh
-  primary-source check confirming it is not 22590 / 64438 / 62602 / 62599/62603 / 63547 /
-  63548 and not a same-class variant.
-- **Keep the rigorous negative-result writeup as the guaranteed-value floor** (the plan's
-  DrayTek ethos): a clean security assessment of the middleware trust model ships regardless.
-
----
-
-## 7. Candidate → gate checklist (paste into each finding note)
-
-```
-[ ] Exact bug already a CVE/GHSA?              (§1–§5 + fresh NVD/GHSA search)
-[ ] Bug class already claimed on THIS component? (run-3 lesson: check the whole family)
-[ ] Documented default the vendor tells users to harden?  (=> hardening finding, not CVE)
-[ ] Searched sibling models / versions, not just one CPE list?
-[ ] If it clears all four: re-run the primary NVD/GHSA sweep the day the claim is made.
-```
-
----
-
-## 8. Coverage & method (honesty about this snapshot)
-
-- **Swept 2026-09-24** via NVD/OpenCVE/OSV, GitHub Security Advisories, CISA ICS advisories,
-  and academic/vendor disclosure sources, across the components the run plan §3 names:
-  `PX4/PX4-Autopilot`, `ArduPilot/ardupilot`, `eProsima/Fast-DDS`, `eProsima/Fast-CDR`,
-  `eProsima/Micro-XRCE-DDS-Agent`, `ros2` / SROS2 / DDS-Security.
-- **Known residual gaps:** (a) this is not an exhaustive NVD enumeration — CVSS/version detail
-  is as reported by aggregators and must be confirmed against primary records at claim time;
-  (b) the **agent version PX4 actually pins** must be verified against the pinned submodule
-  before §3 is applied; (c) GHSA advisories on the eProsima and PX4 repos should be re-pulled
-  the day a candidate is escalated (advisories are added continuously).
-- **The gate is only as good as its freshness.** Re-run before any novelty claim; the run-3
-  dedup miss happened because a check was scoped too narrowly.
-
----
-
-## 9. Sources
-
-- CVE-2026-1579 (PX4 MAVLink signing → `SERIAL_CONTROL` RCE): <https://app.opencve.io/cve/CVE-2026-1579> · CISA ICS advisory: <https://www.cisa.gov/news-events/ics-advisories/icsa-26-090-02> · PX4 hardening guide: <https://docs.px4.io/main/en/mavlink/security_hardening>
-- PX4 security advisories (GHSA index): <https://github.com/PX4/PX4-Autopilot/security/advisories> · CVE-2026-32743: <https://app.opencve.io/cve/CVE-2026-32743> · CVE-2026-32713: <https://osv.dev/vulnerability/CVE-2026-32713> · CVE-2026-32724: <https://osv.dev/vulnerability/CVE-2026-32724> · GHSA-55wq-2hgm-75m4: <https://github.com/PX4/PX4-Autopilot/security/advisories/GHSA-55wq-2hgm-75m4>
-- Fast-DDS CVE-2026-22590: <https://osv.dev/vulnerability/CVE-2026-22590> · CVE-2025-64438: <https://app.opencve.io/cve/CVE-2025-64438> · CVE-2025-62602: <https://nvd.nist.gov/vuln/detail/cve-2025-62602> · Fast-DDS CVE list: <https://vulners.com/search/vendors/eprosima/products/fast%20dds> · CVE-2024-30259: <https://nvd.nist.gov/vuln/detail/CVE-2023-50257>
-- Micro-XRCE-DDS-Agent CVE-2025-63547: <https://app.opencve.io/cve/CVE-2025-63547> · CVE-2025-63548: <https://app.opencve.io/cve/CVE-2025-63548> · product CVE list: <https://app.opencve.io/cve/?product=micro-xrce-dds_agent&vendor=eprosima>
-- SROS2 / DDS-Security — "On the (In)Security of Secure ROS 2" (CCS'22): <https://tianweiz07.github.io/Papers/22-ccs-2.pdf> · Alias Robotics DDS/ROS 2: <https://news.aliasrobotics.com/alias-robotics-dds-ros2-vulnerabilities/> · SROS2 keystore-exfil PoC (2025): <https://www.researchgate.net/publication/397231318_Supply_Chain_Exploitation_of_Secure_ROS_2_Systems_A_Proof-of-Concept_on_Autonomous_Platform_Compromise_via_Keystore_Exfiltration>
-- ArduPilot CVE-2026-36522: <https://github.com/deepwoodssec/CVE-2026-36522> · CVE-2026-38971: <https://app.opencve.io/cve/CVE-2026-38971>
-- PX4 uXRCE-DDS bridge (architecture / default config): <https://docs.px4.io/main/en/middleware/uxrce_dds>
+- CVE-2026-1579 (PX4 MAVLink → SERIAL_CONTROL RCE): <https://app.opencve.io/cve/CVE-2026-1579> · CISA ICSA-26-090-02: <https://www.cisa.gov/news-events/ics-advisories/icsa-26-090-02>
+- PX4 CVE list (OpenCVE): <https://app.opencve.io/cve/?product=px4-autopilot&vendor=px4> — incl. CVE-2026-32743, CVE-2026-32724, CVE-2026-86097, CVE-2026-84698
+- PX4 security hardening guide: <https://docs.px4.io/main/en/mavlink/security_hardening>
+- Fast-DDS CVE list (Vulners): <https://vulners.com/search/vendors/eprosima/products/fast%20dds> — incl. CVE-2024-28231/30258/30259, CVE-2023-39945/39946/39948, CVE-2025-62603/62599
+- Micro-XRCE-DDS Agent CVEs: <https://app.opencve.io/cve/?product=micro-xrce-dds_agent&vendor=eprosima> — CVE-2025-63547, CVE-2025-63548
+- "On the (In)Security of Secure ROS 2" (ACM CCS 2022): <https://dl.acm.org/doi/abs/10.1145/3548606.3560681>
+- Alias Robotics — DDS/ROS 2 vulnerabilities: <https://news.aliasrobotics.com/alias-robotics-dds-ros2-vulnerabilities/>
+- ArduPilot RE & control-aware security analysis (arXiv 2512.01164): <https://www.arxiv.org/pdf/2512.01164>

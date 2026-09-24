@@ -85,6 +85,14 @@ airframe.
 
 ## 3. Phase 0 — Dedup gate & known-territory map (do this first)
 
+> **Status: BUILT 2026-09-21** → [`../research/uas-autonomy/known-territory.md`](../research/uas-autonomy/known-territory.md).
+> Sweep done (CVE-2026-1579 **verified**: PX4 v1.16.0 SITL, CVSS 9.8, CISA ICSA-26-090-02).
+> **Headline finding:** the PX4 MAVLink surface (a 2026 CVE cluster) and Fast-DDS core
+> RTPS/CDR parsing are **heavily mined** → cite, don't claim; the **micro-XRCE-DDS Agent is
+> the thinnest-covered layer** (only 2 field-validation DoS CVEs) → the primary Phase 2
+> novel-CVE aim, followed by the PX4↔uXRCE-DDS integration seam. Re-run the sweep before any
+> candidate goes deep.
+
 Three straight dedup outcomes make this the highest-ROI habit in the whole plan.
 **Before any deep RE**, build a one-page known-territory map so effort aims only at
 unclaimed surface. Sweep, at minimum:
@@ -115,6 +123,17 @@ Phases 1–2 passes through before deep time is spent.
 ---
 
 ## 4. Phase 1 — Re-anchor + dedup-clean the existing break/build (ships first)
+
+> **Status: DONE 2026-09-21.** Doc re-anchor + PX4 SITL measured run both complete. The
+> **CVE-2026-1579 citation + severity anchor + PX4-primary/ArduPilot-cross-stack framing**
+> are threaded through the [capstone](track2/uas-capstone-assessment.md),
+> [threat model](track2/uas-autopilot-threat-model.md),
+> [hardening writeup](track2/uas-mavlink-hardening.md), and [brief](track2/uas-security-brief.html)
+> (the P6.2 module is framed as the MIT-licensed, adoptable build-side control). **PX4 SITL run
+> complete:** PX4 v1.18.0-beta1 (`make px4_sitl gz_x500`) reproduced the **identical 4 FAIL / 1
+> PASS** cluster ArduPilot showed — cross-stack confirmation, and CVE-2026-1579 measured on PX4
+> ([capstone §5.1](track2/uas-capstone-assessment.md)). Optional remaining: the signing-enabled
+> PX4 "after" (per the PX4 security-hardening guide). DoD met.
 
 Low-cost because the work already exists; the point is to make it PX4-primary and
 dedup-clean so it ships as a defensible artifact within weeks.
@@ -149,6 +168,14 @@ embedded/IoT assessment (3), security architecture (1/4), Cyber T&E (7).
 ---
 
 ## 5. Phase 2 — CVE-upside flagship: ROS 2 / DDS + PX4 micro-XRCE-DDS bridge
+
+> **Status: SCOPED 2026-09-21** → [`../research/uas-autonomy/phase2-micro-xrce-dds-scope.md`](../research/uas-autonomy/phase2-micro-xrce-dds-scope.md).
+> Target locked to the **Micro-XRCE-DDS Agent** (Phase 0's thinnest layer). Surface mapped in
+> 6 layers (transport framing → XRCE parse → Micro-CDR `ucdr` deserialize → entity XML/binary
+> rep → session/stream state → PX4 integration seam) with 6 ranked hypotheses. **Priority: H1**
+> (fuzz the `ucdr` parser — most likely clean CVE) **+ H5** (PX4 default bridge = no
+> DDS-Security ⇒ unauthenticated command-topic surface, the CVE-2026-1579 pattern one layer up —
+> highest impact). Next: acquire+build source (ASan/UBSan), stand up the fuzz + SITL rigs — **H1 fuzz-harness spec drafted** ([`../research/uas-autonomy/phase2-h1-fuzz-harness-spec.md`](../research/uas-autonomy/phase2-h1-fuzz-harness-spec.md), skeleton self-tests); H5 first run recorded (blocked at publisher `0x80`, pivot to H1).
 
 The genuinely new work, and the only surface here where a novel CVE is realistically on
 the table. It is also the most Lattice-flavored layer (autonomy middleware / mesh).
