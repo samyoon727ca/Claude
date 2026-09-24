@@ -61,7 +61,10 @@ static void decode_once(const uint8_t* data, size_t size) {
     }
 
     // ---- submessages ----
-    char     dst[UCDR_FUZZ_DST_CAP];
+    // 8-byte aligned so the multi-byte sequence/array casts below ((uint16_t*)dst, ... up to
+    // uint64_t/double) are well-defined — a bare char[] gives no alignment guarantee and would
+    // let UBSan flag a *harness-side* misaligned store as UB, masking real ucdr findings.
+    _Alignas(8) char dst[UCDR_FUZZ_DST_CAP];
     uint8_t  u8;  int8_t  i8;  uint16_t u16; int16_t i16;
     uint32_t u32; int32_t i32; uint64_t u64; int64_t i64;
     float f; double d; char c; bool b;
@@ -81,7 +84,7 @@ static void decode_once(const uint8_t* data, size_t size) {
         while (!mb.error && budget-- > 0 && ucdr_buffer_remaining(&mb) > 0) {
             uint8_t op = 0;
             if (!ucdr_deserialize_uint8_t(&mb, &op)) break;
-            switch (op % 18u) {
+            switch (op % 25u) {
                 case 0:  ucdr_deserialize_bool(&mb, &b);      break;
                 case 1:  ucdr_deserialize_char(&mb, &c);      break;
                 case 2:  ucdr_deserialize_uint8_t(&mb, &u8);  break;
@@ -94,16 +97,30 @@ static void decode_once(const uint8_t* data, size_t size) {
                 case 9:  ucdr_deserialize_int64_t(&mb, &i64); break;
                 case 10: ucdr_deserialize_float(&mb, &f);     break;
                 case 11: ucdr_deserialize_double(&mb, &d);    break;
-                // Length-prefixed forms — the H1 heart. ucdr reads a length from the buffer,
-                // then must clamp to the destination capacity. Bounded dst + ASan verify it.
+                // Length-prefixed forms — the H1 heart. ucdr reads an attacker-controlled length,
+                // then must clamp the copy to the element capacity. The WIDEST element types are
+                // covered too: `length * sizeof(element)` is where an integer overflow could slip
+                // a huge length past a bounds check. Bounded dst + ASan/UBSan verify the clamp.
                 case 12: ucdr_deserialize_string(&mb, dst, UCDR_FUZZ_DST_CAP); break;
                 case 13: ucdr_deserialize_sequence_char(&mb, dst, UCDR_FUZZ_DST_CAP, &seq_len); break;
                 case 14: ucdr_deserialize_sequence_uint8_t(&mb, (uint8_t*)dst, UCDR_FUZZ_DST_CAP, &seq_len); break;
                 case 15: ucdr_deserialize_sequence_uint16_t(&mb, (uint16_t*)dst, UCDR_FUZZ_DST_CAP / sizeof(uint16_t), &seq_len); break;
-                // Fixed-size array whose size is itself attacker-derived (models an upstream
-                // length field feeding an array read without re-validation).
-                case 16: { size_t n = (size_t)(op ^ flags) % UCDR_FUZZ_DST_CAP;
+                case 16: ucdr_deserialize_sequence_uint32_t(&mb, (uint32_t*)dst, UCDR_FUZZ_DST_CAP / sizeof(uint32_t), &seq_len); break;
+                case 17: ucdr_deserialize_sequence_uint64_t(&mb, (uint64_t*)dst, UCDR_FUZZ_DST_CAP / sizeof(uint64_t), &seq_len); break;
+                case 18: ucdr_deserialize_sequence_float(&mb, (float*)dst, UCDR_FUZZ_DST_CAP / sizeof(float), &seq_len); break;
+                case 19: ucdr_deserialize_sequence_double(&mb, (double*)dst, UCDR_FUZZ_DST_CAP / sizeof(double), &seq_len); break;
+                // Fixed-count arrays whose element count is itself attacker-derived (models an
+                // upstream length field feeding an array read without re-validation). The count is
+                // bounded to dst's per-type element capacity so the *destination* never overflows
+                // by construction — any overrun that fires is ucdr reading past the input frame.
+                case 20: { size_t n = (size_t)(op ^ flags) % UCDR_FUZZ_DST_CAP;
                            ucdr_deserialize_array_uint8_t(&mb, (uint8_t*)dst, n); break; }
+                case 21: { size_t n = (size_t)op % (UCDR_FUZZ_DST_CAP / sizeof(uint16_t));
+                           ucdr_deserialize_array_uint16_t(&mb, (uint16_t*)dst, n); break; }
+                case 22: { size_t n = (size_t)op % (UCDR_FUZZ_DST_CAP / sizeof(uint32_t));
+                           ucdr_deserialize_array_uint32_t(&mb, (uint32_t*)dst, n); break; }
+                case 23: { size_t n = (size_t)op % (UCDR_FUZZ_DST_CAP / sizeof(uint64_t));
+                           ucdr_deserialize_array_uint64_t(&mb, (uint64_t*)dst, n); break; }
                 default: ucdr_deserialize_array_char(&mb, dst, (size_t)op % UCDR_FUZZ_DST_CAP); break;
             }
         }
