@@ -58,7 +58,7 @@ Two fuzz targets, cheapest-first:
 
 | # | Target | What it is | Effort | Why |
 |---|--------|-----------|:------:|-----|
-| **A (primary)** | **`ucdr` decode primitives, in-process** | link Micro-CDR; drive header + `sequence`/`string`/`array` decoders with fuzz bytes | **low** | fastest, deterministic, self-contained; isolates the exact H1 bug class. Skeleton: [`ucdr_fuzz/`](ucdr_fuzz/) |
+| **A (primary)** | **`ucdr` decode primitives, in-process** | build Micro-CDR from source (instrumented); drive header + `sequence`/`string`/`array` decoders across **all element widths (8→64-bit + float/double)** with fuzz bytes | **low** | fastest, deterministic, self-contained; isolates the exact H1 bug class. Skeleton: [`ucdr_fuzz/`](ucdr_fuzz/) |
 | B (fidelity) | **Agent XRCE message-parse entry** | link the Agent's Processing/CDR objects; fuzz the first function that touches received bytes | med–high | closer to the network-reachable surface; also reaches H2 (FRAGMENT reassembly) and H3 (entity XML) from the same rig |
 
 Start with **A** (it is what `ucdr_fuzz/` builds); graduate the interesting corpus to **B** to
@@ -86,12 +86,23 @@ Triage env: `ASAN_OPTIONS=abort_on_error=1:detect_leaks=1:strict_string_checks=1
 **exactly-sized** heap allocation so an over-read past the frame is a hard ASan
 heap-buffer-overflow, not a silent read into slack.
 
-Build + self-test:
+**Micro-CDR is built from source and instrumented — not linked as a prebuilt library.** ASan
+only checks accesses in *instrumented* code, and the OOB the hunt targets happens **inside
+`ucdr`**; a prebuilt `libmicrocdr` would both hide real overflows (ASan can't see them) and
+starve libFuzzer of coverage from the library. The `CMakeLists.txt` therefore `FetchContent`s
+Micro-CDR at `UCDR_FUZZ_MICROCDR_TAG` and compiles it with the same
+`-fsanitize=address,undefined` (+ `fuzzer-no-link` for coverage under Clang). `find_package` is
+available only as an explicit, loudly-degraded fallback (`-DUCDR_FUZZ_SYSTEM_MICROCDR=ON`).
+
+Build + self-test (fetch-and-build needs network the first time; **pin the tag and record the
+resolved commit in §5**):
 
 ```bash
 cd research/uas-autonomy/ucdr_fuzz
-CC=clang cmake -B build && cmake --build build -j"$(nproc)"
+# Primary rig (coverage-guided, sees inside Micro-CDR):
+CC=clang cmake -B build -DUCDR_FUZZ_MICROCDR_TAG=<pinned-commit> && cmake --build build -j"$(nproc)"
 ./build/ucdr_fuzz_standalone --selftest      # deterministic; needs no fuzzing engine
+./build/ucdr_fuzz -runs=0 corpus/            # sanity: libFuzzer target links + loads corpus
 ```
 
 ## 4. Corpus & seed plan
