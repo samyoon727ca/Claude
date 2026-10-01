@@ -56,14 +56,24 @@ source. Write-up: [`../research/uas-autonomy/phase2-h1-fuzz-results.md`](../rese
 dedup re-swept clean the same day ([`known-territory.md`](../research/uas-autonomy/known-territory.md)).
 The harness ships as a reusable CI fuzz target (builds instrumented Micro-CDR from source).
 
-**Concrete next action** → H1 showed the residual risk is **not** the `ucdr` primitives but the
-**caller contract** (the Agent passing the true capacity; the raw `array_*` API has no capacity
-check). So Phase 2 moves up a layer: **target B (fuzz the Agent's XRCE message-parse entry),
-H2 (FRAGMENT reassembly), H3 (entity XML/binary rep)**, and the untouched **H4 (session/privilege)**
-— none of which the two known DoS CVEs touch. Scope + ranking:
+**Target B done (2026-10-01):** the **Agent-side** XRCE parse entry (`InputMessage` + the
+`dds::xrce::*` type deserializers via **Fast-CDR v2.3.1**) was fuzzed — ~736 M coverage-guided
+ASan/UBSan executions, **0** crashes/OOMs, plateau covering all 9 dispatched payload types **and** the
+XML/reference entity-representation paths (**H3**). Another clean negative on the reached surface.
+Harness [`../research/uas-autonomy/agent_fuzz/`](../research/uas-autonomy/agent_fuzz/) (Fast-CDR-only
+build, no Fast-DDS); write-up
+[`../research/uas-autonomy/phase2-targetB-agent-parse-results.md`](../research/uas-autonomy/phase2-targetB-agent-parse-results.md).
+
+**Concrete next action** → the one input-reachable surface target B did **not** exercise is the
+`REPRESENTATION_IN_BINARY` **QoS sub-decoders** (`OBJK_*_Binary` / `*_QosBinary`, XCDRv2 PL-CDR
+member-header structures) — the most plausible remaining H3 headroom. Punch into it with a
+**grammar-aware / serialize-generated** seed set: a small generator that uses the Agent's own
+`serialize` to emit valid `CREATE`+`REPRESENTATION_IN_BINARY` objects (Fast-CDR then encodes the
+PL-CDR member headers), seeding `agent_fuzz`. After that: **H2** (FRAGMENT reassembly in
+`Session::push/pop_input_fragment` — needs the ProxyClient/Session layer) and **H4**
+(session/privilege logic, a differential/stateful test, not a byte-fuzz). Scope + ranking:
 [`../research/uas-autonomy/phase2-micro-xrce-dds-scope.md`](../research/uas-autonomy/phase2-micro-xrce-dds-scope.md);
-full sequence + router fallbacks: [`track1-uas-run-plan.md`](track1-uas-run-plan.md). To reproduce
-H1: [`../research/uas-autonomy/phase2-h1-fuzz-results.md`](../research/uas-autonomy/phase2-h1-fuzz-results.md) §9.
+full sequence: [`track1-uas-run-plan.md`](track1-uas-run-plan.md). Reproduce H1 / target B: results §9 in each doc.
 
 Guardrails unchanged: WSL for the gate (keep it green), a new branch — never `main`, coordinated
 disclosure / no committed blobs, and

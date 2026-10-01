@@ -61,11 +61,12 @@ Two fuzz targets, cheapest-first:
 
 | # | Target | What it is | Effort | Why |
 |---|--------|-----------|:------:|-----|
-| **A (primary)** | **`ucdr` decode primitives, in-process** | link Micro-CDR; drive header + `sequence`/`string`/`array` decoders with fuzz bytes | **low** | fastest, deterministic, self-contained; isolates the exact H1 bug class. Skeleton: [`ucdr_fuzz/`](ucdr_fuzz/) |
-| B (fidelity) | **Agent XRCE message-parse entry** | link the Agent's Processing/CDR objects; fuzz the first function that touches received bytes | med–high | closer to the network-reachable surface; also reaches H2 (FRAGMENT reassembly) and H3 (entity XML) from the same rig |
+| **A (primary)** | **`ucdr` decode primitives, in-process** | link Micro-CDR; drive header + `sequence`/`string`/`array` decoders with fuzz bytes | **low** | fastest, deterministic, self-contained; isolates the exact H1 bug class. Harness: [`ucdr_fuzz/`](ucdr_fuzz/) — **DONE** ([results](phase2-h1-fuzz-results.md)) |
+| **B (fidelity) — DONE** | **Agent XRCE message-parse entry** | the Agent's `InputMessage` + `dds::xrce::*` type deserializers via **Fast-CDR**; dispatches each submessage by id like `Processor::process_submessage` | med–high | the real network-reachable Agent parse surface; reaches **H3** (entity XML/binary rep). Harness: [`agent_fuzz/`](agent_fuzz/) · **results:** [`phase2-targetB-agent-parse-results.md`](phase2-targetB-agent-parse-results.md) |
 
-Start with **A** (it is what `ucdr_fuzz/` builds); graduate the interesting corpus to **B** to
-confirm reachability from the real Agent entry before any disclosure claim.
+**A** (client `ucdr`) and **B** (Agent Fast-CDR parse) are both executed (2026-10-01) — both clean
+negatives on the reached surface. Target B's result also carries the precise coverage gap (the
+`REPRESENTATION_IN_BINARY` QoS sub-decoders) that scopes the next refinement.
 
 **Source under test (pin commits, record hashes here on the run):**
 
