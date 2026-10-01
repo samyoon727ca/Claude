@@ -15,11 +15,14 @@
 use std::collections::HashMap;
 
 pub const KEY_LEN: usize = 32;
-const MAGIC_V2: u8 = 0xFD;
-const IFLAG_SIGNED: u8 = 0x01;
+pub(crate) const MAGIC_V2: u8 = 0xFD;
+pub(crate) const IFLAG_SIGNED: u8 = 0x01;
 const SIG_LEN: usize = 6;
-const SIG_BLOCK_LEN: usize = 13; // link_id(1) + timestamp(6) + signature(6)
-const V2_HEADER_LEN: usize = 10; // magic,len,incompat,compat,seq,sysid,compid,msgid(3)
+pub(crate) const SIG_BLOCK_LEN: usize = 13; // link_id(1) + timestamp(6) + signature(6)
+pub(crate) const V2_HEADER_LEN: usize = 10; // magic,len,incompat,compat,seq,sysid,compid,msgid(3)
+
+/// Inline signing-enforcement gateway — puts [`verify_frame`] on the wire.
+pub mod gateway;
 
 /// A 32-byte MAVLink signing key.
 pub struct SigningKey(pub [u8; KEY_LEN]);
@@ -200,8 +203,8 @@ mod tests {
     }
     fn test_key() -> SigningKey {
         let mut k = [0u8; 32];
-        for i in 0..32 {
-            k[i] = i as u8; // 00 01 .. 1f — matches the pymavlink vector below
+        for (i, b) in k.iter_mut().enumerate() {
+            *b = i as u8; // 00 01 .. 1f — matches the pymavlink vector below
         }
         SigningKey(k)
     }

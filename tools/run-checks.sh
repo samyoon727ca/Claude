@@ -94,6 +94,16 @@ python3 .claude/skills/finding-to-vendor-report/scripts/make_report.py "$FIND" -
 python3 .claude/skills/finding-to-cve-writeup/scripts/make_cve.py "$FIND" >/dev/null 2>&1 && ok "make_cve" || bad "make_cve"
 python3 .claude/skills/security-dataviz/scripts/diagram.py taint a b c >/dev/null 2>&1 && ok "diagram.py taint" || bad "diagram.py taint"
 
+echo "== 8. Rust signing module (P6.2) =="
+if have cargo; then
+  # Builds the no-deps crate and runs the sign/verify KAT + interop tests *and* the
+  # on-the-wire gateway integration tests (tests/wire.rs binds localhost UDP sockets).
+  ( cd tools/mavlink-signing && cargo test --quiet >/dev/null 2>&1 ) \
+    && ok "mavlink-signing cargo test" || bad "mavlink-signing cargo test"
+else
+  echo "  [skip] cargo absent; mavlink-signing tests skipped (crate unaffected)"
+fi
+
 echo
 echo "==== $pass passed, $fail failed ===="
 exit $([ "$fail" -eq 0 ] && echo 0 || echo 1)

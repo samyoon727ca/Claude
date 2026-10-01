@@ -11,8 +11,8 @@ frictionless restart.
 ## 0. Confirm state first (30 seconds)
 ```
 git checkout main                                   # tooling branches are merged
-tools/run-checks.sh                                 # clean checkout: 27 passed, 0 failed
-                                                    # (local work/ extraction adds SVGs -> 29; only failures matter)
+tools/run-checks.sh                                 # clean checkout: 28 passed, 0 failed
+                                                    # (local work/ extraction adds SVGs -> 30; only failures matter)
 ```
 Read [`docs/artifact-plan.md`](artifact-plan.md) for the plan and
 [`docs/qualification-map.md`](qualification-map.md) for competency coverage.
@@ -32,8 +32,14 @@ propose a plan, then pick one to execute.
 2. **Telemetry encryption (T4)** — stand up an encrypted transport (WireGuard/DTLS) GCS↔companion,
    re-run `mavlink-sectest` through it, show telemetry is no longer cleartext: the *applied*
    control for the [hardening writeup](track2/uas-mavlink-hardening.md)'s T4 row.
-3. **P6.2 → inline proxy** — make the Rust signing module enforce signing on the wire, proven
-   end-to-end by the harness.
+3. **P6.2 → inline proxy** — ✅ **done (2026-10-01).** The Rust signing module now enforces
+   signing *on the wire*: a one-way MAVLink v2 gateway (`tools/mavlink-signing/src/gateway.rs`
+   + the `mavlink-signing-proxy` binary) forwards only signed/valid/fresh frames and drops
+   unsigned/forged/replayed/malformed traffic. Proven end-to-end over real localhost UDP in
+   `tests/wire.rs` (signed → forwarded byte-for-byte; unsigned/tampered/replay → blocked),
+   17/17 `cargo test` green, clippy-clean, and wired into `tools/run-checks.sh` (guarded on
+   `cargo`). See [`../tools/mavlink-signing/SPEC.md`](../tools/mavlink-signing/SPEC.md)
+   §"Inline enforcement gateway".
 
 **Thrust B — hands-on FPGA** (convert [P6.1](track2/fpga-security-reference.md) from reference to demonstrated):
 1. **Simulation (no hardware):** a security RTL core (AES-GCM / HMAC bitstream-auth checker / PUF

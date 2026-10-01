@@ -1,9 +1,14 @@
 # P6.2 — MAVLink v2 signing module (Rust)
 
-> **Status: built (2026-09-18) — 7/7 `cargo test` green**, including two interop tests
+> **Status: built (2026-09-18) — core 7/7 `cargo test` green**, including two interop tests
 > against a real pymavlink-signed frame (Rust *verifies* it, and Rust *sign* reproduces it
-> byte-for-byte) and a SHA-256 known-answer test. Crate: `Cargo.toml` + `src/lib.rs`
-> (zero external dependencies). This file is both the design spec and the module's README.
+> byte-for-byte) and a SHA-256 known-answer test. **Extended (2026-10-01) with an inline
+> signing-enforcement gateway** that puts the verifier *on the wire* (`src/gateway.rs` + the
+> `mavlink-signing-proxy` binary), proven end-to-end over real localhost UDP sockets in
+> `tests/wire.rs`. **17/17 green** (13 lib/unit + 4 on-the-wire integration), clippy-clean,
+> wired into `tools/run-checks.sh` (guarded on `cargo`). Crate: `Cargo.toml` + `src/lib.rs` +
+> `src/gateway.rs` + `src/bin/proxy.rs` (zero external dependencies). This file is both the
+> design spec and the module's README.
 
 **Role.** A memory-safe implementation of MAVLink v2 message signing (sign + verify +
 anti-replay) — the *control* that closes the capstone's T1/T5 gap. It gives a
@@ -62,8 +67,46 @@ Report the control's behavior as the T1/T5 remediation evidence:
 | module verdict | `Unsigned`/reject | `Valid` | `Replay`/reject |
 
 That table is the before/after the SITL channel fiddliness can't reliably give — measured
-by `cargo test`, cross-checked against pymavlink. Optionally wrap the verifier as a small
-proxy in front of the harness link later; the KAT/interop proof stands on its own.
+by `cargo test`, cross-checked against pymavlink. The KAT/interop proof stands on its own.
+
+## Inline enforcement gateway (the control *on the wire*)
+The verifier is wrapped as a one-way MAVLink v2 relay (`src/gateway.rs`) that enforces the
+signing policy inline on the command-ingress link:
+
+```text
+    GCS ──unsigned/forged/replayed──▶  [ mavlink-signing-proxy ]  ──only Valid──▶  autopilot
+```
+
+- **`Gateway`** — the pure, I/O-free decision engine. `filter_datagram(&[u8]) -> Vec<u8>`
+  splits a datagram into back-to-back v2 frames, runs each through `verify_frame`, and
+  returns only the bytes that pass policy, tallying `Stats` (forwarded / passed_unsigned /
+  dropped_{unsigned,bad_sig,replay,malformed}). The crypto core stays free of network and
+  filesystem; this layer only decides.
+- **`UdpGateway`** — the thin UDP shell (recv on the listen socket, forward passing bytes to
+  the protected side from a dedicated upstream socket).
+- **`mavlink-signing-proxy`** — the runnable binary:
+  ```
+  cargo run --bin mavlink-signing-proxy -- \
+      --listen 127.0.0.1:14560 --forward 127.0.0.1:14550 --key-file mav.key
+  # add --allow-unsigned to pass cleartext through (forged/replayed are still rejected)
+  ```
+
+**Policy semantics.** `require_signed` (default on) governs *unsigned* frames only; a signed
+frame is always signature-checked and replay-checked, so tampering and replay are rejected
+even with `--allow-unsigned`. That is the deployable T1/T5 control, not just a test verdict.
+
+**End-to-end proof (`tests/wire.rs`).** Real localhost UDP, bytes through the proxy:
+
+| Sent by "GCS"              | Reaches "autopilot"? | Gateway stat        |
+|----------------------------|:--------------------:|---------------------|
+| correctly signed           | yes, byte-for-byte   | `forwarded`         |
+| unsigned (require-signed)  | no                   | `dropped_unsigned`  |
+| tampered signed (1 bit)    | no                   | `dropped_bad_sig`   |
+| replayed (ts ≤ last)       | no                   | `dropped_replay`    |
+| unsigned (`--allow-unsigned`) | yes               | `passed_unsigned`   |
+
+A `run()`-loop test also drives the exact forward loop the binary uses, in a background
+thread, to confirm the loop (not just `pump_once`) relays over a live socket.
 
 ## Acceptance criteria
 - All five tests pass under `cargo test`; interop KAT round-trips with pymavlink.
