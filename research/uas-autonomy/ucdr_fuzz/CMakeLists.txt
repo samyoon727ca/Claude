@@ -69,7 +69,7 @@ if(CMAKE_C_COMPILER_ID MATCHES "Clang")
   target_link_libraries(ucdr_fuzz  ${UCDR_LIB})
   message(STATUS "ucdr_fuzz: libFuzzer target enabled (Clang detected)")
 else()
-  message(STATUS "ucdr_fuzz: libFuzzer target skipped (need Clang); build the standalone target")
+  message(STATUS "ucdr_fuzz: libFuzzer target skipped (need Clang); standalone target is still instrumented")
 endif()
 
 # --- Target 2: standalone driver (any compiler) — self-test, crash replay, AFL++ ------------

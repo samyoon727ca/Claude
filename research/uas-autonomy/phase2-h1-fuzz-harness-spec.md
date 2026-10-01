@@ -9,10 +9,13 @@ missing-**bounds-check** question one layer down, entirely offline. This is the 
 pivot](phase2-h5-test-results.md): the prize sits in the Agent's entity-creation / CDR parser,
 not in "does PX4 execute my ARM."*
 
-> **Status: SPEC (drafted 2026-09-21).** No fuzzing run yet; §5 is the run-record stub to fill.
-> The harness skeleton is committed and self-tests today ([`ucdr_fuzz/`](ucdr_fuzz/)). Every
-> crash passes the **dedup gate (§6) before any novelty claim** — a clean run ships as a
-> rigorous negative result (the DrayTek ethos: value ships either way).
+> **Status: EXECUTED 2026-10-01 — negative result.** The run is complete; the filled run record
+> and the security assessment live in [`phase2-h1-fuzz-results.md`](phase2-h1-fuzz-results.md).
+> ~693 M coverage-guided executions under ASan/UBSan against **instrumented** Micro-CDR v2.0.2
+> reached a documented coverage plateau with **zero** crashes/OOMs/timeouts: the `ucdr`
+> length-prefixed decoders uphold the memory-safety invariant. §5 below is filled; the dedup gate
+> (§6) confirmed the surface was genuinely unclaimed. The harness ships as a reusable CI fuzz
+> target (the DrayTek ethos: value ships either way).
 
 > **Scope, safety & ethics.** UNCLASSIFIED, open-source (eProsima Micro-CDR, Micro-XRCE-DDS-
 > Agent/-Client — all public, Apache-2.0). **DEFENSIVE and OFFLINE:** the harness parses
@@ -66,11 +69,11 @@ confirm reachability from the real Agent entry before any disclosure claim.
 
 **Source under test (pin commits, record hashes here on the run):**
 
-| Repo | Commit | SHA-256 (tarball) | vs. known CVEs |
-|------|--------|-------------------|----------------|
-| `eProsima/Micro-CDR` | _pending_ | _pending_ | — |
-| `eProsima/Micro-XRCE-DDS-Agent` | _pending_ | _pending_ | fixed **after** v3.0.1 (63547/63548) — fuzz **≥** the fixed tag so old bugs don't mask new ones |
-| `eProsima/Micro-XRCE-DDS-Client` | _pending_ | _pending_ | seed-capture only |
+| Repo | Commit | Tag | vs. known CVEs |
+|------|--------|-----|----------------|
+| `eProsima/Micro-CDR` | `99672492c5ef9fc378a8835b0bce9b2f7fa41306` | **v2.0.2** (2025-09-30) | **no CVE of its own**; latest release; built from source + instrumented |
+| `eProsima/Micro-XRCE-DDS-Agent` | tag `a88c712…` | **v3.0.2** (2026-09-03) | fixed **after** v3.0.1 (63547/63548) — we fuzz **past** the fix baseline ✓ |
+| `eProsima/Micro-XRCE-DDS-Client` | — | **v3.0.2** | pins `microcdr` **EXACT 2.0.2** → confirms what the Agent ships (seed-capture not needed; offline byte-fuzz) |
 
 ## 3. Build & instrumentation
 
@@ -131,19 +134,19 @@ A length-prefix fuzzer converges far faster from **real frames** than from zero.
 Minimize before keeping: `./build/ucdr_fuzz -merge=1 corpus/ seeds/` then `-minimize_crash=1`
 on any finding.
 
-## 5. Run record — *pending first execution*
+## 5. Run record — **executed 2026-10-01** (full assessment: [`phase2-h1-fuzz-results.md`](phase2-h1-fuzz-results.md))
 
 | Field | Value |
 |-------|-------|
-| Run date | _pending_ |
-| Host / OS | _pending (WSL Ubuntu)_ |
-| Micro-CDR / Agent commit | _pending_ |
-| Fuzzer / sanitizers | _pending (libFuzzer + ASan/UBSan)_ |
-| Corpus size / provenance | _pending_ |
-| Exec/s · total execs · peak RSS | _pending_ |
-| Coverage (edges) | _pending_ |
-| Crashes (unique, post-minimize) | _pending_ |
-| Outcome | _pending — see §6 classification_ |
+| Run date | **2026-10-01** |
+| Host / OS | WSL Ubuntu **26.04 LTS**, x86-64 |
+| Micro-CDR commit | **v2.0.2 / `99672492c5ef9fc378a8835b0bce9b2f7fa41306`** (from source, instrumented) |
+| Fuzzer / sanitizers | **clang 21.1.8 libFuzzer + ASan/UBSan** (`ucdr` compiled with the sanitizers — 63 `__asan` refs in `libmicrocdr.a`) |
+| Corpus size / provenance | 66 hand seeds → **204-unit** effective corpus (352 files / 64 KB); offline, no SITL capture; bytes git-ignored |
+| Exec/s · total execs · peak RSS | ~176 k/s single, **~739 k/s** aggregate (fork=16) · **~693 M** execs · **555 MB** peak (≈40 MB/worker) |
+| Coverage (edges) | **163 edges (saturated, flat entire run)** · 948 features (ramped then plateaued) |
+| Crashes (unique, post-minimize) | **0** (also 0 OOMs / 0 timeouts / 0 leaks) |
+| Outcome | **Negative result** — invariant holds; §6 class = safe (error-set, no memory violation). Residual risk → caller contract (target B / H2–H3). |
 
 ## 6. Dedup gate — run BEFORE any novelty claim
 
