@@ -61,7 +61,12 @@ static void decode_once(const uint8_t* data, size_t size) {
     }
 
     // ---- submessages ----
-    char     dst[UCDR_FUZZ_DST_CAP];
+    // Over-align dst so the (uint16_t*)/(etc.) casts below hand ucdr a correctly
+    // aligned destination: a misaligned harness buffer would otherwise trip a UBSan
+    // alignment report that is a harness artifact, not a ucdr bug (a real caller
+    // deserializes into a properly-typed array). We still bound it to 256 bytes so a
+    // length-prefix overrun is a real heap/stack overflow, not a silent write to slack.
+    _Alignas(16) char dst[UCDR_FUZZ_DST_CAP];
     uint8_t  u8;  int8_t  i8;  uint16_t u16; int16_t i16;
     uint32_t u32; int32_t i32; uint64_t u64; int64_t i64;
     float f; double d; char c; bool b;

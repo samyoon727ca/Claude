@@ -47,14 +47,23 @@ propose a plan, then pick one to execute.
 work substitutes for one real disclosure. **The UAS / autonomy run (Run 4) is now in flight:**
 Phase 0 (dedup / known-territory map) and Phase 1 (PX4 re-anchor + measured SITL) are **done**;
 **Phase 2** — the micro-XRCE-DDS Agent novel-CVE hunt — is the active thread. H5 (unauth command
-injection) ran and recorded a *blocked-at-publisher* (`0x80 DDS_ERROR`) result, pivoting the effort
-to **H1: fuzz the thin `ucdr` decode parser** (the surface Phase 0 flagged as least-mined).
-**Concrete next action** → run the H1 harness per its spec:
-[`../research/uas-autonomy/phase2-h1-fuzz-harness-spec.md`](../research/uas-autonomy/phase2-h1-fuzz-harness-spec.md)
-(buildable skeleton [`../research/uas-autonomy/ucdr_fuzz/`](../research/uas-autonomy/ucdr_fuzz/) —
-`./build/ucdr_fuzz_standalone --selftest` is green today; on WSL: build with clang, seed the
-corpus from a loopback capture, run libFuzzer, then the §6 dedup gate). Full sequence + the router
-fallbacks: [`track1-uas-run-plan.md`](track1-uas-run-plan.md).
+injection) recorded a *blocked-at-publisher* (`0x80 DDS_ERROR`) result; the effort pivoted to
+**H1: fuzz the thin `ucdr` decode parser** — which has now **run (2026-10-01) and resolved as a
+rigorous negative result:** ~693 M coverage-guided ASan/UBSan executions against **instrumented**
+Micro-CDR v2.0.2 (commit `99672492…`, the exact version the Agent ships) reached a documented
+coverage plateau with **zero** crashes/OOMs/timeouts — the length-prefixed invariant holds in
+source. Write-up: [`../research/uas-autonomy/phase2-h1-fuzz-results.md`](../research/uas-autonomy/phase2-h1-fuzz-results.md);
+dedup re-swept clean the same day ([`known-territory.md`](../research/uas-autonomy/known-territory.md)).
+The harness ships as a reusable CI fuzz target (builds instrumented Micro-CDR from source).
+
+**Concrete next action** → H1 showed the residual risk is **not** the `ucdr` primitives but the
+**caller contract** (the Agent passing the true capacity; the raw `array_*` API has no capacity
+check). So Phase 2 moves up a layer: **target B (fuzz the Agent's XRCE message-parse entry),
+H2 (FRAGMENT reassembly), H3 (entity XML/binary rep)**, and the untouched **H4 (session/privilege)**
+— none of which the two known DoS CVEs touch. Scope + ranking:
+[`../research/uas-autonomy/phase2-micro-xrce-dds-scope.md`](../research/uas-autonomy/phase2-micro-xrce-dds-scope.md);
+full sequence + router fallbacks: [`track1-uas-run-plan.md`](track1-uas-run-plan.md). To reproduce
+H1: [`../research/uas-autonomy/phase2-h1-fuzz-results.md`](../research/uas-autonomy/phase2-h1-fuzz-results.md) §9.
 
 Guardrails unchanged: WSL for the gate (keep it green), a new branch — never `main`, coordinated
 disclosure / no committed blobs, and

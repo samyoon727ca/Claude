@@ -6,10 +6,18 @@ against this map so effort aims only at **unclaimed** surface. Built to answer o
 question per layer: **is this already CVE'd / published (cite it) or genuinely
 under-reviewed (hunt it)?***
 
-> **Status: LIVE MAP — swept 2026-09-21.** This is working-area paperwork
-> (`research/uas-autonomy/`; blobs git-ignored per `.gitignore`). Re-run the sweep before
-> each candidate goes deep — the landscape moves (the 2026 PX4 cluster below all landed
+> **Status: LIVE MAP — swept 2026-09-21, re-swept 2026-10-01 (landscape unchanged).** This is
+> working-area paperwork (`research/uas-autonomy/`; blobs git-ignored per `.gitignore`). Re-run the
+> sweep before each candidate goes deep — the landscape moves (the 2026 PX4 cluster below all landed
 > this year). Sources in §7; every claim is dated and linked.
+>
+> **Re-sweep 2026-10-01 (4 parallel sources — CVE DBs / repo activity / CISA+vendor / academic):**
+> **nothing moved** on the `ucdr` decode surface. Still only CVE-2025-63547/63548 for the Agent
+> (both Agent-side, not `ucdr`); **Micro-CDR still has zero CVEs/advisories**; its decoders
+> (`sequence/string/array/basic/common.c`) are **untouched since 2021-11-25** (no silent post-v2.0.2
+> fix). Newest eProsima CVEs (Fast-DDS 2026-22590/22591) are RTPS/Fast-DDS, different codebase,
+> pre-baseline. This dedup-cleared the **H1 fuzz run** →
+> [`phase2-h1-fuzz-results.md`](phase2-h1-fuzz-results.md) (negative result).
 
 ## 1. Method & scope
 
@@ -76,6 +84,16 @@ XRCE input-validation surface is shallowly tested; untouched publicly: **deeper 
 submessage parsing, the client↔agent trust boundary / session & privilege handling, and
 the PX4-specific integration seam** (how PX4 configures and exposes the Agent). This is
 where Phase 2 should aim first.
+
+> **H1 result (2026-10-01):** the `ucdr` **decode-primitive** slice of this layer is now
+> **tested and clean** — ~693 M coverage-guided ASan/UBSan executions against instrumented
+> v2.0.2 found **no** OOB; the length-prefixed invariant holds in source
+> ([`phase2-h1-fuzz-results.md`](phase2-h1-fuzz-results.md) §5). **Coverage-gap / next:** the
+> invariant is contingent on the **caller** passing the true destination capacity, and the raw
+> `ucdr_deserialize_array_*` API takes an attacker-influenced `size` with no capacity check. So the
+> residual headroom in §2.4 is **not** the `ucdr` primitives but **how the Agent uses them** —
+> **target B (Agent parse entry), H2 (FRAGMENT reassembly), H3 (entity XML/binary rep)** — plus the
+> still-untouched **session/privilege (H4)** and **PX4 integration seam (H5-adjacent)** rows.
 
 ### 2.5 ArduPilot → **PARTIAL (active academic RE) — cross-validator, not the bet**
 - **arXiv 2512.01164** — *Reverse Engineering and Control-Aware Security Analysis of the
