@@ -91,9 +91,17 @@ where Phase 2 should aim first.
 > ([`phase2-h1-fuzz-results.md`](phase2-h1-fuzz-results.md) §5). **Coverage-gap / next:** the
 > invariant is contingent on the **caller** passing the true destination capacity, and the raw
 > `ucdr_deserialize_array_*` API takes an attacker-influenced `size` with no capacity check. So the
-> residual headroom in §2.4 is **not** the `ucdr` primitives but **how the Agent uses them** —
-> **target B (Agent parse entry), H2 (FRAGMENT reassembly), H3 (entity XML/binary rep)** — plus the
-> still-untouched **session/privilege (H4)** and **PX4 integration seam (H5-adjacent)** rows.
+> residual headroom in §2.4 is **not** the `ucdr` primitives but **how the Agent uses them**.
+>
+> **Target B result (2026-10-01):** the **Agent-side** XRCE parse entry (`InputMessage` + the
+> `dds::xrce::*` type deserializers via **Fast-CDR v2.3.1**) is now **tested and clean too** —
+> ~736 M coverage-guided ASan/UBSan executions, **0** crashes/OOMs, plateau covering all 9 dispatched
+> payload types **and** the XML/reference entity-representation paths (**H3**)
+> ([`phase2-targetB-agent-parse-results.md`](phase2-targetB-agent-parse-results.md)). **Remaining
+> headroom (named):** the `REPRESENTATION_IN_BINARY` **QoS sub-decoders** (`OBJK_*_Binary` /
+> `*_QosBinary`, XCDRv2 PL-CDR member-header structures) — reachable but not exercised by a byte
+> mutator; needs **grammar-aware / serialize-generated seeds** (next). Still-untouched: **H2**
+> (FRAGMENT reassembly in `Session`) and **H4** (session/privilege logic).
 
 ### 2.5 ArduPilot → **PARTIAL (active academic RE) — cross-validator, not the bet**
 - **arXiv 2512.01164** — *Reverse Engineering and Control-Aware Security Analysis of the
